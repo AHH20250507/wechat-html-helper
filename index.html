@@ -196,7 +196,11 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <label>文字颜色</label>
         <input type="color" id="textColor" value="#ffffff" oninput="renderPreview()">
         <label>字号</label>
-        <input type="number" id="fontSizeInput" value="72" min="8" max="200" style="width:60px;padding:4px 6px;" oninput="renderPreview()">
+        <input type="number" id="fontSizeInput" value="45" min="8" max="200" style="width:60px;padding:4px 6px;" oninput="renderPreview()">
+        <label>左距</label>
+        <input type="number" id="padLeftInput" value="40" min="0" max="200" style="width:54px;padding:4px 6px;" oninput="renderPreview()">
+        <label>右距</label>
+        <input type="number" id="padRightInput" value="40" min="0" max="200" style="width:54px;padding:4px 6px;" oninput="renderPreview()">
       </div>
 
       <div id="textInputRow" style="display:none;margin-bottom:20px;padding:16px;background:#f5f5f7;border-radius:10px;">
@@ -318,6 +322,10 @@ function handleImgFile(file) {
       imgState.naturalW = img.naturalWidth;
       imgState.naturalH = img.naturalHeight;
       imgState.loaded = true;
+      // cache a standalone Image object for download (avoids blank areas)
+      var cached = new Image();
+      cached.src = ev.target.result;
+      imgState.cachedImg = cached;
       document.getElementById('imgControls').style.display = 'flex';
       document.getElementById('textInputRow').style.display = 'block';
       document.getElementById('cropArea').style.display = 'block';
@@ -434,17 +442,17 @@ function renderPreview() {
   // text
   var text = document.getElementById('overlayText').value;
   if (text) {
-    var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 72;
+    var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 45;
     var color = document.getElementById('textColor').value;
+    var padLeft = parseInt(document.getElementById('padLeftInput').value) || 40;
+    var padRight = parseInt(document.getElementById('padRightInput').value) || 40;
     ctx.fillStyle = color;
-    ctx.font = '900 ' + fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
 
-    // word wrap, left-aligned, top area
-    var padLeft = 40;
     var padTop = Math.round(cropH * 0.15);
-    var maxWidth = cropW - padLeft * 2;
+    var maxWidth = cropW - padLeft - padRight;
     var lines = wrapText(ctx, text, maxWidth);
     var lineHeight = fontSize * 1.2;
     for (var i = 0; i < lines.length; i++) {
@@ -487,13 +495,15 @@ function downloadImg() {
 
   var c = document.createElement('canvas');
   c.width = outW; c.height = outH;
-  var ctx = c.getContext('2d');
+  var ctx = c.getContext('2d', { willReadFrequently: true });
 
-  // draw image (reproduce the crop)
+  // draw from cached Image object (avoids blank areas from DOM img)
+  var imgObj = imgState.cachedImg;
+  if (!imgObj || !imgObj.complete) { showToast('图片未加载完成'); return; }
   var s = imgState.scale * scaleRatio;
   var dx = imgState.offX * scaleRatio;
   var dy = imgState.offY * scaleRatio;
-  ctx.drawImage(document.getElementById('cropImg'), dx, dy, imgState.naturalW * s, imgState.naturalH * s);
+  ctx.drawImage(imgObj, dx, dy, imgState.naturalW * s, imgState.naturalH * s);
 
   // overlay
   var opacity = parseInt(document.getElementById('overlayRange').value) / 100;
@@ -503,15 +513,16 @@ function downloadImg() {
   // text
   var text = document.getElementById('overlayText').value;
   if (text) {
-    var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 72) * scaleRatio;
+    var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 45) * scaleRatio;
     var color = document.getElementById('textColor').value;
+    var padLeft = (parseInt(document.getElementById('padLeftInput').value) || 40) * scaleRatio;
+    var padRight = (parseInt(document.getElementById('padRightInput').value) || 40) * scaleRatio;
     ctx.fillStyle = color;
-    ctx.font = '900 ' + Math.round(fontSize) + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.font = Math.round(fontSize) + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
-    var padLeft = 40 * scaleRatio;
     var padTop = Math.round(outH * 0.15);
-    var maxWidth = outW - padLeft * 2;
+    var maxWidth = outW - padLeft - padRight;
     var lines = wrapText(ctx, text, maxWidth);
     var lineHeight = fontSize * 1.2;
     for (var i = 0; i < lines.length; i++) {

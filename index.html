@@ -61,13 +61,30 @@ button { border: none; cursor: pointer; transition: all .2s; }
 .btn-secondary { background: #e8e8ed; color: #1d1d1f; }
 .btn-secondary:hover { background: #d2d2d7; }
 
-.img-controls { display: none; flex-direction: column; gap: 14px; padding: 20px; background: #f5f5f7; border-radius: 10px; margin-bottom: 20px; }
-.slider-row { display: flex; flex-direction: column; gap: 6px; }
-.slider-label { display: flex; justify-content: space-between; font-size: 12px; color: #1d1d1f; }
-.slider-label span:last-child { color: #86868b; font-variant-numeric: tabular-nums; }
-.slider-row input[type="range"] { width: 100%; height: 4px; border-radius: 2px; -webkit-appearance: none; appearance: none; background: #d2d2d7; outline: none; }
-.slider-row input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #00b050; cursor: pointer; }
-.slider-row input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #00b050; cursor: pointer; border: none; }
+.control-panel { display: none; flex-direction: column; gap: 1px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 20px; }
+.control-row {
+  display: grid; grid-template-columns: 56px 1fr 60px; align-items: center; gap: 12px;
+  padding: 12px 16px; background: #fff;
+}
+.control-row label { font-size: 13px; color: #1d1d1f; font-weight: 500; }
+.control-row input[type="range"] {
+  width: 100%; height: 4px; border-radius: 2px; -webkit-appearance: none; appearance: none;
+  background: #e8e8ed; outline: none; margin: 0;
+}
+.control-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+  border-radius: 50%; background: #00b050; cursor: pointer; border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.control-row input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%; background: #00b050;
+  cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.control-row input[type="number"] {
+  width: 56px; padding: 4px 6px; border: 1px solid #e8e8ed; border-radius: 6px;
+  font-size: 13px; text-align: center; color: #1d1d1f; outline: none;
+}
+.control-row input[type="number"]:focus { border-color: #00b050; }
 .append-header-right { display: flex; align-items: center; gap: 14px; }
 .file-upload-btn {
   display: inline-flex; align-items: center; gap: 5px;
@@ -194,22 +211,26 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <input type="file" id="imgFileInput" accept="image/*" onchange="imgLoaded(event)">
       </div>
 
-      <div class="img-controls" id="imgControls">
-        <div class="slider-row">
-          <div class="slider-label"><span>字号</span><span id="fontSizeVal">72</span></div>
-          <input type="range" id="fontSizeInput" min="8" max="200" value="72" oninput="onSlider('fontSizeInput','fontSizeVal');renderPreview()">
+      <div class="control-panel" id="imgControls">
+        <div class="control-row">
+          <label>字号</label>
+          <input type="range" id="fontSizeInput" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput','fontSizeNum');renderPreview()">
+          <input type="number" id="fontSizeNum" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum','fontSizeInput');renderPreview()">
         </div>
-        <div class="slider-row">
-          <div class="slider-label"><span>左距</span><span id="padLeftVal">40</span></div>
-          <input type="range" id="padLeftInput" min="0" max="200" value="40" oninput="onSlider('padLeftInput','padLeftVal');renderPreview()">
+        <div class="control-row">
+          <label>左距</label>
+          <input type="range" id="padLeftInput" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput','padLeftNum');renderPreview()">
+          <input type="number" id="padLeftNum" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum','padLeftInput');renderPreview()">
         </div>
-        <div class="slider-row">
-          <div class="slider-label"><span>右距</span><span id="padRightVal">40</span></div>
-          <input type="range" id="padRightInput" min="0" max="200" value="40" oninput="onSlider('padRightInput','padRightVal');renderPreview()">
+        <div class="control-row">
+          <label>右距</label>
+          <input type="range" id="padRightInput" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput','padRightNum');renderPreview()">
+          <input type="number" id="padRightNum" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum','padRightInput');renderPreview()">
         </div>
-        <div class="slider-row">
-          <div class="slider-label"><span>上移</span><span id="textOffsetVal">0</span></div>
-          <input type="range" id="textOffsetY" min="-200" max="200" value="0" oninput="onSlider('textOffsetY','textOffsetVal');renderPreview()">
+        <div class="control-row">
+          <label>上移</label>
+          <input type="range" id="textOffsetY" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY','textOffsetNum');renderPreview()">
+          <input type="number" id="textOffsetNum" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum','textOffsetY');renderPreview()">
         </div>
       </div>
 
@@ -453,9 +474,11 @@ function clampImgPos() {
   }
 }
 
-function onSlider(inputId, valId) {
-  var v = document.getElementById(inputId).value;
-  document.getElementById(valId).textContent = v;
+function syncFromSlider(sliderId, numId) {
+  document.getElementById(numId).value = document.getElementById(sliderId).value;
+}
+function syncFromNumber(numId, sliderId) {
+  document.getElementById(sliderId).value = document.getElementById(numId).value;
 }
 
 function renderPreview() {
@@ -520,6 +543,10 @@ function resetImg() {
   document.getElementById('imgActions').style.display = 'none';
   document.getElementById('uploadZone').style.display = 'block';
   document.getElementById('overlayText').value = '';
+  // reset sliders and number inputs
+  var defaults = { fontSizeInput: 72, fontSizeNum: 72, padLeftInput: 40, padLeftNum: 40,
+                   padRightInput: 40, padRightNum: 40, textOffsetY: 0, textOffsetNum: 0 };
+  for (var k in defaults) document.getElementById(k).value = defaults[k];
 }
 
 function downloadImg() {

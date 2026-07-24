@@ -61,7 +61,13 @@ button { border: none; cursor: pointer; transition: all .2s; }
 .btn-secondary { background: #e8e8ed; color: #1d1d1f; }
 .btn-secondary:hover { background: #d2d2d7; }
 
-/* ---- append section ---- */
+.img-controls { display: none; flex-direction: column; gap: 14px; padding: 20px; background: #f5f5f7; border-radius: 10px; margin-bottom: 20px; }
+.slider-row { display: flex; flex-direction: column; gap: 6px; }
+.slider-label { display: flex; justify-content: space-between; font-size: 12px; color: #1d1d1f; }
+.slider-label span:last-child { color: #86868b; font-variant-numeric: tabular-nums; }
+.slider-row input[type="range"] { width: 100%; height: 4px; border-radius: 2px; -webkit-appearance: none; appearance: none; background: #d2d2d7; outline: none; }
+.slider-row input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #00b050; cursor: pointer; }
+.slider-row input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #00b050; cursor: pointer; border: none; }
 .append-header-right { display: flex; align-items: center; gap: 14px; }
 .file-upload-btn {
   display: inline-flex; align-items: center; gap: 5px;
@@ -188,15 +194,23 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <input type="file" id="imgFileInput" accept="image/*" onchange="imgLoaded(event)">
       </div>
 
-      <div class="img-controls" id="imgControls" style="display:none;">
-        <label>字号</label>
-        <input type="number" id="fontSizeInput" value="45" min="8" max="200" style="width:60px;padding:4px 6px;" oninput="renderPreview()">
-        <label>左距</label>
-        <input type="number" id="padLeftInput" value="40" min="0" max="200" style="width:54px;padding:4px 6px;" oninput="renderPreview()">
-        <label>右距</label>
-        <input type="number" id="padRightInput" value="40" min="0" max="200" style="width:54px;padding:4px 6px;" oninput="renderPreview()">
-        <label>上移</label>
-        <input type="number" id="textOffsetY" value="0" min="-200" max="200" style="width:54px;padding:4px 6px;" oninput="renderPreview()">
+      <div class="img-controls" id="imgControls">
+        <div class="slider-row">
+          <div class="slider-label"><span>字号</span><span id="fontSizeVal">72</span></div>
+          <input type="range" id="fontSizeInput" min="8" max="200" value="72" oninput="onSlider('fontSizeInput','fontSizeVal');renderPreview()">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>左距</span><span id="padLeftVal">40</span></div>
+          <input type="range" id="padLeftInput" min="0" max="200" value="40" oninput="onSlider('padLeftInput','padLeftVal');renderPreview()">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>右距</span><span id="padRightVal">40</span></div>
+          <input type="range" id="padRightInput" min="0" max="200" value="40" oninput="onSlider('padRightInput','padRightVal');renderPreview()">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>上移</span><span id="textOffsetVal">0</span></div>
+          <input type="range" id="textOffsetY" min="-200" max="200" value="0" oninput="onSlider('textOffsetY','textOffsetVal');renderPreview()">
+        </div>
       </div>
 
       <div id="textInputRow" style="display:none;margin-bottom:20px;padding:16px;background:#f5f5f7;border-radius:10px;">
@@ -439,6 +453,11 @@ function clampImgPos() {
   }
 }
 
+function onSlider(inputId, valId) {
+  var v = document.getElementById(inputId).value;
+  document.getElementById(valId).textContent = v;
+}
+
 function renderPreview() {
   var canvas = document.getElementById('overlayCanvas');
   var ctx = canvas.getContext('2d');
@@ -455,7 +474,7 @@ function renderPreview() {
   var text = document.getElementById('overlayText').value;
   if (text) {
     var scale = cropW / 1280;
-    var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 45) * scale;
+    var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 72) * scale;
     var padLeft = (parseInt(document.getElementById('padLeftInput').value) || 40) * scale;
     var padRight = (parseInt(document.getElementById('padRightInput').value) || 40) * scale;
     var offsetY = (parseInt(document.getElementById('textOffsetY').value) || 0) * scale;
@@ -536,7 +555,7 @@ function downloadImg() {
   // text rendered at final resolution
   var text = document.getElementById('overlayText').value;
   if (text) {
-    var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 45;
+    var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 72;
     var padLeft = parseInt(document.getElementById('padLeftInput').value) || 40;
     var padRight = parseInt(document.getElementById('padRightInput').value) || 40;
     var offsetY = parseInt(document.getElementById('textOffsetY').value) || 0;

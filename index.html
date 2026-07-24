@@ -8,46 +8,31 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
-  background: #f5f5f7;
-  color: #1d1d1f;
-  min-height: 100vh;
-  padding: 40px 20px 40px;
+  background: #f5f5f7; color: #1d1d1f;
+  min-height: 100vh; padding: 40px 20px;
 }
 .container { max-width: 960px; margin: 0 auto; }
-h1 { font-size: 28px; font-weight: 600; text-align: center; margin-bottom: 8px; }
-.subtitle { text-align: center; color: #86868b; font-size: 14px; margin-bottom: 28px; }
+h1 { font-size: 28px; font-weight: 600; text-align: center; margin-bottom: 24px; }
 
+/* ---- tabs ---- */
+.tabs {
+  display: flex; justify-content: center; gap: 0;
+  margin-bottom: 24px; background: #e8e8ed; border-radius: 10px; padding: 3px;
+  max-width: 260px; margin-left: auto; margin-right: auto;
+}
+.tab-btn {
+  flex: 1; padding: 8px 0; text-align: center;
+  font-size: 13px; font-weight: 500; border: none; background: transparent;
+  border-radius: 8px; cursor: pointer; color: #86868b; transition: all .2s;
+}
+.tab-btn.active { background: #fff; color: #1d1d1f; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
-/* ---- cards ---- */
-.rules {
-  background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
-}
-.rules h2 {
-  font-size: 14px; font-weight: 600; color: #86868b;
-  text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px;
-}
-.rule-item {
-  display: flex; align-items: center; gap: 10px; padding: 8px 0;
-  font-size: 13px; color: #1d1d1f; border-bottom: 1px solid #f0f0f0;
-}
-.rule-item:last-child { border-bottom: none; }
-.rule-item .arrow { color: #86868b; flex-shrink: 0; }
-.rule-item code {
-  background: #f5f5f7; padding: 2px 6px; border-radius: 4px;
-  font-family: "SF Mono", Menlo, monospace; font-size: 12px; word-break: break-all;
-}
-.rule-item .swatch {
-  display: inline-block; width: 14px; height: 14px; border-radius: 3px;
-  vertical-align: middle; margin-right: 4px;
-}
-
-/* ---- editor ---- */
-.editor-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-@media (max-width: 700px) { .editor-wrap { grid-template-columns: 1fr; } }
+/* ---- panels ---- */
 .panel {
   background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06);
-  display: flex; flex-direction: column; overflow: hidden;
+  display: flex; flex-direction: column; overflow: hidden; margin-bottom: 20px;
 }
 .panel-header {
   padding: 12px 16px; font-size: 13px; font-weight: 600; color: #86868b;
@@ -66,16 +51,22 @@ textarea::placeholder { color: #c7c7cc; }
   font-size: 12px; line-height: 1.6; color: #1d1d1f;
   overflow: auto; white-space: pre-wrap; word-break: break-all;
 }
+.editor-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+@media (max-width: 700px) { .editor-wrap { grid-template-columns: 1fr; } }
+
+/* ---- buttons ---- */
+button { border: none; cursor: pointer; transition: all .2s; }
+.btn-primary { background: #00b050; color: #fff; }
+.btn-primary:hover { background: #009945; }
+.btn-secondary { background: #e8e8ed; color: #1d1d1f; }
+.btn-secondary:hover { background: #d2d2d7; }
 
 /* ---- append section ---- */
-.append-header-right {
-  display: flex; align-items: center; gap: 14px;
-}
+.append-header-right { display: flex; align-items: center; gap: 14px; }
 .file-upload-btn {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 4px 10px; border-radius: 6px; border: 1px solid #d2d2d7;
   background: #fff; font-size: 12px; color: #1d1d1f; cursor: pointer;
-  transition: background .2s;
 }
 .file-upload-btn:hover { background: #f5f5f7; }
 .file-upload-btn input[type="file"] { display: none; }
@@ -88,15 +79,44 @@ textarea::placeholder { color: #c7c7cc; }
   font-size: 12px; font-weight: 400; color: #1d1d1f; cursor: pointer;
 }
 
-/* ---- buttons ---- */
-button {
-  padding: 10px 24px; border-radius: 8px; border: none;
-  font-size: 14px; font-weight: 500; cursor: pointer; transition: all .2s;
+/* ---- image editor ---- */
+.img-editor { padding: 24px; }
+.img-upload-zone {
+  border: 2px dashed #d2d2d7; border-radius: 12px; padding: 48px 24px;
+  text-align: center; cursor: pointer; transition: all .2s; margin-bottom: 20px;
 }
-.btn-primary { background: #00b050; color: #fff; }
-.btn-primary:hover { background: #009945; }
-.btn-secondary { background: #e8e8ed; color: #1d1d1f; }
-.btn-secondary:hover { background: #d2d2d7; }
+.img-upload-zone:hover { border-color: #00b050; background: #f9fff9; }
+.img-upload-zone p { color: #86868b; font-size: 14px; }
+.img-upload-zone input { display: none; }
+
+.img-controls {
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  margin-bottom: 20px; padding: 16px; background: #f5f5f7; border-radius: 10px;
+}
+.img-controls label { font-size: 12px; color: #86868b; font-weight: 500; }
+.img-controls select, .img-controls input[type="text"], .img-controls input[type="range"] {
+  padding: 4px 8px; border-radius: 6px; border: 1px solid #d2d2d7;
+  font-size: 12px; background: #fff;
+}
+.img-controls input[type="range"] { width: 100px; padding: 0; }
+.img-controls input[type="color"] { width: 28px; height: 28px; border: none; padding: 0; cursor: pointer; }
+
+.crop-area {
+  position: relative; overflow: hidden; background: #1d1d1f;
+  border-radius: 8px; margin-bottom: 20px; cursor: grab;
+  max-width: 100%; margin-left: auto; margin-right: auto;
+}
+.crop-area:active { cursor: grabbing; }
+.crop-area img { display: block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.crop-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+.preview-actions {
+  display: flex; justify-content: center; gap: 12px; align-items: center;
+}
+.opacity-val { font-size: 12px; color: #86868b; min-width: 32px; text-align: center; }
 
 /* ---- toast ---- */
 .toast {
@@ -111,108 +131,147 @@ button {
 </head>
 <body>
 <div class="container">
-  <div style="text-align:center;margin-bottom:28px;">
-    <h1>公众号HTML助手</h1>
+  <h1>公众号HTML助手</h1>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('html')">HTML 编辑</button>
+    <button class="tab-btn" onclick="switchTab('img')">图片处理</button>
   </div>
 
-  <div class="editor-wrap">
+  <!-- ========== HTML Tab ========== -->
+  <div class="tab-content active" id="tab-html">
+    <div class="editor-wrap">
+      <div class="panel">
+        <div class="panel-header">
+          <span>输入 HTML</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span id="stats" style="font-size:11px;color:#86868b;font-weight:400;"></span>
+            <button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="clearAll()">清空</button>
+            <button class="btn-primary" style="padding:4px 14px;font-size:12px;border-radius:6px;" onclick="process()">转换</button>
+          </div>
+        </div>
+        <textarea id="input" placeholder="在此粘贴原始 HTML 代码…"></textarea>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span>输出结果</span>
+          <button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="copyOutput()">复制</button>
+        </div>
+        <div class="output-area" id="output"></div>
+      </div>
+    </div>
     <div class="panel">
       <div class="panel-header">
-        <span>输入 HTML</span>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span id="stats" style="font-size:11px;color:#86868b;font-weight:400;"></span>
-          <button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="clearAll()">清空</button>
-          <button class="btn-primary" style="padding:4px 14px;font-size:12px;border-radius:6px;" onclick="process()">转换</button>
+        <span>追加结尾（可选）</span>
+        <div class="append-header-right">
+          <span class="file-name" id="fileName"></span>
+          <label class="file-upload-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            上传 HTML
+            <input type="file" id="fileInput" accept=".html,.htm,.txt" onchange="handleFileUpload(event)">
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="appendToggle" style="width:15px;height:15px;accent-color:#00b050;cursor:pointer;">
+            启用
+          </label>
         </div>
       </div>
-      <textarea id="input" placeholder="在此粘贴原始 HTML 代码…"></textarea>
-    </div>
-    <div class="panel">
-      <div class="panel-header">
-        <span>输出结果</span>
-        <button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="copyOutput()">复制</button>
-      </div>
-      <div class="output-area" id="output"></div>
+      <textarea id="appendInput" style="height:160px;" placeholder="粘贴 HTML 代码，或点击上方「上传 HTML」导入文件…（勾选「启用」后生效）"></textarea>
     </div>
   </div>
 
-  <div class="panel" style="margin-bottom:20px;">
-    <div class="panel-header">
-      <span>追加结尾（可选）</span>
-      <div class="append-header-right">
-        <span class="file-name" id="fileName"></span>
-        <label class="file-upload-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          上传 HTML
-          <input type="file" id="fileInput" accept=".html,.htm,.txt" onchange="handleFileUpload(event)">
-        </label>
-        <label class="toggle-label">
-          <input type="checkbox" id="appendToggle" style="width:15px;height:15px;accent-color:#00b050;cursor:pointer;">
-          启用
-        </label>
+  <!-- ========== Image Tab ========== -->
+  <div class="tab-content" id="tab-img">
+    <div class="panel img-editor">
+      <div class="img-upload-zone" id="uploadZone" onclick="document.getElementById('imgFileInput').click()">
+        <p>点击上传图片，或将图片拖拽到这里</p>
+        <input type="file" id="imgFileInput" accept="image/*" onchange="imgLoaded(event)">
+      </div>
+
+      <div class="img-controls" id="imgControls" style="display:none;">
+        <label>比例</label>
+        <select id="ratioSelect" onchange="onRatioChange()">
+          <option value="3:1">3:1 横幅</option>
+          <option value="16:9">16:9</option>
+          <option value="4:3">4:3</option>
+          <option value="1:1">1:1 正方</option>
+          <option value="3:4">3:4 竖版</option>
+          <option value="custom">自定义</option>
+        </select>
+        <label>蒙层透明度</label>
+        <input type="range" id="overlayRange" min="0" max="100" value="54" oninput="renderPreview()">
+        <span class="opacity-val" id="opacityVal">54%</span>
+        <label>文字颜色</label>
+        <input type="color" id="textColor" value="#ffffff" oninput="renderPreview()">
+        <label>字号</label>
+        <select id="fontSizeSelect" onchange="renderPreview()">
+          <option value="24">24px</option>
+          <option value="32" selected>32px</option>
+          <option value="48">48px</option>
+          <option value="64">64px</option>
+        </select>
+      </div>
+
+      <div id="textInputRow" style="display:none;margin-bottom:20px;padding:16px;background:#f5f5f7;border-radius:10px;">
+        <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
+        <input type="text" id="overlayText" placeholder="输入要显示在图片上的文字…" oninput="renderPreview()"
+          style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+      </div>
+
+      <div class="crop-area" id="cropArea" style="display:none;">
+        <img id="cropImg">
+        <canvas class="crop-overlay" id="overlayCanvas"></canvas>
+      </div>
+
+      <div class="preview-actions" id="imgActions" style="display:none;">
+        <button class="btn-secondary" style="padding:8px 20px;font-size:13px;border-radius:8px;" onclick="resetImg()">重新上传</button>
+        <button class="btn-primary" style="padding:8px 20px;font-size:13px;border-radius:8px;" onclick="downloadImg()">下载图片</button>
       </div>
     </div>
-    <textarea id="appendInput" style="height:160px;" placeholder="粘贴 HTML 代码，或点击上方「上传 HTML」导入文件…（勾选「启用」后生效）"></textarea>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-var OLD_IMG = '<img alt="酷换机新头图.gif" src="https://mmbiz.qpic.cn/mmbiz_gif/iaw9nmmHthVcNNic7B4ibFg7Ribvt2o1pTCbfFlicw8No0Spt3ic3y9BDqzHdxZYF5zPNvB6DdZUMYU0T9Wkb0IroEhA/640?wx_fmt=gif" style="vertical-align: baseline;width: 100%;box-sizing:border-box;max-width:100% !important;" draggable="false" data-ratio="0.20074349442379183" data-w="1076"/>';
+/* ===== Tab Switch ===== */
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(function(b, i) {
+    b.classList.toggle('active', (name === 'html' && i === 0) || (name === 'img' && i === 1));
+  });
+  document.getElementById('tab-html').classList.toggle('active', name === 'html');
+  document.getElementById('tab-img').classList.toggle('active', name === 'img');
+}
 
+/* ===== HTML Editor (unchanged) ===== */
+var OLD_IMG = '<img alt="\u9177\u6362\u673a\u65b0\u5934\u56fe.gif" src="https://mmbiz.qpic.cn/mmbiz_gif/iaw9nmmHthVcNNic7B4ibFg7Ribvt2o1pTCbfFlicw8No0Spt3ic3y9BDqzHdxZYF5zPNvB6DdZUMYU0T9Wkb0IroEhA/640?wx_fmt=gif" style="vertical-align: baseline;width: 100%;box-sizing:border-box;max-width:100% !important;" draggable="false" data-ratio="0.20074349442379183" data-w="1076"/>';
 var NEW_IMG = '<img src="https://mmbiz.qpic.cn/mmbiz_gif/lfic4S7GicgmD0Ot7hgOUpfofRwogPQoaTUSkOXicuTWeETNsjdZWSyQflaVfKqAo0zakN2K0ia7PBuxj8FfG4XHNQ/640?wx_fmt=gif" style="width:100%;vertical-align:baseline;box-sizing:border-box;max-width:100% !important;" draggable="false" data-ratio="0.20055710306406685" data-w="1077"/>';
 
 function process() {
   var input = document.getElementById('input').value;
   if (!input.trim()) { showToast('请先粘贴 HTML 代码'); return; }
-
-  var result = input;
-  var colorCount = 0;
-  var imgCount = 0;
-
-  // 规则1：替换颜色 #006fff → #00b050（不区分大小写）
-  result = result.replace(/#006fff/gi, function() {
-    colorCount++;
-    return '#00b050';
-  });
-
-  // 规则2：替换头图（精确 + 模糊兜底）
+  var result = input, colorCount = 0, imgCount = 0;
+  result = result.replace(/#006fff/gi, function() { colorCount++; return '#00b050'; });
   if (result.indexOf(OLD_IMG) !== -1) {
-    result = result.split(OLD_IMG).join(NEW_IMG);
-    imgCount = 1;
+    result = result.split(OLD_IMG).join(NEW_IMG); imgCount = 1;
   } else {
-    var imgRegex = /<img[^>]*iaw9nmmHthVcNNic7B4ibFg7Ribvt2o1pTCbfFlicw8No0Spt3ic3y9BDqzHdxZYF5zPNvB6DdZUMYU0T9Wkb0IroEhA[^>]*\/?>/gi;
-    if (imgRegex.test(result)) {
-      result = result.replace(imgRegex, function() {
-        imgCount++;
-        return NEW_IMG;
-      });
-    }
+    var re = /<img[^>]*iaw9nmmHthVcNNic7B4ibFg7Ribvt2o1pTCbfFlicw8No0Spt3ic3y9BDqzHdxZYF5zPNvB6DdZUMYU0T9Wkb0IroEhA[^>]*\/?>/gi;
+    if (re.test(result)) { result = result.replace(re, function() { imgCount++; return NEW_IMG; }); }
   }
-
-  // 规则3：追加结尾
   var appended = false;
   if (document.getElementById('appendToggle').checked) {
-    var appendContent = document.getElementById('appendInput').value;
-    if (appendContent.trim()) {
-      result = result + appendContent;
-      appended = true;
-    }
+    var ac = document.getElementById('appendInput').value;
+    if (ac.trim()) { result = result + ac; appended = true; }
   }
-
   document.getElementById('output').textContent = result;
-
-  var parts = [];
-  if (colorCount > 0) parts.push('颜色替换 ' + colorCount + ' 处');
-  if (imgCount > 0) parts.push('头图替换 ' + imgCount + ' 处');
-  if (appended) parts.push('已追加结尾');
-  document.getElementById('stats').textContent = parts.length > 0 ? '完成：' + parts.join('，') : '未匹配到任何规则';
+  var p = [];
+  if (colorCount > 0) p.push('颜色替换 ' + colorCount + ' 处');
+  if (imgCount > 0) p.push('头图替换 ' + imgCount + ' 处');
+  if (appended) p.push('已追加结尾');
+  document.getElementById('stats').textContent = p.length > 0 ? '完成：' + p.join('，') : '未匹配到任何规则';
 }
-
 function handleFileUpload(e) {
-  var file = e.target.files[0];
-  if (!file) return;
+  var file = e.target.files[0]; if (!file) return;
   var reader = new FileReader();
   reader.onload = function(ev) {
     document.getElementById('appendInput').value = ev.target.result;
@@ -220,32 +279,21 @@ function handleFileUpload(e) {
     document.getElementById('appendToggle').checked = true;
     showToast('已导入 ' + file.name);
   };
-  reader.readAsText(file);
-  // 重置 input 以便同一文件可再次选择
-  e.target.value = '';
+  reader.readAsText(file); e.target.value = '';
 }
-
 function copyOutput() {
-  // 复制前自动重新转换，确保输出包含最新追加内容
   process();
   var text = document.getElementById('output').textContent;
   if (!text) { showToast('暂无内容可复制'); return; }
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(function() {
-      showToast('已复制到剪贴板');
-    }).catch(fallbackCopy);
-  } else {
-    fallbackCopy();
-  }
+    navigator.clipboard.writeText(text).then(function() { showToast('已复制到剪贴板'); }).catch(fallbackCopy);
+  } else { fallbackCopy(); }
   function fallbackCopy() {
-    var ta = document.createElement('textarea');
-    ta.value = text; document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('已复制到剪贴板');
+    var ta = document.createElement('textarea'); ta.value = text;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); showToast('已复制到剪贴板');
   }
 }
-
 function clearAll() {
   document.getElementById('input').value = '';
   document.getElementById('output').textContent = '';
@@ -255,6 +303,261 @@ function clearAll() {
   document.getElementById('fileName').textContent = '';
 }
 
+/* ===== Image Editor ===== */
+var imgState = { loaded: false, naturalW: 0, naturalH: 0, offX: 0, offY: 0, scale: 1, dragging: false, startX: 0, startY: 0, startOffX: 0, startOffY: 0 };
+var cropW = 0, cropH = 0;
+
+// drag & drop
+var zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.style.borderColor = '#00b050'; });
+zone.addEventListener('dragleave', function() { zone.style.borderColor = '#d2d2d7'; });
+zone.addEventListener('drop', function(e) {
+  e.preventDefault(); zone.style.borderColor = '#d2d2d7';
+  if (e.dataTransfer.files.length) { handleImgFile(e.dataTransfer.files[0]); }
+});
+
+function imgLoaded(e) {
+  var file = e.target.files[0];
+  if (file) handleImgFile(file);
+  e.target.value = '';
+}
+
+function handleImgFile(file) {
+  if (!file.type.startsWith('image/')) { showToast('请选择图片文件'); return; }
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var img = document.getElementById('cropImg');
+    img.onload = function() {
+      imgState.naturalW = img.naturalWidth;
+      imgState.naturalH = img.naturalHeight;
+      imgState.loaded = true;
+      document.getElementById('imgControls').style.display = 'flex';
+      document.getElementById('textInputRow').style.display = 'block';
+      document.getElementById('cropArea').style.display = 'block';
+      document.getElementById('imgActions').style.display = 'flex';
+      document.getElementById('uploadZone').style.display = 'none';
+      onRatioChange();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function getRatio() {
+  var v = document.getElementById('ratioSelect').value;
+  if (v === 'custom') return null;
+  var parts = v.split(':');
+  return parseFloat(parts[0]) / parseFloat(parts[1]);
+}
+
+function onRatioChange() {
+  var ratio = getRatio();
+  var maxW = document.getElementById('cropArea').parentElement.clientWidth - 48;
+  if (maxW < 300) maxW = 300;
+
+  if (!ratio) {
+    // custom: use natural image ratio
+    ratio = imgState.naturalW / imgState.naturalH;
+  }
+
+  cropW = maxW;
+  cropH = Math.round(cropW / ratio);
+  if (cropH > 600) { cropH = 600; cropW = Math.round(cropH * ratio); }
+
+  var area = document.getElementById('cropArea');
+  area.style.width = cropW + 'px';
+  area.style.height = cropH + 'px';
+
+  var canvas = document.getElementById('overlayCanvas');
+  canvas.width = cropW;
+  canvas.height = cropH;
+
+  // initial fit: cover the crop area
+  var imgRatio = imgState.naturalW / imgState.naturalH;
+  var cropRatio = cropW / cropH;
+  if (imgRatio > cropRatio) {
+    imgState.scale = cropH / imgState.naturalH;
+  } else {
+    imgState.scale = cropW / imgState.naturalW;
+  }
+  imgState.offX = (cropW - imgState.naturalW * imgState.scale) / 2;
+  imgState.offY = (cropH - imgState.naturalH * imgState.scale) / 2;
+
+  applyImgPos();
+  renderPreview();
+}
+
+function applyImgPos() {
+  var img = document.getElementById('cropImg');
+  img.style.width = (imgState.naturalW * imgState.scale) + 'px';
+  img.style.height = (imgState.naturalH * imgState.scale) + 'px';
+  img.style.position = 'absolute';
+  img.style.left = imgState.offX + 'px';
+  img.style.top = imgState.offY + 'px';
+}
+
+// drag to reposition
+var cropArea = document.getElementById('cropArea');
+cropArea.addEventListener('mousedown', function(e) { startDrag(e.clientX, e.clientY); e.preventDefault(); });
+cropArea.addEventListener('touchstart', function(e) { var t = e.touches[0]; startDrag(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
+document.addEventListener('mousemove', function(e) { moveDrag(e.clientX, e.clientY); });
+document.addEventListener('touchmove', function(e) { if (imgState.dragging) { var t = e.touches[0]; moveDrag(t.clientX, t.clientY); e.preventDefault(); } }, { passive: false });
+document.addEventListener('mouseup', endDrag);
+document.addEventListener('touchend', endDrag);
+
+// scroll to zoom
+cropArea.addEventListener('wheel', function(e) {
+  if (!imgState.loaded) return;
+  e.preventDefault();
+  var delta = e.deltaY > 0 ? -0.05 : 0.05;
+  var newScale = Math.max(0.1, Math.min(5, imgState.scale + delta));
+  // zoom centered on mouse
+  var rect = cropArea.getBoundingClientRect();
+  var mx = e.clientX - rect.left;
+  var my = e.clientY - rect.top;
+  var ratio = newScale / imgState.scale;
+  imgState.offX = mx - (mx - imgState.offX) * ratio;
+  imgState.offY = my - (my - imgState.offY) * ratio;
+  imgState.scale = newScale;
+  applyImgPos();
+  renderPreview();
+}, { passive: false });
+
+function startDrag(x, y) {
+  if (!imgState.loaded) return;
+  imgState.dragging = true;
+  imgState.startX = x; imgState.startY = y;
+  imgState.startOffX = imgState.offX; imgState.startOffY = imgState.offY;
+}
+function moveDrag(x, y) {
+  if (!imgState.dragging) return;
+  imgState.offX = imgState.startOffX + (x - imgState.startX);
+  imgState.offY = imgState.startOffY + (y - imgState.startY);
+  applyImgPos();
+  renderPreview();
+}
+function endDrag() { imgState.dragging = false; }
+
+function renderPreview() {
+  var canvas = document.getElementById('overlayCanvas');
+  var ctx = canvas.getContext('2d');
+  canvas.width = cropW;
+  canvas.height = cropH;
+
+  ctx.clearRect(0, 0, cropW, cropH);
+
+  // overlay
+  var opacity = parseInt(document.getElementById('overlayRange').value) / 100;
+  document.getElementById('opacityVal').textContent = Math.round(opacity * 100) + '%';
+  ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
+  ctx.fillRect(0, 0, cropW, cropH);
+
+  // text
+  var text = document.getElementById('overlayText').value;
+  if (text) {
+    var fontSize = parseInt(document.getElementById('fontSizeSelect').value);
+    var color = document.getElementById('textColor').value;
+    ctx.fillStyle = color;
+    ctx.font = 'bold ' + fontSize + 'px -apple-system, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // word wrap
+    var maxWidth = cropW - 40;
+    var lines = wrapText(ctx, text, maxWidth);
+    var lineHeight = fontSize * 1.4;
+    var totalH = lines.length * lineHeight;
+    var startY = (cropH - totalH) / 2 + lineHeight / 2;
+    for (var i = 0; i < lines.length; i++) {
+      ctx.fillText(lines[i], cropW / 2, startY + i * lineHeight);
+    }
+  }
+}
+
+function wrapText(ctx, text, maxWidth) {
+  var chars = text.split('');
+  var lines = [];
+  var line = '';
+  for (var i = 0; i < chars.length; i++) {
+    var test = line + chars[i];
+    if (ctx.measureText(test).width > maxWidth && line.length > 0) {
+      lines.push(line);
+      line = chars[i];
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function resetImg() {
+  imgState.loaded = false;
+  document.getElementById('imgControls').style.display = 'none';
+  document.getElementById('textInputRow').style.display = 'none';
+  document.getElementById('cropArea').style.display = 'none';
+  document.getElementById('imgActions').style.display = 'none';
+  document.getElementById('uploadZone').style.display = 'block';
+  document.getElementById('overlayText').value = '';
+}
+
+function downloadImg() {
+  // render at full resolution
+  var ratio = getRatio() || (imgState.naturalW / imgState.naturalH);
+  var outW, outH;
+  // use natural image width as base
+  if (imgState.naturalW / imgState.naturalH > ratio) {
+    outH = imgState.naturalH;
+    outW = Math.round(outH * ratio);
+  } else {
+    outW = imgState.naturalW;
+    outH = Math.round(outW / ratio);
+  }
+
+  var scaleRatio = outW / cropW;
+
+  var c = document.createElement('canvas');
+  c.width = outW; c.height = outH;
+  var ctx = c.getContext('2d');
+
+  // draw image (reproduce the crop)
+  var s = imgState.scale * scaleRatio;
+  var dx = imgState.offX * scaleRatio;
+  var dy = imgState.offY * scaleRatio;
+  ctx.drawImage(document.getElementById('cropImg'), dx, dy, imgState.naturalW * s, imgState.naturalH * s);
+
+  // overlay
+  var opacity = parseInt(document.getElementById('overlayRange').value) / 100;
+  ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
+  ctx.fillRect(0, 0, outW, outH);
+
+  // text
+  var text = document.getElementById('overlayText').value;
+  if (text) {
+    var fontSize = parseInt(document.getElementById('fontSizeSelect').value) * scaleRatio;
+    var color = document.getElementById('textColor').value;
+    ctx.fillStyle = color;
+    ctx.font = 'bold ' + Math.round(fontSize) + 'px -apple-system, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var maxWidth = outW - 40 * scaleRatio;
+    var lines = wrapText(ctx, text, maxWidth);
+    var lineHeight = fontSize * 1.4;
+    var totalH = lines.length * lineHeight;
+    var startY = (outH - totalH) / 2 + lineHeight / 2;
+    for (var i = 0; i < lines.length; i++) {
+      ctx.fillText(lines[i], outW / 2, startY + i * lineHeight);
+    }
+  }
+
+  var link = document.createElement('a');
+  link.download = 'cover.png';
+  link.href = c.toDataURL('image/png');
+  link.click();
+  showToast('图片已下载');
+}
+
+/* ===== Toast ===== */
 function showToast(msg) {
   var el = document.getElementById('toast');
   el.textContent = msg;
@@ -262,7 +565,7 @@ function showToast(msg) {
   setTimeout(function() { el.classList.remove('show'); }, 2000);
 }
 
-// Ctrl+Enter 快捷转换
+// Ctrl+Enter shortcut
 document.getElementById('input').addEventListener('keydown', function(e) {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') process();
 });

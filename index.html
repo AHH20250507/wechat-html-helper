@@ -233,6 +233,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div class="img-status" id="imgStatus1"></div>
         <div class="preview-actions" id="imgActions1" style="display:none;">
           <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="resetImg(1)">重新上传</button>
+          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="downloadImg(1)">下载图片</button>
           <button class="btn-primary" style="padding:8px 16px;font-size:13px;border-radius:8px;" id="confirmImg1" onclick="confirmImg(1)">确认使用</button>
         </div>
       </div>
@@ -258,6 +259,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div class="img-status" id="imgStatus2"></div>
         <div class="preview-actions" id="imgActions2" style="display:none;">
           <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="resetImg(2)">重新上传</button>
+          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="downloadImg(2)">下载图片</button>
           <button class="btn-primary" style="padding:8px 16px;font-size:13px;border-radius:8px;" id="confirmImg2" onclick="confirmImg(2)">确认使用</button>
         </div>
       </div>
@@ -556,44 +558,60 @@ function confirmImg(idx) {
   });
 }
 
+function renderFinalCanvas(idx, callback) {
+  var s = imgStates[idx];
+  var c = document.createElement('canvas');
+  c.width = 1280; c.height = 360;
+  var ctx = c.getContext('2d');
+  ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, 1280, 360);
+  var scale = 1280 / getCropW(idx);
+  ctx.drawImage(s.cachedImg, s.offX * scale, s.offY * scale, s.naturalW * s.scale * scale, s.naturalH * s.scale * scale);
+  ctx.fillStyle = 'rgba(0,0,0,0.54)'; ctx.fillRect(0, 0, 1280, 360);
+  var text = document.getElementById('overlayText' + idx).value;
+  if (text) {
+    var fontSize = parseInt(document.getElementById('fontSizeInput' + idx).value) || 72;
+    var padLeft = parseInt(document.getElementById('padLeftInput' + idx).value) || 40;
+    var padRight = parseInt(document.getElementById('padRightInput' + idx).value) || 40;
+    var offsetY = parseInt(document.getElementById('textOffsetY' + idx).value) || 0;
+    ctx.fillStyle = '#ffffff';
+    ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var lines = wrapText(ctx, text, 1280 - padLeft - padRight);
+    var lineHeight = fontSize * 1.2;
+    var totalH = lines.length * lineHeight;
+    var centerX = 640, centerY = (360 - totalH) / 2 + lineHeight / 2 + offsetY;
+    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
+  }
+  callback(c);
+}
+
+function downloadImg(idx) {
+  var s = imgStates[idx]; if (!s || !s.loaded) { showToast('请先上传图片'); return; }
+  renderFinalCanvas(idx, function(c) {
+    var link = document.createElement('a');
+    link.download = 'cover' + idx + '.png';
+    link.href = c.toDataURL('image/png');
+    link.click();
+    showToast('图片 ' + idx + ' 已下载');
+  });
+}
+
 function uploadToImgbed(idx) {
   return new Promise(function(resolve, reject) {
-    var s = imgStates[idx];
-    var c = document.createElement('canvas');
-    c.width = 1280; c.height = 360;
-    var ctx = c.getContext('2d');
-    ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, 1280, 360);
-    var scale = 1280 / getCropW(idx);
-    ctx.drawImage(s.cachedImg, s.offX * scale, s.offY * scale, s.naturalW * s.scale * scale, s.naturalH * s.scale * scale);
-    ctx.fillStyle = 'rgba(0,0,0,0.54)'; ctx.fillRect(0, 0, 1280, 360);
-    var text = document.getElementById('overlayText' + idx).value;
-    if (text) {
-      var fontSize = parseInt(document.getElementById('fontSizeInput' + idx).value) || 72;
-      var padLeft = parseInt(document.getElementById('padLeftInput' + idx).value) || 40;
-      var padRight = parseInt(document.getElementById('padRightInput' + idx).value) || 40;
-      var offsetY = parseInt(document.getElementById('textOffsetY' + idx).value) || 0;
-      ctx.fillStyle = '#ffffff';
-      ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      var lines = wrapText(ctx, text, 1280 - padLeft - padRight);
-      var lineHeight = fontSize * 1.2;
-      var totalH = lines.length * lineHeight;
-      var centerX = 640, centerY = (360 - totalH) / 2 + lineHeight / 2 + offsetY;
-      for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
-    }
-    c.toBlob(function(blob) {
-      var form = new FormData();
-      form.append('file', blob, 'cover' + idx + '.png');
-      form.append('nameMode', 'isRenameMode');
-      fetch('https://www.imgbed.link/imgbed/file/upload', { method: 'POST', body: form })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          if (data.url) resolve(data.url);
-          else if (data.data && data.data.url) resolve(data.data.url);
-          else if (data.msg) reject(data.msg);
-          else reject(JSON.stringify(data));
-        }).catch(reject);
-    }, 'image/png');
+    renderFinalCanvas(idx, function(c) {
+      c.toBlob(function(blob) {
+        var form = new FormData();
+        form.append('request', 'fileupload');
+        form.append('fileToUpload', blob, 'cover' + idx + '.png');
+        fetch('https://catbox.moe/user/api.php', { method: 'POST', body: form })
+          .then(function(res) { return res.text(); })
+          .then(function(text) {
+            text = text.trim();
+            if (text && text.indexOf('http') === 0) resolve(text);
+            else reject(text || '上传失败');
+          }).catch(reject);
+      }, 'image/png');
+    });
   });
 }
 

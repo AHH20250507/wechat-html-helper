@@ -437,18 +437,18 @@ function renderPreview() {
     var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 72;
     var color = document.getElementById('textColor').value;
     ctx.fillStyle = color;
-    ctx.font = 'bold ' + fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.font = '900 ' + fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
     ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
+    ctx.textBaseline = 'top';
 
-    // word wrap, left-aligned with padding
-    var maxWidth = cropW - 40;
+    // word wrap, left-aligned, top area
+    var padLeft = 40;
+    var padTop = Math.round(cropH * 0.15);
+    var maxWidth = cropW - padLeft * 2;
     var lines = wrapText(ctx, text, maxWidth);
-    var lineHeight = fontSize * 1.4;
-    var totalH = lines.length * lineHeight;
-    var startY = (cropH - totalH) / 2 + lineHeight / 2;
+    var lineHeight = fontSize * 1.2;
     for (var i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], 20, startY + i * lineHeight);
+      ctx.fillText(lines[i], padLeft, padTop + i * lineHeight);
     }
   }
 }
@@ -506,16 +506,16 @@ function downloadImg() {
     var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 72) * scaleRatio;
     var color = document.getElementById('textColor').value;
     ctx.fillStyle = color;
-    ctx.font = 'bold ' + Math.round(fontSize) + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.font = '900 ' + Math.round(fontSize) + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
     ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    var maxWidth = outW - 40 * scaleRatio;
+    ctx.textBaseline = 'top';
+    var padLeft = 40 * scaleRatio;
+    var padTop = Math.round(outH * 0.15);
+    var maxWidth = outW - padLeft * 2;
     var lines = wrapText(ctx, text, maxWidth);
-    var lineHeight = fontSize * 1.4;
-    var totalH = lines.length * lineHeight;
-    var startY = (outH - totalH) / 2 + lineHeight / 2;
+    var lineHeight = fontSize * 1.2;
     for (var i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], 20 * scaleRatio, startY + i * lineHeight);
+      ctx.fillText(lines[i], padLeft, padTop + i * lineHeight);
     }
   }
 

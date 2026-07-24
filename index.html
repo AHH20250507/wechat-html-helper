@@ -486,63 +486,61 @@ function resetImg() {
 
 function downloadImg() {
   var outW = 1280, outH = 360;
-  var scaleRatio = outW / cropW;
 
-  // ensure cached image is fully decoded before drawing (fixes blank areas)
   var imgObj = imgState.cachedImg;
-  if (!imgObj) { showToast('请先上传图片'); return; }
+  if (!imgObj || !imgObj.complete) { showToast('请先上传图片'); return; }
 
-  var doDraw = function() {
-    var c = document.createElement('canvas');
-    c.width = outW; c.height = outH;
-    var ctx = c.getContext('2d', { willReadFrequently: true });
+  // Step 1: re-render preview on a clean canvas at preview size
+  var previewC = document.createElement('canvas');
+  previewC.width = cropW;
+  previewC.height = cropH;
+  var pctx = previewC.getContext('2d');
 
-    var s = imgState.scale * scaleRatio;
-    var dx = imgState.offX * scaleRatio;
-    var dy = imgState.offY * scaleRatio;
-    ctx.drawImage(imgObj, dx, dy, imgObj.naturalWidth * s, imgObj.naturalHeight * s);
+  // draw image at current crop position
+  pctx.drawImage(imgObj, imgState.offX, imgState.offY,
+    imgState.naturalW * imgState.scale, imgState.naturalH * imgState.scale);
 
-    // overlay (fixed 54%)
-    ctx.fillStyle = 'rgba(0,0,0,0.54)';
-    ctx.fillRect(0, 0, outW, outH);
+  // overlay (fixed 54%)
+  pctx.fillStyle = 'rgba(0,0,0,0.54)';
+  pctx.fillRect(0, 0, cropW, cropH);
 
-    // text
-    var text = document.getElementById('overlayText').value;
-    if (text) {
-      var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 45) * scaleRatio;
-      var padLeft = (parseInt(document.getElementById('padLeftInput').value) || 40) * scaleRatio;
-      var padRight = (parseInt(document.getElementById('padRightInput').value) || 40) * scaleRatio;
-      var offsetY = (parseInt(document.getElementById('textOffsetY').value) || 0) * scaleRatio;
-      ctx.fillStyle = '#ffffff';
-      ctx.font = Math.round(fontSize) + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      var maxWidth = outW - padLeft - padRight;
-      var lines = wrapText(ctx, text, maxWidth);
-      var lineHeight = fontSize * 1.2;
-      var totalH = lines.length * lineHeight;
-      var centerX = outW / 2;
-      var centerY = (outH - totalH) / 2 + lineHeight / 2 + offsetY;
-      for (var i = 0; i < lines.length; i++) {
-        ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
-      }
+  // text
+  var text = document.getElementById('overlayText').value;
+  if (text) {
+    var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 45;
+    var padLeft = parseInt(document.getElementById('padLeftInput').value) || 40;
+    var padRight = parseInt(document.getElementById('padRightInput').value) || 40;
+    var offsetY = parseInt(document.getElementById('textOffsetY').value) || 0;
+    pctx.fillStyle = '#ffffff';
+    pctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    pctx.textAlign = 'center';
+    pctx.textBaseline = 'middle';
+    var maxWidth = cropW - padLeft - padRight;
+    var lines = wrapText(pctx, text, maxWidth);
+    var lineHeight = fontSize * 1.2;
+    var totalH = lines.length * lineHeight;
+    var centerX = cropW / 2;
+    var centerY = (cropH - totalH) / 2 + lineHeight / 2 + offsetY;
+    for (var i = 0; i < lines.length; i++) {
+      pctx.fillText(lines[i], centerX, centerY + i * lineHeight);
     }
-
-    var link = document.createElement('a');
-    link.download = 'cover.png';
-    link.href = c.toDataURL('image/png');
-    link.click();
-    showToast('图片已下载');
-  };
-
-  // use decode() if available, fallback to onload check
-  if (imgObj.decode) {
-    imgObj.decode().then(doDraw).catch(doDraw);
-  } else if (imgObj.complete) {
-    doDraw();
-  } else {
-    imgObj.onload = doDraw;
   }
+
+  // Step 2: scale preview canvas to 1280x360 output
+  var outC = document.createElement('canvas');
+  outC.width = outW;
+  outC.height = outH;
+  var octx = outC.getContext('2d');
+  octx.imageSmoothingEnabled = true;
+  octx.imageSmoothingQuality = 'high';
+  octx.drawImage(previewC, 0, 0, outW, outH);
+
+  // download
+  var link = document.createElement('a');
+  link.download = 'cover.png';
+  link.href = outC.toDataURL('image/png');
+  link.click();
+  showToast('图片已下载');
 }
 
 /* ===== Toast ===== */

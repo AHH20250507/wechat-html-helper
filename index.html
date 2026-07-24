@@ -508,59 +508,55 @@ function downloadImg() {
   var imgObj = imgState.cachedImg;
   if (!imgObj || !imgObj.complete) { showToast('请先上传图片'); return; }
 
-  // Step 1: re-render preview on a clean canvas at preview size
-  var previewC = document.createElement('canvas');
-  previewC.width = cropW;
-  previewC.height = cropH;
-  var pctx = previewC.getContext('2d');
+  var c = document.createElement('canvas');
+  c.width = outW; c.height = outH;
+  var ctx = c.getContext('2d');
 
-  // fill black background so no transparent edges appear
-  pctx.fillStyle = '#000000';
-  pctx.fillRect(0, 0, cropW, cropH);
+  // black background first
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(0, 0, outW, outH);
 
-  // draw image at current crop position
-  pctx.drawImage(imgObj, imgState.offX, imgState.offY,
-    imgState.naturalW * imgState.scale, imgState.naturalH * imgState.scale);
+  // scale from preview coordinates to output coordinates
+  var scale = outW / cropW;
+
+  // draw image at current crop position, scaled to output resolution
+  ctx.drawImage(
+    imgObj,
+    imgState.offX * scale,
+    imgState.offY * scale,
+    imgState.naturalW * imgState.scale * scale,
+    imgState.naturalH * imgState.scale * scale
+  );
 
   // overlay (fixed 54%)
-  pctx.fillStyle = 'rgba(0,0,0,0.54)';
-  pctx.fillRect(0, 0, cropW, cropH);
+  ctx.fillStyle = 'rgba(0,0,0,0.54)';
+  ctx.fillRect(0, 0, outW, outH);
 
-  // text
+  // text rendered at final resolution
   var text = document.getElementById('overlayText').value;
   if (text) {
     var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 45;
     var padLeft = parseInt(document.getElementById('padLeftInput').value) || 40;
     var padRight = parseInt(document.getElementById('padRightInput').value) || 40;
     var offsetY = parseInt(document.getElementById('textOffsetY').value) || 0;
-    pctx.fillStyle = '#ffffff';
-    pctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-    pctx.textAlign = 'center';
-    pctx.textBaseline = 'middle';
-    var maxWidth = cropW - padLeft - padRight;
-    var lines = wrapText(pctx, text, maxWidth);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var maxWidth = outW - padLeft - padRight;
+    var lines = wrapText(ctx, text, maxWidth);
     var lineHeight = fontSize * 1.2;
     var totalH = lines.length * lineHeight;
-    var centerX = cropW / 2;
-    var centerY = (cropH - totalH) / 2 + lineHeight / 2 + offsetY;
+    var centerX = outW / 2;
+    var centerY = (outH - totalH) / 2 + lineHeight / 2 + offsetY;
     for (var i = 0; i < lines.length; i++) {
-      pctx.fillText(lines[i], centerX, centerY + i * lineHeight);
+      ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
     }
   }
 
-  // Step 2: scale preview canvas to 1280x360 output
-  var outC = document.createElement('canvas');
-  outC.width = outW;
-  outC.height = outH;
-  var octx = outC.getContext('2d');
-  octx.imageSmoothingEnabled = true;
-  octx.imageSmoothingQuality = 'high';
-  octx.drawImage(previewC, 0, 0, outW, outH);
-
-  // download
   var link = document.createElement('a');
   link.download = 'cover.png';
-  link.href = outC.toDataURL('image/png');
+  link.href = c.toDataURL('image/png');
   link.click();
   showToast('图片已下载');
 }

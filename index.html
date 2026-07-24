@@ -189,27 +189,14 @@ button { border: none; cursor: pointer; transition: all .2s; }
       </div>
 
       <div class="img-controls" id="imgControls" style="display:none;">
-        <label>比例</label>
-        <select id="ratioSelect" onchange="onRatioChange()">
-          <option value="3:1">3:1 横幅</option>
-          <option value="16:9">16:9</option>
-          <option value="4:3">4:3</option>
-          <option value="1:1">1:1 正方</option>
-          <option value="3:4">3:4 竖版</option>
-          <option value="custom">自定义</option>
-        </select>
+        <span style="font-size:12px;color:#86868b;">1280 x 360</span>
         <label>蒙层透明度</label>
         <input type="range" id="overlayRange" min="0" max="100" value="54" oninput="renderPreview()">
         <span class="opacity-val" id="opacityVal">54%</span>
         <label>文字颜色</label>
         <input type="color" id="textColor" value="#ffffff" oninput="renderPreview()">
         <label>字号</label>
-        <select id="fontSizeSelect" onchange="renderPreview()">
-          <option value="24">24px</option>
-          <option value="32" selected>32px</option>
-          <option value="48">48px</option>
-          <option value="64">64px</option>
-        </select>
+        <input type="number" id="fontSizeInput" value="72" min="8" max="200" style="width:60px;padding:4px 6px;" oninput="renderPreview()">
       </div>
 
       <div id="textInputRow" style="display:none;margin-bottom:20px;padding:16px;background:#f5f5f7;border-radius:10px;">
@@ -344,21 +331,13 @@ function handleImgFile(file) {
 }
 
 function getRatio() {
-  var v = document.getElementById('ratioSelect').value;
-  if (v === 'custom') return null;
-  var parts = v.split(':');
-  return parseFloat(parts[0]) / parseFloat(parts[1]);
+  return 1280 / 360;
 }
 
 function onRatioChange() {
   var ratio = getRatio();
   var maxW = document.getElementById('cropArea').parentElement.clientWidth - 48;
   if (maxW < 300) maxW = 300;
-
-  if (!ratio) {
-    // custom: use natural image ratio
-    ratio = imgState.naturalW / imgState.naturalH;
-  }
 
   cropW = maxW;
   cropH = Math.round(cropW / ratio);
@@ -455,21 +434,21 @@ function renderPreview() {
   // text
   var text = document.getElementById('overlayText').value;
   if (text) {
-    var fontSize = parseInt(document.getElementById('fontSizeSelect').value);
+    var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 72;
     var color = document.getElementById('textColor').value;
     ctx.fillStyle = color;
-    ctx.font = 'bold ' + fontSize + 'px -apple-system, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif';
-    ctx.textAlign = 'center';
+    ctx.font = 'bold ' + fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
 
-    // word wrap
+    // word wrap, left-aligned with padding
     var maxWidth = cropW - 40;
     var lines = wrapText(ctx, text, maxWidth);
     var lineHeight = fontSize * 1.4;
     var totalH = lines.length * lineHeight;
     var startY = (cropH - totalH) / 2 + lineHeight / 2;
     for (var i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], cropW / 2, startY + i * lineHeight);
+      ctx.fillText(lines[i], 20, startY + i * lineHeight);
     }
   }
 }
@@ -502,18 +481,8 @@ function resetImg() {
 }
 
 function downloadImg() {
-  // render at full resolution
-  var ratio = getRatio() || (imgState.naturalW / imgState.naturalH);
-  var outW, outH;
-  // use natural image width as base
-  if (imgState.naturalW / imgState.naturalH > ratio) {
-    outH = imgState.naturalH;
-    outW = Math.round(outH * ratio);
-  } else {
-    outW = imgState.naturalW;
-    outH = Math.round(outW / ratio);
-  }
-
+  // always output at fixed 1280x360
+  var outW = 1280, outH = 360;
   var scaleRatio = outW / cropW;
 
   var c = document.createElement('canvas');
@@ -534,11 +503,11 @@ function downloadImg() {
   // text
   var text = document.getElementById('overlayText').value;
   if (text) {
-    var fontSize = parseInt(document.getElementById('fontSizeSelect').value) * scaleRatio;
+    var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 72) * scaleRatio;
     var color = document.getElementById('textColor').value;
     ctx.fillStyle = color;
-    ctx.font = 'bold ' + Math.round(fontSize) + 'px -apple-system, "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif';
-    ctx.textAlign = 'center';
+    ctx.font = 'bold ' + Math.round(fontSize) + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     var maxWidth = outW - 40 * scaleRatio;
     var lines = wrapText(ctx, text, maxWidth);
@@ -546,7 +515,7 @@ function downloadImg() {
     var totalH = lines.length * lineHeight;
     var startY = (outH - totalH) / 2 + lineHeight / 2;
     for (var i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], outW / 2, startY + i * lineHeight);
+      ctx.fillText(lines[i], 20 * scaleRatio, startY + i * lineHeight);
     }
   }
 

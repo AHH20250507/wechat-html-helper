@@ -365,6 +365,7 @@ function onRatioChange() {
   }
   imgState.offX = (cropW - imgState.naturalW * imgState.scale) / 2;
   imgState.offY = (cropH - imgState.naturalH * imgState.scale) / 2;
+  clampImgPos();
 
   applyImgPos();
   renderPreview();
@@ -402,6 +403,7 @@ cropArea.addEventListener('wheel', function(e) {
   imgState.offX = mx - (mx - imgState.offX) * ratio;
   imgState.offY = my - (my - imgState.offY) * ratio;
   imgState.scale = newScale;
+  clampImgPos();
   applyImgPos();
   renderPreview();
 }, { passive: false });
@@ -416,10 +418,26 @@ function moveDrag(x, y) {
   if (!imgState.dragging) return;
   imgState.offX = imgState.startOffX + (x - imgState.startX);
   imgState.offY = imgState.startOffY + (y - imgState.startY);
+  clampImgPos();
   applyImgPos();
   renderPreview();
 }
-function endDrag() { imgState.dragging = false; }
+function endDrag() { if (!imgState.dragging) return; imgState.dragging = false; clampImgPos(); applyImgPos(); renderPreview(); }
+
+function clampImgPos() {
+  var imgW = imgState.naturalW * imgState.scale;
+  var imgH = imgState.naturalH * imgState.scale;
+  if (imgW >= cropW) {
+    imgState.offX = Math.min(0, Math.max(cropW - imgW, imgState.offX));
+  } else {
+    imgState.offX = (cropW - imgW) / 2;
+  }
+  if (imgH >= cropH) {
+    imgState.offY = Math.min(0, Math.max(cropH - imgH, imgState.offY));
+  } else {
+    imgState.offY = (cropH - imgH) / 2;
+  }
+}
 
 function renderPreview() {
   var canvas = document.getElementById('overlayCanvas');
@@ -495,6 +513,10 @@ function downloadImg() {
   previewC.width = cropW;
   previewC.height = cropH;
   var pctx = previewC.getContext('2d');
+
+  // fill black background so no transparent edges appear
+  pctx.fillStyle = '#000000';
+  pctx.fillRect(0, 0, cropW, cropH);
 
   // draw image at current crop position
   pctx.drawImage(imgObj, imgState.offX, imgState.offY,

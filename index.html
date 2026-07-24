@@ -18,11 +18,11 @@ h1 { font-size: 28px; font-weight: 600; text-align: center; margin-bottom: 24px;
 .tabs {
   display: flex; justify-content: center; gap: 0;
   margin-bottom: 24px; background: #e8e8ed; border-radius: 10px; padding: 3px;
-  max-width: 260px; margin-left: auto; margin-right: auto;
+  max-width: 320px; margin-left: auto; margin-right: auto;
 }
 .tab-btn {
   flex: 1; padding: 8px 0; text-align: center;
-  font-size: 13px; font-weight: 500; border: none; background: transparent;
+  font-size: 12px; font-weight: 500; border: none; background: transparent;
   border-radius: 8px; cursor: pointer; color: #86868b; transition: all .2s;
 }
 .tab-btn.active { background: #fff; color: #1d1d1f; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
@@ -40,13 +40,13 @@ h1 { font-size: 28px; font-weight: 600; text-align: center; margin-bottom: 24px;
   display: flex; align-items: center; justify-content: space-between;
 }
 textarea {
-  width: 100%; height: 420px; border: none; outline: none; resize: vertical;
+  width: 100%; height: 380px; border: none; outline: none; resize: vertical;
   padding: 16px; font-family: "SF Mono", Menlo, Consolas, monospace;
   font-size: 12px; line-height: 1.6; color: #1d1d1f; background: transparent;
 }
 textarea::placeholder { color: #c7c7cc; }
 .output-area {
-  width: 100%; height: 420px; padding: 16px;
+  width: 100%; height: 380px; padding: 16px;
   font-family: "SF Mono", Menlo, Consolas, monospace;
   font-size: 12px; line-height: 1.6; color: #1d1d1f;
   overflow: auto; white-space: pre-wrap; word-break: break-all;
@@ -61,30 +61,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
 .btn-secondary { background: #e8e8ed; color: #1d1d1f; }
 .btn-secondary:hover { background: #d2d2d7; }
 
-.control-panel { display: none; flex-direction: column; gap: 1px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 20px; }
-.control-row {
-  display: grid; grid-template-columns: 56px 1fr 60px; align-items: center; gap: 12px;
-  padding: 12px 16px; background: #fff;
-}
-.control-row label { font-size: 13px; color: #1d1d1f; font-weight: 500; }
-.control-row input[type="range"] {
-  width: 100%; height: 4px; border-radius: 2px; -webkit-appearance: none; appearance: none;
-  background: #e8e8ed; outline: none; margin: 0;
-}
-.control-row input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
-  border-radius: 50%; background: #00b050; cursor: pointer; border: 2px solid #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,.15);
-}
-.control-row input[type="range"]::-moz-range-thumb {
-  width: 18px; height: 18px; border-radius: 50%; background: #00b050;
-  cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15);
-}
-.control-row input[type="number"] {
-  width: 56px; padding: 4px 6px; border: 1px solid #e8e8ed; border-radius: 6px;
-  font-size: 13px; text-align: center; color: #1d1d1f; outline: none;
-}
-.control-row input[type="number"]:focus { border-color: #00b050; }
+/* ---- append section ---- */
 .append-header-right { display: flex; align-items: center; gap: 14px; }
 .file-upload-btn {
   display: inline-flex; align-items: center; gap: 5px;
@@ -102,31 +79,47 @@ button { border: none; cursor: pointer; transition: all .2s; }
   font-size: 12px; font-weight: 400; color: #1d1d1f; cursor: pointer;
 }
 
-/* ---- image editor ---- */
-.img-editor { padding: 24px; }
+/* ---- image editors ---- */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+.img-editor { padding: 16px; }
 .img-upload-zone {
-  border: 2px dashed #d2d2d7; border-radius: 12px; padding: 48px 24px;
-  text-align: center; cursor: pointer; transition: all .2s; margin-bottom: 20px;
+  border: 2px dashed #d2d2d7; border-radius: 12px; padding: 32px 24px;
+  text-align: center; cursor: pointer; transition: all .2s; margin-bottom: 16px;
 }
 .img-upload-zone:hover { border-color: #00b050; background: #f9fff9; }
 .img-upload-zone p { color: #86868b; font-size: 14px; }
 .img-upload-zone input { display: none; }
 
-.img-controls {
-  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-  margin-bottom: 20px; padding: 16px; background: #f5f5f7; border-radius: 10px;
+.control-panel { display: flex; flex-direction: column; gap: 1px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 16px; }
+.control-row {
+  display: grid; grid-template-columns: 48px 1fr 52px; align-items: center; gap: 10px;
+  padding: 10px 12px; background: #fff;
 }
-.img-controls label { font-size: 12px; color: #86868b; font-weight: 500; }
-.img-controls select, .img-controls input[type="text"], .img-controls input[type="range"] {
-  padding: 4px 8px; border-radius: 6px; border: 1px solid #d2d2d7;
-  font-size: 12px; background: #fff;
+.control-row label { font-size: 12px; color: #1d1d1f; font-weight: 500; }
+.control-row input[type="range"] {
+  width: 100%; height: 4px; border-radius: 2px; -webkit-appearance: none; appearance: none;
+  background: #e8e8ed; outline: none; margin: 0;
 }
-.img-controls input[type="range"] { width: 100px; padding: 0; }
-.img-controls input[type="color"] { width: 28px; height: 28px; border: none; padding: 0; cursor: pointer; }
+.control-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+  border-radius: 50%; background: #00b050; cursor: pointer; border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.control-row input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%; background: #00b050;
+  cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.control-row input[type="number"] {
+  width: 52px; padding: 4px 4px; border: 1px solid #e8e8ed; border-radius: 6px;
+  font-size: 12px; text-align: center; color: #1d1d1f; outline: none;
+}
+.control-row input[type="number"]:focus { border-color: #00b050; }
 
 .crop-area {
   position: relative; overflow: hidden; background: #1d1d1f;
-  border-radius: 8px; margin-bottom: 20px; cursor: grab;
+  border-radius: 8px; margin-bottom: 16px; cursor: grab;
   max-width: 100%; margin-left: auto; margin-right: auto;
 }
 .crop-area:active { cursor: grabbing; }
@@ -136,10 +129,19 @@ button { border: none; cursor: pointer; transition: all .2s; }
   pointer-events: none;
 }
 
-.preview-actions {
-  display: flex; justify-content: center; gap: 12px; align-items: center;
+.preview-actions { display: flex; justify-content: center; gap: 12px; align-items: center; }
+
+/* ---- fusion ---- */
+.url-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.url-row label { font-size: 13px; color: #86868b; min-width: 60px; }
+.url-row input {
+  flex: 1; padding: 8px 12px; border: 1px solid #e8e8ed; border-radius: 8px;
+  font-size: 13px; outline: none;
 }
-.opacity-val { font-size: 12px; color: #86868b; min-width: 32px; text-align: center; }
+.url-row input:focus { border-color: #00b050; }
+.img-status {
+  font-size: 12px; color: #86868b; min-height: 18px; margin-bottom: 12px;
+}
 
 /* ---- toast ---- */
 .toast {
@@ -157,8 +159,9 @@ button { border: none; cursor: pointer; transition: all .2s; }
   <h1>公众号HTML助手</h1>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('html')">HTML 编辑</button>
-    <button class="tab-btn" onclick="switchTab('img')">图片处理</button>
+    <button class="tab-btn active" onclick="switchTab('html')">1. HTML 编辑</button>
+    <button class="tab-btn" onclick="switchTab('img')">2. 图片处理</button>
+    <button class="tab-btn" onclick="switchTab('fuse')">3. 融合生成</button>
   </div>
 
   <!-- ========== HTML Tab ========== -->
@@ -201,54 +204,85 @@ button { border: none; cursor: pointer; transition: all .2s; }
       </div>
       <textarea id="appendInput" style="height:160px;" placeholder="粘贴 HTML 代码，或点击上方「上传 HTML」导入文件…（勾选「启用」后生效）"></textarea>
     </div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <button class="btn-primary" style="padding:10px 32px;font-size:14px;border-radius:8px;" onclick="confirmHtml()">确认使用此 HTML</button>
+    </div>
   </div>
 
   <!-- ========== Image Tab ========== -->
   <div class="tab-content" id="tab-img">
-    <div class="panel img-editor">
-      <div class="img-upload-zone" id="uploadZone" onclick="document.getElementById('imgFileInput').click()">
-        <p>点击上传图片，或将图片拖拽到这里</p>
-        <input type="file" id="imgFileInput" accept="image/*" onchange="imgLoaded(event)">
-      </div>
-
-      <div class="control-panel" id="imgControls">
-        <div class="control-row">
-          <label>字号</label>
-          <input type="range" id="fontSizeInput" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput','fontSizeNum');renderPreview()">
-          <input type="number" id="fontSizeNum" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum','fontSizeInput');renderPreview()">
+    <div class="two-col">
+      <!-- Image 1 -->
+      <div class="panel img-editor">
+        <div class="panel-header"><span>图片 1</span></div>
+        <div class="img-upload-zone" id="uploadZone1" onclick="document.getElementById('imgFileInput1').click()">
+          <p>点击上传图片，或将图片拖拽到这里</p>
+          <input type="file" id="imgFileInput1" accept="image/*" onchange="imgLoaded(event,1)">
         </div>
-        <div class="control-row">
-          <label>左距</label>
-          <input type="range" id="padLeftInput" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput','padLeftNum');renderPreview()">
-          <input type="number" id="padLeftNum" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum','padLeftInput');renderPreview()">
+        <div class="control-panel" id="imgControls1">
+          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput1" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput1','fontSizeNum1');renderPreview(1)"><input type="number" id="fontSizeNum1" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum1','fontSizeInput1');renderPreview(1)"></div>
+          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput1" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput1','padLeftNum1');renderPreview(1)"><input type="number" id="padLeftNum1" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum1','padLeftInput1');renderPreview(1)"></div>
+          <div class="control-row"><label>右距</label><input type="range" id="padRightInput1" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput1','padRightNum1');renderPreview(1)"><input type="number" id="padRightNum1" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum1','padRightInput1');renderPreview(1)"></div>
+          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY1" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY1','textOffsetNum1');renderPreview(1)"><input type="number" id="textOffsetNum1" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum1','textOffsetY1');renderPreview(1)"></div>
         </div>
-        <div class="control-row">
-          <label>右距</label>
-          <input type="range" id="padRightInput" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput','padRightNum');renderPreview()">
-          <input type="number" id="padRightNum" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum','padRightInput');renderPreview()">
+        <div id="textInputRow1" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
+          <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
+          <input type="text" id="overlayText1" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(1)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
         </div>
-        <div class="control-row">
-          <label>上移</label>
-          <input type="range" id="textOffsetY" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY','textOffsetNum');renderPreview()">
-          <input type="number" id="textOffsetNum" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum','textOffsetY');renderPreview()">
+        <div class="crop-area" id="cropArea1" style="display:none;"><img id="cropImg1"><canvas class="crop-overlay" id="overlayCanvas1"></canvas></div>
+        <div class="img-status" id="imgStatus1"></div>
+        <div class="preview-actions" id="imgActions1" style="display:none;">
+          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="resetImg(1)">重新上传</button>
+          <button class="btn-primary" style="padding:8px 16px;font-size:13px;border-radius:8px;" id="confirmImg1" onclick="confirmImg(1)">确认使用</button>
         </div>
       </div>
 
-      <div id="textInputRow" style="display:none;margin-bottom:20px;padding:16px;background:#f5f5f7;border-radius:10px;">
-        <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
-        <input type="text" id="overlayText" placeholder="输入要显示在图片上的文字…" oninput="renderPreview()"
-          style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+      <!-- Image 2 -->
+      <div class="panel img-editor">
+        <div class="panel-header"><span>图片 2</span></div>
+        <div class="img-upload-zone" id="uploadZone2" onclick="document.getElementById('imgFileInput2').click()">
+          <p>点击上传图片，或将图片拖拽到这里</p>
+          <input type="file" id="imgFileInput2" accept="image/*" onchange="imgLoaded(event,2)">
+        </div>
+        <div class="control-panel" id="imgControls2">
+          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput2" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput2','fontSizeNum2');renderPreview(2)"><input type="number" id="fontSizeNum2" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum2','fontSizeInput2');renderPreview(2)"></div>
+          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput2" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput2','padLeftNum2');renderPreview(2)"><input type="number" id="padLeftNum2" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum2','padLeftInput2');renderPreview(2)"></div>
+          <div class="control-row"><label>右距</label><input type="range" id="padRightInput2" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput2','padRightNum2');renderPreview(2)"><input type="number" id="padRightNum2" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum2','padRightInput2');renderPreview(2)"></div>
+          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY2" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY2','textOffsetNum2');renderPreview(2)"><input type="number" id="textOffsetNum2" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum2','textOffsetY2');renderPreview(2)"></div>
+        </div>
+        <div id="textInputRow2" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
+          <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
+          <input type="text" id="overlayText2" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(2)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+        </div>
+        <div class="crop-area" id="cropArea2" style="display:none;"><img id="cropImg2"><canvas class="crop-overlay" id="overlayCanvas2"></canvas></div>
+        <div class="img-status" id="imgStatus2"></div>
+        <div class="preview-actions" id="imgActions2" style="display:none;">
+          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="resetImg(2)">重新上传</button>
+          <button class="btn-primary" style="padding:8px 16px;font-size:13px;border-radius:8px;" id="confirmImg2" onclick="confirmImg(2)">确认使用</button>
+        </div>
       </div>
+    </div>
+  </div>
 
-      <div class="crop-area" id="cropArea" style="display:none;">
-        <img id="cropImg">
-        <canvas class="crop-overlay" id="overlayCanvas"></canvas>
+  <!-- ========== Fusion Tab ========== -->
+  <div class="tab-content" id="tab-fuse">
+    <div class="panel">
+      <div class="panel-header">第三步 HTML 结尾模板</div>
+      <textarea id="fuseTemplate" placeholder="粘贴第三步 HTML 模板…" style="height:180px;margin-bottom:0;"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-header">图床图片地址（图片确认后会自动填入）</div>
+      <div style="padding:16px;">
+        <div class="url-row"><label>图片1</label><input type="text" id="imgUrl1" placeholder="图片1 地址"></div>
+        <div class="url-row"><label>图片2</label><input type="text" id="imgUrl2" placeholder="图片2 地址"></div>
       </div>
-
-      <div class="preview-actions" id="imgActions" style="display:none;">
-        <button class="btn-secondary" style="padding:8px 20px;font-size:13px;border-radius:8px;" onclick="resetImg()">重新上传</button>
-        <button class="btn-primary" style="padding:8px 20px;font-size:13px;border-radius:8px;" onclick="downloadImg()">下载图片</button>
-      </div>
+    </div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <button class="btn-primary" style="padding:10px 32px;font-size:14px;border-radius:8px;" onclick="generateFusion()">生成最终 HTML</button>
+    </div>
+    <div class="panel" style="margin-bottom:0;">
+      <div class="panel-header"><span>最终输出</span><button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="copyFusion()">复制</button></div>
+      <div class="output-area" id="fusionOutput"></div>
     </div>
   </div>
 </div>
@@ -256,16 +290,20 @@ button { border: none; cursor: pointer; transition: all .2s; }
 <div class="toast" id="toast"></div>
 
 <script>
+/* ===== State ===== */
+var state = { html: '', img1: null, img2: null };
+
 /* ===== Tab Switch ===== */
 function switchTab(name) {
-  document.querySelectorAll('.tab-btn').forEach(function(b, i) {
-    b.classList.toggle('active', (name === 'html' && i === 0) || (name === 'img' && i === 1));
+  var names = ['html','img','fuse'];
+  var idx = names.indexOf(name);
+  document.querySelectorAll('.tab-btn').forEach(function(b, i) { b.classList.toggle('active', i === idx); });
+  ['tab-html','tab-img','tab-fuse'].forEach(function(id, i) {
+    document.getElementById(id).classList.toggle('active', (idx === i));
   });
-  document.getElementById('tab-html').classList.toggle('active', name === 'html');
-  document.getElementById('tab-img').classList.toggle('active', name === 'img');
 }
 
-/* ===== HTML Editor (unchanged) ===== */
+/* ===== HTML Editor ===== */
 var OLD_IMG = '<img alt="\u9177\u6362\u673a\u65b0\u5934\u56fe.gif" src="https://mmbiz.qpic.cn/mmbiz_gif/iaw9nmmHthVcNNic7B4ibFg7Ribvt2o1pTCbfFlicw8No0Spt3ic3y9BDqzHdxZYF5zPNvB6DdZUMYU0T9Wkb0IroEhA/640?wx_fmt=gif" style="vertical-align: baseline;width: 100%;box-sizing:border-box;max-width:100% !important;" draggable="false" data-ratio="0.20074349442379183" data-w="1076"/>';
 var NEW_IMG = '<img src="https://mmbiz.qpic.cn/mmbiz_gif/lfic4S7GicgmD0Ot7hgOUpfofRwogPQoaTUSkOXicuTWeETNsjdZWSyQflaVfKqAo0zakN2K0ia7PBuxj8FfG4XHNQ/640?wx_fmt=gif" style="width:100%;vertical-align:baseline;box-sizing:border-box;max-width:100% !important;" draggable="false" data-ratio="0.20055710306406685" data-w="1077"/>';
 
@@ -274,24 +312,32 @@ function process() {
   if (!input.trim()) { showToast('请先粘贴 HTML 代码'); return; }
   var result = input, colorCount = 0, imgCount = 0;
   result = result.replace(/#006fff/gi, function() { colorCount++; return '#00b050'; });
-  if (result.indexOf(OLD_IMG) !== -1) {
-    result = result.split(OLD_IMG).join(NEW_IMG); imgCount = 1;
-  } else {
+  if (result.indexOf(OLD_IMG) !== -1) { result = result.split(OLD_IMG).join(NEW_IMG); imgCount = 1; }
+  else {
     var re = /<img[^>]*iaw9nmmHthVcNNic7B4ibFg7Ribvt2o1pTCbfFlicw8No0Spt3ic3y9BDqzHdxZYF5zPNvB6DdZUMYU0T9Wkb0IroEhA[^>]*\/?>/gi;
     if (re.test(result)) { result = result.replace(re, function() { imgCount++; return NEW_IMG; }); }
   }
-  var appended = false;
   if (document.getElementById('appendToggle').checked) {
     var ac = document.getElementById('appendInput').value;
-    if (ac.trim()) { result = result + ac; appended = true; }
+    if (ac.trim()) result = result + ac;
   }
   document.getElementById('output').textContent = result;
   var p = [];
   if (colorCount > 0) p.push('颜色替换 ' + colorCount + ' 处');
   if (imgCount > 0) p.push('头图替换 ' + imgCount + ' 处');
-  if (appended) p.push('已追加结尾');
   document.getElementById('stats').textContent = p.length > 0 ? '完成：' + p.join('，') : '未匹配到任何规则';
 }
+
+function confirmHtml() {
+  var raw = document.getElementById('input').value.trim();
+  var converted = document.getElementById('output').textContent.trim();
+  // prefer converted if available, else raw
+  state.html = converted || raw;
+  if (!state.html) { showToast('请先粘贴 HTML 代码'); return; }
+  showToast('HTML 已确认，进入图片处理');
+  switchTab('img');
+}
+
 function handleFileUpload(e) {
   var file = e.target.files[0]; if (!file) return;
   var reader = new FileReader();
@@ -303,19 +349,13 @@ function handleFileUpload(e) {
   };
   reader.readAsText(file); e.target.value = '';
 }
+
 function copyOutput() {
-  process();
   var text = document.getElementById('output').textContent;
   if (!text) { showToast('暂无内容可复制'); return; }
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(function() { showToast('已复制到剪贴板'); }).catch(fallbackCopy);
-  } else { fallbackCopy(); }
-  function fallbackCopy() {
-    var ta = document.createElement('textarea'); ta.value = text;
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta); showToast('已复制到剪贴板');
-  }
+  copyText(text);
 }
+
 function clearAll() {
   document.getElementById('input').value = '';
   document.getElementById('output').textContent = '';
@@ -326,293 +366,268 @@ function clearAll() {
 }
 
 /* ===== Image Editor ===== */
-var imgState = { loaded: false, naturalW: 0, naturalH: 0, offX: 0, offY: 0, scale: 1, dragging: false, startX: 0, startY: 0, startOffX: 0, startOffY: 0 };
-var cropW = 0, cropH = 0;
+var imgStates = {};
+function getCropW() { return 640; }
+function getCropH() { return 180; }
 
-// drag & drop
-var zone = document.getElementById('uploadZone');
-zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.style.borderColor = '#00b050'; });
-zone.addEventListener('dragleave', function() { zone.style.borderColor = '#d2d2d7'; });
-zone.addEventListener('drop', function(e) {
-  e.preventDefault(); zone.style.borderColor = '#d2d2d7';
-  if (e.dataTransfer.files.length) { handleImgFile(e.dataTransfer.files[0]); }
-});
-
-function imgLoaded(e) {
-  var file = e.target.files[0];
-  if (file) handleImgFile(file);
-  e.target.value = '';
+function setupDrag(idx) {
+  var area = document.getElementById('cropArea' + idx);
+  area.addEventListener('mousedown', function(e) { startDrag(e.clientX, e.clientY, idx); e.preventDefault(); });
+  area.addEventListener('touchstart', function(e) { var t = e.touches[0]; startDrag(t.clientX, t.clientY, idx); e.preventDefault(); }, { passive: false });
+  area.addEventListener('wheel', function(e) { zoomImg(e, idx); }, { passive: false });
 }
 
-function handleImgFile(file) {
-  if (!file.type.startsWith('image/')) { showToast('请选择图片文件'); return; }
+function imgLoaded(e, idx) {
+  var file = e.target.files[0];
+  if (!file || !file.type.startsWith('image/')) { showToast('请选择图片文件'); return; }
+  e.target.value = '';
   var reader = new FileReader();
   reader.onload = function(ev) {
-    var img = document.getElementById('cropImg');
+    var img = document.getElementById('cropImg' + idx);
     img.onload = function() {
-      imgState.naturalW = img.naturalWidth;
-      imgState.naturalH = img.naturalHeight;
-      imgState.loaded = true;
-      // cache a standalone Image object for download (avoids blank areas)
-      var cached = new Image();
-      cached.src = ev.target.result;
-      imgState.cachedImg = cached;
-      document.getElementById('imgControls').style.display = 'flex';
-      document.getElementById('textInputRow').style.display = 'block';
-      document.getElementById('cropArea').style.display = 'block';
-      document.getElementById('imgActions').style.display = 'flex';
-      document.getElementById('uploadZone').style.display = 'none';
-      onRatioChange();
+      imgStates[idx] = { loaded: true, naturalW: img.naturalWidth, naturalH: img.naturalHeight, offX: 0, offY: 0, scale: 1, dragging: false, cachedImg: new Image() };
+      imgStates[idx].cachedImg.src = ev.target.result;
+      document.getElementById('imgControls' + idx).style.display = 'flex';
+      document.getElementById('textInputRow' + idx).style.display = 'block';
+      document.getElementById('cropArea' + idx).style.display = 'block';
+      document.getElementById('imgActions' + idx).style.display = 'flex';
+      document.getElementById('uploadZone' + idx).style.display = 'none';
+      document.getElementById('imgStatus' + idx).textContent = '';
+      onRatioChange(idx);
     };
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
 }
 
-function getRatio() {
-  return 1280 / 360;
-}
-
-function onRatioChange() {
-  var ratio = getRatio();
-  var maxW = document.getElementById('cropArea').parentElement.clientWidth - 48;
-  if (maxW < 300) maxW = 300;
-
-  cropW = maxW;
-  cropH = Math.round(cropW / ratio);
-  if (cropH > 600) { cropH = 600; cropW = Math.round(cropH * ratio); }
-
-  var area = document.getElementById('cropArea');
-  area.style.width = cropW + 'px';
-  area.style.height = cropH + 'px';
-
-  var canvas = document.getElementById('overlayCanvas');
-  canvas.width = cropW;
-  canvas.height = cropH;
-
-  // initial fit: cover the crop area
-  var imgRatio = imgState.naturalW / imgState.naturalH;
+function onRatioChange(idx) {
+  var s = imgStates[idx];
+  var cropW = getCropW(), cropH = getCropH();
+  var area = document.getElementById('cropArea' + idx);
+  area.style.width = cropW + 'px'; area.style.height = cropH + 'px';
+  var canvas = document.getElementById('overlayCanvas' + idx);
+  canvas.width = cropW; canvas.height = cropH;
+  var imgRatio = s.naturalW / s.naturalH;
   var cropRatio = cropW / cropH;
-  if (imgRatio > cropRatio) {
-    imgState.scale = cropH / imgState.naturalH;
-  } else {
-    imgState.scale = cropW / imgState.naturalW;
-  }
-  imgState.offX = (cropW - imgState.naturalW * imgState.scale) / 2;
-  imgState.offY = (cropH - imgState.naturalH * imgState.scale) / 2;
-  clampImgPos();
-
-  applyImgPos();
-  renderPreview();
+  if (imgRatio > cropRatio) s.scale = cropH / s.naturalH;
+  else s.scale = cropW / s.naturalW;
+  s.offX = (cropW - s.naturalW * s.scale) / 2;
+  s.offY = (cropH - s.naturalH * s.scale) / 2;
+  clampImgPos(idx);
+  applyImgPos(idx);
+  renderPreview(idx);
 }
 
-function applyImgPos() {
-  var img = document.getElementById('cropImg');
-  img.style.width = (imgState.naturalW * imgState.scale) + 'px';
-  img.style.height = (imgState.naturalH * imgState.scale) + 'px';
+function applyImgPos(idx) {
+  var s = imgStates[idx];
+  var img = document.getElementById('cropImg' + idx);
+  img.style.width = (s.naturalW * s.scale) + 'px';
+  img.style.height = (s.naturalH * s.scale) + 'px';
   img.style.position = 'absolute';
-  img.style.left = imgState.offX + 'px';
-  img.style.top = imgState.offY + 'px';
+  img.style.left = s.offX + 'px';
+  img.style.top = s.offY + 'px';
 }
 
-// drag to reposition
-var cropArea = document.getElementById('cropArea');
-cropArea.addEventListener('mousedown', function(e) { startDrag(e.clientX, e.clientY); e.preventDefault(); });
-cropArea.addEventListener('touchstart', function(e) { var t = e.touches[0]; startDrag(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
-document.addEventListener('mousemove', function(e) { moveDrag(e.clientX, e.clientY); });
-document.addEventListener('touchmove', function(e) { if (imgState.dragging) { var t = e.touches[0]; moveDrag(t.clientX, t.clientY); e.preventDefault(); } }, { passive: false });
-document.addEventListener('mouseup', endDrag);
-document.addEventListener('touchend', endDrag);
+function clampImgPos(idx) {
+  var s = imgStates[idx];
+  var cropW = getCropW(), cropH = getCropH();
+  var imgW = s.naturalW * s.scale, imgH = s.naturalH * s.scale;
+  if (imgW >= cropW) s.offX = Math.min(0, Math.max(cropW - imgW, s.offX));
+  else s.offX = (cropW - imgW) / 2;
+  if (imgH >= cropH) s.offY = Math.min(0, Math.max(cropH - imgH, s.offY));
+  else s.offY = (cropH - imgH) / 2;
+}
 
-// scroll to zoom
-cropArea.addEventListener('wheel', function(e) {
-  if (!imgState.loaded) return;
+function startDrag(x, y, idx) {
+  var s = imgStates[idx]; if (!s || !s.loaded) return;
+  s.dragging = true; s.startX = x; s.startY = y; s.startOffX = s.offX; s.startOffY = s.offY;
+}
+function moveDrag(x, y, idx) {
+  var s = imgStates[idx]; if (!s || !s.dragging) return;
+  s.offX = s.startOffX + (x - s.startX);
+  s.offY = s.startOffY + (y - s.startY);
+  clampImgPos(idx); applyImgPos(idx); renderPreview(idx);
+}
+function endDrag(idx) { var s = imgStates[idx]; if (!s || !s.dragging) return; s.dragging = false; clampImgPos(idx); applyImgPos(idx); renderPreview(idx); }
+function zoomImg(e, idx) {
+  var s = imgStates[idx]; if (!s || !s.loaded) return;
   e.preventDefault();
   var delta = e.deltaY > 0 ? -0.05 : 0.05;
-  var newScale = Math.max(0.1, Math.min(5, imgState.scale + delta));
-  // zoom centered on mouse
-  var rect = cropArea.getBoundingClientRect();
-  var mx = e.clientX - rect.left;
-  var my = e.clientY - rect.top;
-  var ratio = newScale / imgState.scale;
-  imgState.offX = mx - (mx - imgState.offX) * ratio;
-  imgState.offY = my - (my - imgState.offY) * ratio;
-  imgState.scale = newScale;
-  clampImgPos();
-  applyImgPos();
-  renderPreview();
-}, { passive: false });
-
-function startDrag(x, y) {
-  if (!imgState.loaded) return;
-  imgState.dragging = true;
-  imgState.startX = x; imgState.startY = y;
-  imgState.startOffX = imgState.offX; imgState.startOffY = imgState.offY;
-}
-function moveDrag(x, y) {
-  if (!imgState.dragging) return;
-  imgState.offX = imgState.startOffX + (x - imgState.startX);
-  imgState.offY = imgState.startOffY + (y - imgState.startY);
-  clampImgPos();
-  applyImgPos();
-  renderPreview();
-}
-function endDrag() { if (!imgState.dragging) return; imgState.dragging = false; clampImgPos(); applyImgPos(); renderPreview(); }
-
-function clampImgPos() {
-  var imgW = imgState.naturalW * imgState.scale;
-  var imgH = imgState.naturalH * imgState.scale;
-  if (imgW >= cropW) {
-    imgState.offX = Math.min(0, Math.max(cropW - imgW, imgState.offX));
-  } else {
-    imgState.offX = (cropW - imgW) / 2;
-  }
-  if (imgH >= cropH) {
-    imgState.offY = Math.min(0, Math.max(cropH - imgH, imgState.offY));
-  } else {
-    imgState.offY = (cropH - imgH) / 2;
-  }
+  var newScale = Math.max(0.1, Math.min(5, s.scale + delta));
+  var area = document.getElementById('cropArea' + idx);
+  var rect = area.getBoundingClientRect();
+  var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  var ratio = newScale / s.scale;
+  s.offX = mx - (mx - s.offX) * ratio;
+  s.offY = my - (my - s.offY) * ratio;
+  s.scale = newScale;
+  clampImgPos(idx); applyImgPos(idx); renderPreview(idx);
 }
 
-function syncFromSlider(sliderId, numId) {
-  document.getElementById(numId).value = document.getElementById(sliderId).value;
-}
-function syncFromNumber(numId, sliderId) {
-  document.getElementById(sliderId).value = document.getElementById(numId).value;
-}
+document.addEventListener('mousemove', function(e) { [1,2].forEach(function(i) { if (imgStates[i] && imgStates[i].dragging) moveDrag(e.clientX, e.clientY, i); }); });
+document.addEventListener('touchmove', function(e) { [1,2].forEach(function(i) { if (imgStates[i] && imgStates[i].dragging) { var t = e.touches[0]; moveDrag(t.clientX, t.clientY, i); e.preventDefault(); } }); }, { passive: false });
+document.addEventListener('mouseup', function() { [1,2].forEach(function(i) { endDrag(i); }); });
+document.addEventListener('touchend', function() { [1,2].forEach(function(i) { endDrag(i); }); });
+setupDrag(1); setupDrag(2);
 
-function renderPreview() {
-  var canvas = document.getElementById('overlayCanvas');
+function syncFromSlider(sliderId, numId) { document.getElementById(numId).value = document.getElementById(sliderId).value; }
+function syncFromNumber(numId, sliderId) { document.getElementById(sliderId).value = document.getElementById(numId).value; }
+
+function renderPreview(idx) {
+  var s = imgStates[idx]; if (!s || !s.loaded) return;
+  var cropW = getCropW(), cropH = getCropH();
+  var canvas = document.getElementById('overlayCanvas' + idx);
   var ctx = canvas.getContext('2d');
-  canvas.width = cropW;
-  canvas.height = cropH;
-
-  ctx.clearRect(0, 0, cropW, cropH);
-
-  // overlay (fixed 54%)
+  canvas.width = cropW; canvas.height = cropH;
+  ctx.clearRect(0,0,cropW,cropH);
+  // overlay
   ctx.fillStyle = 'rgba(0,0,0,0.54)';
-  ctx.fillRect(0, 0, cropW, cropH);
-
-  // text (scaled to match 1280x360 output proportions)
-  var text = document.getElementById('overlayText').value;
+  ctx.fillRect(0,0,cropW,cropH);
+  // text
+  var text = document.getElementById('overlayText' + idx).value;
   if (text) {
     var scale = cropW / 1280;
-    var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 72) * scale;
-    var padLeft = (parseInt(document.getElementById('padLeftInput').value) || 40) * scale;
-    var padRight = (parseInt(document.getElementById('padRightInput').value) || 40) * scale;
-    var offsetY = (parseInt(document.getElementById('textOffsetY').value) || 0) * scale;
+    var fontSize = (parseInt(document.getElementById('fontSizeInput' + idx).value) || 72) * scale;
+    var padLeft = (parseInt(document.getElementById('padLeftInput' + idx).value) || 40) * scale;
+    var padRight = (parseInt(document.getElementById('padRightInput' + idx).value) || 40) * scale;
+    var offsetY = (parseInt(document.getElementById('textOffsetY' + idx).value) || 0) * scale;
     ctx.fillStyle = '#ffffff';
     ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    var maxWidth = cropW - padLeft - padRight;
-    var lines = wrapText(ctx, text, maxWidth);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var lines = wrapText(ctx, text, cropW - padLeft - padRight);
     var lineHeight = fontSize * 1.2;
     var totalH = lines.length * lineHeight;
     var centerX = cropW / 2;
     var centerY = (cropH - totalH) / 2 + lineHeight / 2 + offsetY;
-    for (var i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
-    }
+    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
   }
 }
 
 function wrapText(ctx, text, maxWidth) {
-  var chars = text.split('');
-  var lines = [];
-  var line = '';
+  var chars = text.split(''), lines = [], line = '';
   for (var i = 0; i < chars.length; i++) {
     var test = line + chars[i];
-    if (ctx.measureText(test).width > maxWidth && line.length > 0) {
-      lines.push(line);
-      line = chars[i];
-    } else {
-      line = test;
-    }
+    if (ctx.measureText(test).width > maxWidth && line.length > 0) { lines.push(line); line = chars[i]; }
+    else line = test;
   }
   if (line) lines.push(line);
   return lines;
 }
 
-function resetImg() {
-  imgState.loaded = false;
-  document.getElementById('imgControls').style.display = 'none';
-  document.getElementById('textInputRow').style.display = 'none';
-  document.getElementById('cropArea').style.display = 'none';
-  document.getElementById('imgActions').style.display = 'none';
-  document.getElementById('uploadZone').style.display = 'block';
-  document.getElementById('overlayText').value = '';
-  // reset sliders and number inputs
-  var defaults = { fontSizeInput: 72, fontSizeNum: 72, padLeftInput: 40, padLeftNum: 40,
-                   padRightInput: 40, padRightNum: 40, textOffsetY: 0, textOffsetNum: 0 };
-  for (var k in defaults) document.getElementById(k).value = defaults[k];
+function resetImg(idx) {
+  imgStates[idx] = null;
+  document.getElementById('imgControls' + idx).style.display = 'none';
+  document.getElementById('textInputRow' + idx).style.display = 'none';
+  document.getElementById('cropArea' + idx).style.display = 'none';
+  document.getElementById('imgActions' + idx).style.display = 'none';
+  document.getElementById('uploadZone' + idx).style.display = 'block';
+  document.getElementById('overlayText' + idx).value = '';
+  document.getElementById('imgUrl' + idx).value = '';
+  document.getElementById('imgStatus' + idx).textContent = '';
+  var defaults = { fontSize: 72, padLeft: 40, padRight: 40, textOffset: 0 };
+  ['fontSize','padLeft','padRight'].forEach(function(k){ document.getElementById(k + 'Input' + idx).value = defaults[k]; document.getElementById(k + 'Num' + idx).value = defaults[k]; });
+  document.getElementById('textOffsetY' + idx).value = defaults.textOffset;
+  document.getElementById('textOffsetNum' + idx).value = defaults.textOffset;
 }
 
-function downloadImg() {
-  var outW = 1280, outH = 360;
-
-  var imgObj = imgState.cachedImg;
-  if (!imgObj || !imgObj.complete) { showToast('请先上传图片'); return; }
-
-  var c = document.createElement('canvas');
-  c.width = outW; c.height = outH;
-  var ctx = c.getContext('2d');
-
-  // black background first
-  ctx.fillStyle = '#000000';
-  ctx.fillRect(0, 0, outW, outH);
-
-  // scale from preview coordinates to output coordinates
-  var scale = outW / cropW;
-
-  // draw image at current crop position, scaled to output resolution
-  ctx.drawImage(
-    imgObj,
-    imgState.offX * scale,
-    imgState.offY * scale,
-    imgState.naturalW * imgState.scale * scale,
-    imgState.naturalH * imgState.scale * scale
-  );
-
-  // overlay (fixed 54%)
-  ctx.fillStyle = 'rgba(0,0,0,0.54)';
-  ctx.fillRect(0, 0, outW, outH);
-
-  // text rendered at final resolution
-  var text = document.getElementById('overlayText').value;
-  if (text) {
-    var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 72;
-    var padLeft = parseInt(document.getElementById('padLeftInput').value) || 40;
-    var padRight = parseInt(document.getElementById('padRightInput').value) || 40;
-    var offsetY = parseInt(document.getElementById('textOffsetY').value) || 0;
-    ctx.fillStyle = '#ffffff';
-    ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    var maxWidth = outW - padLeft - padRight;
-    var lines = wrapText(ctx, text, maxWidth);
-    var lineHeight = fontSize * 1.2;
-    var totalH = lines.length * lineHeight;
-    var centerX = outW / 2;
-    var centerY = (outH - totalH) / 2 + lineHeight / 2 + offsetY;
-    for (var i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
+function confirmImg(idx) {
+  var s = imgStates[idx]; if (!s || !s.loaded) { showToast('请先上传图片 ' + idx); return; }
+  var btn = document.getElementById('confirmImg' + idx);
+  btn.disabled = true; btn.textContent = '上传中…';
+  uploadToImgbed(idx).then(function(url) {
+    document.getElementById('imgUrl' + idx).value = url;
+    document.getElementById('imgStatus' + idx).innerHTML = '图片 ' + idx + ' 已上传：<a href="' + url + '" target="_blank" style="color:#00b050;">查看</a>';
+    btn.textContent = '已确认'; btn.disabled = false;
+    showToast('图片 ' + idx + ' 上传成功');
+    if (imgStates[1] && imgStates[2] && document.getElementById('imgUrl1').value && document.getElementById('imgUrl2').value) {
+      // both done, could auto jump but let user decide
     }
-  }
+  }).catch(function(err) {
+    btn.disabled = false; btn.textContent = '确认使用';
+    showToast('上传图床失败，请手动上传后粘贴地址');
+    document.getElementById('imgStatus' + idx).textContent = '自动上传失败，请把图片下载后手动上传到图床，再把地址粘贴到「图片' + idx + '」输入框';
+  });
+}
 
-  var link = document.createElement('a');
-  link.download = 'cover.png';
-  link.href = c.toDataURL('image/png');
-  link.click();
-  showToast('图片已下载');
+function uploadToImgbed(idx) {
+  return new Promise(function(resolve, reject) {
+    var s = imgStates[idx];
+    var c = document.createElement('canvas');
+    c.width = 1280; c.height = 360;
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, 1280, 360);
+    var scale = 1280 / getCropW();
+    ctx.drawImage(s.cachedImg, s.offX * scale, s.offY * scale, s.naturalW * s.scale * scale, s.naturalH * s.scale * scale);
+    ctx.fillStyle = 'rgba(0,0,0,0.54)'; ctx.fillRect(0, 0, 1280, 360);
+    var text = document.getElementById('overlayText' + idx).value;
+    if (text) {
+      var fontSize = parseInt(document.getElementById('fontSizeInput' + idx).value) || 72;
+      var padLeft = parseInt(document.getElementById('padLeftInput' + idx).value) || 40;
+      var padRight = parseInt(document.getElementById('padRightInput' + idx).value) || 40;
+      var offsetY = parseInt(document.getElementById('textOffsetY' + idx).value) || 0;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      var lines = wrapText(ctx, text, 1280 - padLeft - padRight);
+      var lineHeight = fontSize * 1.2;
+      var totalH = lines.length * lineHeight;
+      var centerX = 640, centerY = (360 - totalH) / 2 + lineHeight / 2 + offsetY;
+      for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
+    }
+    c.toBlob(function(blob) {
+      var form = new FormData();
+      form.append('file', blob, 'cover' + idx + '.png');
+      form.append('nameMode', 'isRenameMode');
+      fetch('https://www.imgbed.link/imgbed/file/upload', { method: 'POST', body: form })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (data.url) resolve(data.url);
+          else if (data.data && data.data.url) resolve(data.data.url);
+          else if (data.msg) reject(data.msg);
+          else reject(JSON.stringify(data));
+        }).catch(reject);
+    }, 'image/png');
+  });
+}
+
+/* ===== Fusion ===== */
+function generateFusion() {
+  if (!state.html) { showToast('请先确认第一步 HTML'); return; }
+  var template = document.getElementById('fuseTemplate').value.trim();
+  if (!template) { showToast('请先粘贴第三步 HTML 模板'); return; }
+  var url1 = document.getElementById('imgUrl1').value.trim();
+  var url2 = document.getElementById('imgUrl2').value.trim();
+  if (!url1 || !url2) { showToast('请确认两张图片已上传'); return; }
+
+  var imgTag1 = '<img src="' + url1 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />';
+  var imgTag2 = '<img src="' + url2 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />';
+  var filled = template.replace(/（图片1）/g, imgTag1).replace(/（图片2）/g, imgTag2);
+  var finalHtml = state.html + '\n' + filled;
+  document.getElementById('fusionOutput').textContent = finalHtml;
+  showToast('最终 HTML 已生成');
+}
+
+function copyFusion() {
+  var text = document.getElementById('fusionOutput').textContent;
+  if (!text) { showToast('暂无内容可复制'); return; }
+  copyText(text);
+}
+
+function copyText(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() { showToast('已复制到剪贴板'); }).catch(function() { fallbackCopy(text); });
+  } else { fallbackCopy(text); }
+}
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea'); ta.value = text;
+  document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+  document.body.removeChild(ta); showToast('已复制到剪贴板');
 }
 
 /* ===== Toast ===== */
 function showToast(msg) {
   var el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
+  el.textContent = msg; el.classList.add('show');
   setTimeout(function() { el.classList.remove('show'); }, 2000);
 }
 

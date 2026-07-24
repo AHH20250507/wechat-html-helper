@@ -451,13 +451,14 @@ function renderPreview() {
   ctx.fillStyle = 'rgba(0,0,0,0.54)';
   ctx.fillRect(0, 0, cropW, cropH);
 
-  // text
+  // text (scaled to match 1280x360 output proportions)
   var text = document.getElementById('overlayText').value;
   if (text) {
-    var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 45;
-    var padLeft = parseInt(document.getElementById('padLeftInput').value) || 40;
-    var padRight = parseInt(document.getElementById('padRightInput').value) || 40;
-    var offsetY = parseInt(document.getElementById('textOffsetY').value) || 0;
+    var scale = cropW / 1280;
+    var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 45) * scale;
+    var padLeft = (parseInt(document.getElementById('padLeftInput').value) || 40) * scale;
+    var padRight = (parseInt(document.getElementById('padRightInput').value) || 40) * scale;
+    var offsetY = (parseInt(document.getElementById('textOffsetY').value) || 0) * scale;
     ctx.fillStyle = '#ffffff';
     ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
     ctx.textAlign = 'center';

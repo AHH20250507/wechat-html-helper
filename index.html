@@ -367,8 +367,15 @@ function clearAll() {
 
 /* ===== Image Editor ===== */
 var imgStates = {};
-function getCropW() { return 640; }
-function getCropH() { return 180; }
+function getCropW(idx) {
+  var area = document.getElementById('cropArea' + idx);
+  var container = area.parentElement;
+  var w = container.clientWidth - 32;
+  if (w < 300) w = container.clientWidth - 24;
+  if (w < 280) w = 280;
+  return w;
+}
+function getCropH(w) { return Math.round(w * 360 / 1280); }
 
 function setupDrag(idx) {
   var area = document.getElementById('cropArea' + idx);
@@ -402,7 +409,7 @@ function imgLoaded(e, idx) {
 
 function onRatioChange(idx) {
   var s = imgStates[idx];
-  var cropW = getCropW(), cropH = getCropH();
+  var cropW = getCropW(idx), cropH = getCropH(cropW);
   var area = document.getElementById('cropArea' + idx);
   area.style.width = cropW + 'px'; area.style.height = cropH + 'px';
   var canvas = document.getElementById('overlayCanvas' + idx);
@@ -430,7 +437,7 @@ function applyImgPos(idx) {
 
 function clampImgPos(idx) {
   var s = imgStates[idx];
-  var cropW = getCropW(), cropH = getCropH();
+  var cropW = getCropW(idx), cropH = getCropH(cropW);
   var imgW = s.naturalW * s.scale, imgH = s.naturalH * s.scale;
   if (imgW >= cropW) s.offX = Math.min(0, Math.max(cropW - imgW, s.offX));
   else s.offX = (cropW - imgW) / 2;
@@ -475,7 +482,7 @@ function syncFromNumber(numId, sliderId) { document.getElementById(sliderId).val
 
 function renderPreview(idx) {
   var s = imgStates[idx]; if (!s || !s.loaded) return;
-  var cropW = getCropW(), cropH = getCropH();
+  var cropW = getCropW(idx), cropH = getCropH(cropW);
   var canvas = document.getElementById('overlayCanvas' + idx);
   var ctx = canvas.getContext('2d');
   canvas.width = cropW; canvas.height = cropH;
@@ -556,7 +563,7 @@ function uploadToImgbed(idx) {
     c.width = 1280; c.height = 360;
     var ctx = c.getContext('2d');
     ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, 1280, 360);
-    var scale = 1280 / getCropW();
+    var scale = 1280 / getCropW(idx);
     ctx.drawImage(s.cachedImg, s.offX * scale, s.offY * scale, s.naturalW * s.scale * scale, s.naturalH * s.scale * scale);
     ctx.fillStyle = 'rgba(0,0,0,0.54)'; ctx.fillRect(0, 0, 1280, 360);
     var text = document.getElementById('overlayText' + idx).value;
@@ -634,6 +641,14 @@ function showToast(msg) {
 // Ctrl+Enter shortcut
 document.getElementById('input').addEventListener('keydown', function(e) {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') process();
+});
+
+// recalculate crop area on resize
+window.addEventListener('resize', function() {
+  [1,2].forEach(function(idx) {
+    var s = imgStates[idx];
+    if (s && s.loaded) { onRatioChange(idx); }
+  });
 });
 </script>
 </body>

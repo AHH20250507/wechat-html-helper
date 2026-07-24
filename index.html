@@ -189,18 +189,14 @@ button { border: none; cursor: pointer; transition: all .2s; }
       </div>
 
       <div class="img-controls" id="imgControls" style="display:none;">
-        <span style="font-size:12px;color:#86868b;">1280 x 360</span>
-        <label>蒙层透明度</label>
-        <input type="range" id="overlayRange" min="0" max="100" value="54" oninput="renderPreview()">
-        <span class="opacity-val" id="opacityVal">54%</span>
-        <label>文字颜色</label>
-        <input type="color" id="textColor" value="#ffffff" oninput="renderPreview()">
         <label>字号</label>
         <input type="number" id="fontSizeInput" value="45" min="8" max="200" style="width:60px;padding:4px 6px;" oninput="renderPreview()">
         <label>左距</label>
         <input type="number" id="padLeftInput" value="40" min="0" max="200" style="width:54px;padding:4px 6px;" oninput="renderPreview()">
         <label>右距</label>
         <input type="number" id="padRightInput" value="40" min="0" max="200" style="width:54px;padding:4px 6px;" oninput="renderPreview()">
+        <label>上移</label>
+        <input type="number" id="textOffsetY" value="0" min="-200" max="200" style="width:54px;padding:4px 6px;" oninput="renderPreview()">
       </div>
 
       <div id="textInputRow" style="display:none;margin-bottom:20px;padding:16px;background:#f5f5f7;border-radius:10px;">
@@ -433,30 +429,30 @@ function renderPreview() {
 
   ctx.clearRect(0, 0, cropW, cropH);
 
-  // overlay
-  var opacity = parseInt(document.getElementById('overlayRange').value) / 100;
-  document.getElementById('opacityVal').textContent = Math.round(opacity * 100) + '%';
-  ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
+  // overlay (fixed 54%)
+  ctx.fillStyle = 'rgba(0,0,0,0.54)';
   ctx.fillRect(0, 0, cropW, cropH);
 
   // text
   var text = document.getElementById('overlayText').value;
   if (text) {
     var fontSize = parseInt(document.getElementById('fontSizeInput').value) || 45;
-    var color = document.getElementById('textColor').value;
     var padLeft = parseInt(document.getElementById('padLeftInput').value) || 40;
     var padRight = parseInt(document.getElementById('padRightInput').value) || 40;
-    ctx.fillStyle = color;
+    var offsetY = parseInt(document.getElementById('textOffsetY').value) || 0;
+    ctx.fillStyle = '#ffffff';
     ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
-    var padTop = Math.round(cropH * 0.15);
     var maxWidth = cropW - padLeft - padRight;
     var lines = wrapText(ctx, text, maxWidth);
     var lineHeight = fontSize * 1.2;
+    var totalH = lines.length * lineHeight;
+    var centerX = cropW / 2;
+    var centerY = (cropH - totalH) / 2 + lineHeight / 2 + offsetY;
     for (var i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], padLeft, padTop + i * lineHeight);
+      ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
     }
   }
 }
@@ -489,52 +485,64 @@ function resetImg() {
 }
 
 function downloadImg() {
-  // always output at fixed 1280x360
   var outW = 1280, outH = 360;
   var scaleRatio = outW / cropW;
 
-  var c = document.createElement('canvas');
-  c.width = outW; c.height = outH;
-  var ctx = c.getContext('2d', { willReadFrequently: true });
-
-  // draw from cached Image object (avoids blank areas from DOM img)
+  // ensure cached image is fully decoded before drawing (fixes blank areas)
   var imgObj = imgState.cachedImg;
-  if (!imgObj || !imgObj.complete) { showToast('图片未加载完成'); return; }
-  var s = imgState.scale * scaleRatio;
-  var dx = imgState.offX * scaleRatio;
-  var dy = imgState.offY * scaleRatio;
-  ctx.drawImage(imgObj, dx, dy, imgState.naturalW * s, imgState.naturalH * s);
+  if (!imgObj) { showToast('请先上传图片'); return; }
 
-  // overlay
-  var opacity = parseInt(document.getElementById('overlayRange').value) / 100;
-  ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
-  ctx.fillRect(0, 0, outW, outH);
+  var doDraw = function() {
+    var c = document.createElement('canvas');
+    c.width = outW; c.height = outH;
+    var ctx = c.getContext('2d', { willReadFrequently: true });
 
-  // text
-  var text = document.getElementById('overlayText').value;
-  if (text) {
-    var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 45) * scaleRatio;
-    var color = document.getElementById('textColor').value;
-    var padLeft = (parseInt(document.getElementById('padLeftInput').value) || 40) * scaleRatio;
-    var padRight = (parseInt(document.getElementById('padRightInput').value) || 40) * scaleRatio;
-    ctx.fillStyle = color;
-    ctx.font = Math.round(fontSize) + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
-    var padTop = Math.round(outH * 0.15);
-    var maxWidth = outW - padLeft - padRight;
-    var lines = wrapText(ctx, text, maxWidth);
-    var lineHeight = fontSize * 1.2;
-    for (var i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], padLeft, padTop + i * lineHeight);
+    var s = imgState.scale * scaleRatio;
+    var dx = imgState.offX * scaleRatio;
+    var dy = imgState.offY * scaleRatio;
+    ctx.drawImage(imgObj, dx, dy, imgObj.naturalWidth * s, imgObj.naturalHeight * s);
+
+    // overlay (fixed 54%)
+    ctx.fillStyle = 'rgba(0,0,0,0.54)';
+    ctx.fillRect(0, 0, outW, outH);
+
+    // text
+    var text = document.getElementById('overlayText').value;
+    if (text) {
+      var fontSize = (parseInt(document.getElementById('fontSizeInput').value) || 45) * scaleRatio;
+      var padLeft = (parseInt(document.getElementById('padLeftInput').value) || 40) * scaleRatio;
+      var padRight = (parseInt(document.getElementById('padRightInput').value) || 40) * scaleRatio;
+      var offsetY = (parseInt(document.getElementById('textOffsetY').value) || 0) * scaleRatio;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = Math.round(fontSize) + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      var maxWidth = outW - padLeft - padRight;
+      var lines = wrapText(ctx, text, maxWidth);
+      var lineHeight = fontSize * 1.2;
+      var totalH = lines.length * lineHeight;
+      var centerX = outW / 2;
+      var centerY = (outH - totalH) / 2 + lineHeight / 2 + offsetY;
+      for (var i = 0; i < lines.length; i++) {
+        ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
+      }
     }
-  }
 
-  var link = document.createElement('a');
-  link.download = 'cover.png';
-  link.href = c.toDataURL('image/png');
-  link.click();
-  showToast('图片已下载');
+    var link = document.createElement('a');
+    link.download = 'cover.png';
+    link.href = c.toDataURL('image/png');
+    link.click();
+    showToast('图片已下载');
+  };
+
+  // use decode() if available, fallback to onload check
+  if (imgObj.decode) {
+    imgObj.decode().then(doDraw).catch(doDraw);
+  } else if (imgObj.complete) {
+    doDraw();
+  } else {
+    imgObj.onload = doDraw;
+  }
 }
 
 /* ===== Toast ===== */

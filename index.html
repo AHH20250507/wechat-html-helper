@@ -542,19 +542,14 @@ function resetImg(idx) {
 function confirmImg(idx) {
   var s = imgStates[idx]; if (!s || !s.loaded) { showToast('请先上传图片 ' + idx); return; }
   var btn = document.getElementById('confirmImg' + idx);
-  btn.disabled = true; btn.textContent = '上传中…';
-  uploadToImgbed(idx).then(function(url) {
-    document.getElementById('imgUrl' + idx).value = url;
-    document.getElementById('imgStatus' + idx).innerHTML = '图片 ' + idx + ' 已上传：<a href="' + url + '" target="_blank" style="color:#00b050;">查看</a>';
+  btn.disabled = true; btn.textContent = '生成中…';
+  renderFinalCanvas(idx, function(c) {
+    var dataUrl = c.toDataURL('image/png');
+    state['img' + idx] = dataUrl;
+    document.getElementById('imgUrl' + idx).value = dataUrl.substring(0, 60) + '…';
+    document.getElementById('imgStatus' + idx).textContent = '图片 ' + idx + ' 已生成（base64 内嵌）';
     btn.textContent = '已确认'; btn.disabled = false;
-    showToast('图片 ' + idx + ' 上传成功');
-    if (imgStates[1] && imgStates[2] && document.getElementById('imgUrl1').value && document.getElementById('imgUrl2').value) {
-      // both done, could auto jump but let user decide
-    }
-  }).catch(function(err) {
-    btn.disabled = false; btn.textContent = '确认使用';
-    showToast('上传图床失败，请手动上传后粘贴地址');
-    document.getElementById('imgStatus' + idx).textContent = '自动上传失败，请把图片下载后手动上传到图床，再把地址粘贴到「图片' + idx + '」输入框';
+    showToast('图片 ' + idx + ' 已确认');
   });
 }
 
@@ -596,32 +591,13 @@ function downloadImg(idx) {
   });
 }
 
-function uploadToImgbed(idx) {
-  return new Promise(function(resolve, reject) {
-    renderFinalCanvas(idx, function(c) {
-      c.toBlob(function(blob) {
-        var form = new FormData();
-        form.append('request', 'fileupload');
-        form.append('fileToUpload', blob, 'cover' + idx + '.png');
-        fetch('https://catbox.moe/user/api.php', { method: 'POST', body: form })
-          .then(function(res) { return res.text(); })
-          .then(function(text) {
-            text = text.trim();
-            if (text && text.indexOf('http') === 0) resolve(text);
-            else reject(text || '上传失败');
-          }).catch(reject);
-      }, 'image/png');
-    });
-  });
-}
-
 /* ===== Fusion ===== */
 function generateFusion() {
   if (!state.html) { showToast('请先确认第一步 HTML'); return; }
   var template = document.getElementById('fuseTemplate').value.trim();
   if (!template) { showToast('请先粘贴第三步 HTML 模板'); return; }
-  var url1 = document.getElementById('imgUrl1').value.trim();
-  var url2 = document.getElementById('imgUrl2').value.trim();
+  var url1 = state.img1 || document.getElementById('imgUrl1').value.trim();
+  var url2 = state.img2 || document.getElementById('imgUrl2').value.trim();
   if (!url1 || !url2) { showToast('请确认两张图片已上传'); return; }
 
   var imgTag1 = '<img src="' + url1 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />';

@@ -309,17 +309,25 @@ function uploadToGitHub(dataUrl, filename) {
     var path = 'images/' + filename;
     var base64 = dataUrl.split(',')[1];
     if (!base64) { reject(new Error('Invalid data URL')); return; }
-    var body = JSON.stringify({ message: 'upload ' + filename, content: base64 });
-    fetch('https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path, {
-      method: 'PUT',
-      headers: { 'Authorization': 'token ' + getGHToken(), 'Content-Type': 'application/json' },
-      body: body
-    }).then(function(res) {
-      if (!res.ok) return res.text().then(function(t){ throw new Error('HTTP ' + res.status + ': ' + t); });
-      return res.json();
-    }).then(function(data) {
-      resolve(data.content.download_url);
-    }).catch(reject);
+    var apiUrl = 'https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path;
+    fetch(apiUrl + '?t=' + Date.now(), { headers: { 'Authorization': 'token ' + getGHToken() } })
+      .then(function(res) { return res.ok ? res.json() : null; })
+      .catch(function() { return null; })
+      .then(function(meta) {
+        var payload = { message: 'upload ' + filename, content: base64 };
+        if (meta && meta.sha) payload.sha = meta.sha;
+        return fetch(apiUrl, {
+          method: 'PUT',
+          headers: { 'Authorization': 'token ' + getGHToken(), 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      })
+      .then(function(res) {
+        if (!res.ok) return res.text().then(function(t){ throw new Error('HTTP ' + res.status + ': ' + t); });
+        return res.json();
+      })
+      .then(function(data) { resolve(data.content.download_url); })
+      .catch(reject);
   });
 }
 
@@ -573,7 +581,7 @@ function confirmImg(idx) {
   btn.disabled = true; btn.textContent = '上传中…';
   renderFinalCanvas(idx, function(c) {
     var dataUrl = c.toDataURL('image/png');
-    var filename = 'cover' + idx + '-' + Date.now() + '.png';
+    var filename = 'cover' + idx + '.png';
     uploadToGitHub(dataUrl, filename).then(function(url) {
       state['img' + idx] = url;
       document.getElementById('imgUrl' + idx).value = url;

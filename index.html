@@ -269,6 +269,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
           <div class="control-row"><label>左距</label><input type="range" id="padLeftInput1" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput1','padLeftNum1');renderPreview(1)"><input type="number" id="padLeftNum1" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum1','padLeftInput1');renderPreview(1)"></div>
           <div class="control-row"><label>右距</label><input type="range" id="padRightInput1" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput1','padRightNum1');renderPreview(1)"><input type="number" id="padRightNum1" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum1','padRightInput1');renderPreview(1)"></div>
           <div class="control-row"><label>上移</label><input type="range" id="textOffsetY1" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY1','textOffsetNum1');renderPreview(1)"><input type="number" id="textOffsetNum1" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum1','textOffsetY1');renderPreview(1)"></div>
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity1" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity1','overlayOpacityNum1');renderPreview(1)"><input type="number" id="overlayOpacityNum1" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum1','overlayOpacity1');renderPreview(1)"></div>
         </div>
         <div id="textInputRow1" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
@@ -295,6 +296,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
           <div class="control-row"><label>左距</label><input type="range" id="padLeftInput2" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput2','padLeftNum2');renderPreview(2)"><input type="number" id="padLeftNum2" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum2','padLeftInput2');renderPreview(2)"></div>
           <div class="control-row"><label>右距</label><input type="range" id="padRightInput2" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput2','padRightNum2');renderPreview(2)"><input type="number" id="padRightNum2" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum2','padRightInput2');renderPreview(2)"></div>
           <div class="control-row"><label>上移</label><input type="range" id="textOffsetY2" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY2','textOffsetNum2');renderPreview(2)"><input type="number" id="textOffsetNum2" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum2','textOffsetY2');renderPreview(2)"></div>
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity2" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity2','overlayOpacityNum2');renderPreview(2)"><input type="number" id="overlayOpacityNum2" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum2','overlayOpacity2');renderPreview(2)"></div>
         </div>
         <div id="textInputRow2" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
@@ -333,6 +335,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
       <div id="snippetList" style="padding:12px;"></div>
       <div class="snippet-add">
         <input type="text" id="newSnippetText" placeholder="输入要快捷复制的文本…">
+        <input type="text" id="newSnippetNote" placeholder="备注（可选）" style="width:140px;flex-shrink:0;">
         <button class="btn-primary" onclick="addSnippet()">添加</button>
       </div>
     </div>
@@ -882,6 +885,9 @@ function renderTemplateList() {
 }
 
 /* ===== Snippets ===== */
+function getSnippetText(item) { return typeof item === 'string' ? item : (item.text || ''); }
+function getSnippetNote(item) { return typeof item === 'string' ? '' : (item.note || ''); }
+
 function renderSnippets() {
   var list = document.getElementById('snippetList');
   list.innerHTML = '';
@@ -891,9 +897,13 @@ function renderSnippets() {
     return;
   }
   items.forEach(function(item, idx) {
+    var text = getSnippetText(item);
+    var note = getSnippetNote(item);
     var div = document.createElement('div');
     div.className = 'snippet-item';
-    div.innerHTML = '<div class="snippet-text"><span>' + escapeHtml(item) + '</span></div>' +
+    div.innerHTML = '<div class="snippet-text"><span>' + escapeHtml(text) + '</span>' +
+      (note ? '<div style="font-size:11px;color:#86868b;margin-top:3px;">备注：' + escapeHtml(note) + '</div>' : '') +
+      '</div>' +
       '<div class="snippet-actions">' +
       '<button class="btn-copy" onclick="copySnippet(' + idx + ')">复制</button>' +
       '<button class="btn-edit" onclick="editSnippet(' + idx + ')">编辑</button>' +
@@ -911,21 +921,30 @@ function escapeHtml(text) {
 
 function addSnippet() {
   var input = document.getElementById('newSnippetText');
+  var noteInput = document.getElementById('newSnippetNote');
   var text = input.value.trim();
   if (!text) { showToast('请输入文本'); return; }
   if (!appData.snippets[appData.selectedTemplate]) appData.snippets[appData.selectedTemplate] = [];
-  appData.snippets[appData.selectedTemplate].push(text);
+  var note = noteInput.value.trim();
+  appData.snippets[appData.selectedTemplate].push(note ? { text: text, note: note } : text);
   saveAppData();
   input.value = '';
+  noteInput.value = '';
   renderSnippets();
   showToast('已添加');
 }
 
 function editSnippet(idx) {
   var items = appData.snippets[appData.selectedTemplate];
-  var newText = prompt('编辑快捷复制文本：', items[idx]);
+  var item = items[idx];
+  var oldText = getSnippetText(item);
+  var oldNote = getSnippetNote(item);
+  var newText = prompt('编辑快捷复制文本：', oldText);
   if (newText === null) return;
-  items[idx] = newText;
+  var newNote = prompt('编辑备注（留空则无备注）：', oldNote);
+  if (newNote === null) newNote = oldNote;
+  newNote = newNote.trim();
+  items[idx] = newNote ? { text: newText, note: newNote } : newText;
   saveAppData();
   renderSnippets();
   showToast('已更新');
@@ -940,7 +959,7 @@ function deleteSnippet(idx) {
 }
 
 function copySnippet(idx) {
-  copyText(appData.snippets[appData.selectedTemplate][idx]);
+  copyText(getSnippetText(appData.snippets[appData.selectedTemplate][idx]));
 }
 
 /* ===== Tab Switch ===== */
@@ -981,9 +1000,14 @@ function process() {
 function confirmHtml() {
   var raw = document.getElementById('input').value.trim();
   var converted = document.getElementById('output').textContent.trim();
-  // prefer converted if available, else raw
-  state.html = converted || raw;
-  if (!state.html) { showToast('请先粘贴 HTML 代码'); return; }
+  var base = converted || raw;
+  if (!base) { showToast('请先粘贴 HTML 代码'); return; }
+  // 无论是否点过「转换」，只要勾选了追加结尾就拼上
+  if (document.getElementById('appendToggle').checked) {
+    var ac = document.getElementById('appendInput').value;
+    if (ac.trim()) base = base + ac;
+  }
+  state.html = base;
   showToast('HTML 已确认，进入图片处理');
   switchTab('img');
 }
@@ -1138,7 +1162,8 @@ function renderPreview(idx) {
   canvas.width = cropW; canvas.height = cropH;
   ctx.clearRect(0,0,cropW,cropH);
   // overlay
-  ctx.fillStyle = 'rgba(0,0,0,0.54)';
+  var opacity = (parseInt(document.getElementById('overlayOpacity' + idx).value) || 54) / 100;
+  ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
   ctx.fillRect(0,0,cropW,cropH);
   // text
   var text = document.getElementById('overlayText' + idx).value;
@@ -1184,6 +1209,8 @@ function resetImg(idx) {
   ['fontSize','padLeft','padRight'].forEach(function(k){ document.getElementById(k + 'Input' + idx).value = defaults[k]; document.getElementById(k + 'Num' + idx).value = defaults[k]; });
   document.getElementById('textOffsetY' + idx).value = defaults.textOffset;
   document.getElementById('textOffsetNum' + idx).value = defaults.textOffset;
+  document.getElementById('overlayOpacity' + idx).value = 54;
+  document.getElementById('overlayOpacityNum' + idx).value = 54;
 }
 
 function confirmImg(idx) {
@@ -1216,7 +1243,8 @@ function renderFinalCanvas(idx, callback) {
   ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, 1280, 360);
   var scale = 1280 / getCropW(idx);
   ctx.drawImage(s.cachedImg, s.offX * scale, s.offY * scale, s.naturalW * s.scale * scale, s.naturalH * s.scale * scale);
-  ctx.fillStyle = 'rgba(0,0,0,0.54)'; ctx.fillRect(0, 0, 1280, 360);
+  var opacity = (parseInt(document.getElementById('overlayOpacity' + idx).value) || 54) / 100;
+  ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')'; ctx.fillRect(0, 0, 1280, 360);
   var text = document.getElementById('overlayText' + idx).value;
   if (text) {
     var fontSize = parseInt(document.getElementById('fontSizeInput' + idx).value) || 72;

@@ -399,8 +399,9 @@ button { border: none; cursor: pointer; transition: all .2s; }
       <textarea id="templateEditor" placeholder="HTML 模板内容…"></textarea>
       <div class="fuse-actions">
         <button class="btn-secondary" onclick="saveCurrentTemplate()">保存模板</button>
+        <button class="btn-secondary" onclick="setAsDefaultTemplate()">设为默认</button>
         <button class="btn-secondary" onclick="resetCurrentTemplate()">恢复默认</button>
-        <button class="btn-secondary" style="margin-left:auto;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="resetAllData()">重置数据</button>
+        <button class="btn-secondary" style="margin-left:auto;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="resetAllData()">重置模板</button>
       </div>
     </div>
 
@@ -417,7 +418,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
 
     <!-- Output -->
     <div class="panel" style="margin-bottom:0;">
-      <div class="panel-header"><span>最终输出</span><button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="copyFusion()">复制</button></div>
+      <div class="panel-header"><span>最终输出</span><div style="display:flex;gap:8px;"><button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="copyFusion()">复制</button><button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="clearFusion()">清除</button></div></div>
       <div class="output-area" id="fusionOutput"></div>
     </div>
   </div>
@@ -941,10 +942,25 @@ function resetCurrentTemplate() {
   showToast('已恢复 ' + name + ' 默认模板');
 }
 
+function setAsDefaultTemplate() {
+  var name = appData.selectedTemplate;
+  var value = document.getElementById('templateEditor').value;
+  if (!value.trim()) { showToast('模板内容为空，无法设为默认'); return; }
+  if (!confirm('确定将当前 ' + name + ' 模板内容设为新的默认模板吗？\n（"恢复默认"将恢复到此版本）')) return;
+  defaultTemplates[name] = value;
+  appData.templates[name] = value;
+  saveAppData();
+  showToast(name + ' 已设为默认模板');
+}
+
 function resetAllData() {
-  if (!confirm('确定要重置所有本地保存的模板和快捷复制数据吗？')) return;
-  localStorage.removeItem('wechat_html_helper_data');
-  location.reload();
+  if (!confirm('确定要重置所有 HTML 模板为初始默认值吗？\n（快捷复制内容不会被清除）')) return;
+  Object.keys(defaultTemplates).forEach(function(name) {
+    appData.templates[name] = defaultTemplates[name];
+  });
+  saveAppData();
+  document.getElementById('templateEditor').value = getTemplateHtml(appData.selectedTemplate);
+  showToast('所有模板已重置为默认');
 }
 
 function renderTemplateList() {
@@ -1481,6 +1497,11 @@ function copyFusion() {
   var text = document.getElementById('fusionOutput').textContent;
   if (!text) { showToast('暂无内容可复制'); return; }
   copyText(text);
+}
+
+function clearFusion() {
+  document.getElementById('fusionOutput').textContent = '';
+  showToast('输出已清除');
 }
 
 function copyText(text) {

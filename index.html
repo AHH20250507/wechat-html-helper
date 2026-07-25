@@ -1144,7 +1144,6 @@ function resetImg(idx) {
   document.getElementById('imgActions' + idx).style.display = 'none';
   document.getElementById('uploadZone' + idx).style.display = 'block';
   document.getElementById('overlayText' + idx).value = '';
-  document.getElementById('imgUrl' + idx).value = '';
   document.getElementById('imgStatus' + idx).textContent = '';
   var defaults = { fontSize: 72, padLeft: 40, padRight: 40, textOffset: 0 };
   ['fontSize','padLeft','padRight'].forEach(function(k){ document.getElementById(k + 'Input' + idx).value = defaults[k]; document.getElementById(k + 'Num' + idx).value = defaults[k]; });
@@ -1161,14 +1160,12 @@ function confirmImg(idx) {
     var filename = 'cover' + idx + '.png';
     uploadToGitHub(dataUrl, filename).then(function(url) {
       state['img' + idx] = url;
-      document.getElementById('imgUrl' + idx).value = url;
       document.getElementById('imgStatus' + idx).innerHTML = '图片 ' + idx + ' 已上传：<a href="' + url + '" target="_blank" style="color:#00b050;">查看</a>';
       btn.textContent = '已确认'; btn.disabled = false;
       showToast('图片 ' + idx + ' 已确认');
     }).catch(function(err) {
       // fallback to base64 if upload fails
       state['img' + idx] = dataUrl;
-      document.getElementById('imgUrl' + idx).value = dataUrl.substring(0, 60) + '…';
       document.getElementById('imgStatus' + idx).textContent = '上传失败，已退回 base64 内嵌：' + (err.message || 'unknown');
       btn.textContent = '已确认'; btn.disabled = false;
       showToast('上传失败，已退回 base64');

@@ -1194,7 +1194,7 @@ function confirmImg(idx) {
     var dataUrl = c.toDataURL('image/png');
     var filename = 'cover' + idx + '.png';
     uploadToGitHub(dataUrl, filename).then(function(url) {
-      state['img' + idx] = url;
+      state['img' + idx] = url + '?t=' + Date.now();
       document.getElementById('imgStatus' + idx).innerHTML = '图片 ' + idx + ' 已上传：<a href="' + url + '" target="_blank" style="color:#00b050;">查看</a>';
       btn.textContent = '已确认'; btn.disabled = false;
       showToast('图片 ' + idx + ' 已确认');

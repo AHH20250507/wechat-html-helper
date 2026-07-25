@@ -256,15 +256,32 @@ button { border: none; cursor: pointer; transition: all .2s; }
 
   <!-- ========== Image Tab ========== -->
   <div class="tab-content" id="tab-img">
+    <!-- Selection bar -->
+    <div class="panel" style="margin-bottom:16px;padding:12px 16px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <span style="font-size:13px;font-weight:600;color:#1d1d1f;">输出映射</span>
+        <label style="font-size:13px;color:#86868b;">图片1 →
+          <select id="slotForImg1" onchange="onSlotSelectChange()" style="padding:4px 8px;border:1px solid #d2d2d7;border-radius:6px;font-size:13px;outline:none;">
+            <option value="1">槽位 1</option><option value="2">槽位 2</option><option value="3">槽位 3</option><option value="4">槽位 4</option>
+          </select>
+        </label>
+        <label style="font-size:13px;color:#86868b;">图片2 →
+          <select id="slotForImg2" onchange="onSlotSelectChange()" style="padding:4px 8px;border:1px solid #d2d2d7;border-radius:6px;font-size:13px;outline:none;">
+            <option value="1">槽位 1</option><option value="2" selected>槽位 2</option><option value="3">槽位 3</option><option value="4">槽位 4</option>
+          </select>
+        </label>
+        <span id="slotSelectHint" style="font-size:12px;color:#ff3b30;display:none;">图片1和图片2不能选同一个槽位</span>
+      </div>
+    </div>
     <div class="two-col">
-      <!-- Image 1 -->
+      <!-- Slot 1 -->
       <div class="panel img-editor">
-        <div class="panel-header"><span>图片 1</span></div>
+        <div class="panel-header"><span>槽位 1</span><span id="slotTag1" style="font-size:11px;color:#00b050;font-weight:500;"></span></div>
         <div class="img-upload-zone" id="uploadZone1" onclick="document.getElementById('imgFileInput1').click()">
           <p>点击上传图片，或将图片拖拽到这里</p>
           <input type="file" id="imgFileInput1" accept="image/*" onchange="imgLoaded(event,1)">
         </div>
-        <div class="control-panel" id="imgControls1">
+        <div class="control-panel" id="imgControls1" style="display:none;">
           <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput1" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput1','fontSizeNum1');renderPreview(1)"><input type="number" id="fontSizeNum1" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum1','fontSizeInput1');renderPreview(1)"></div>
           <div class="control-row"><label>左距</label><input type="range" id="padLeftInput1" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput1','padLeftNum1');renderPreview(1)"><input type="number" id="padLeftNum1" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum1','padLeftInput1');renderPreview(1)"></div>
           <div class="control-row"><label>右距</label><input type="range" id="padRightInput1" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput1','padRightNum1');renderPreview(1)"><input type="number" id="padRightNum1" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum1','padRightInput1');renderPreview(1)"></div>
@@ -278,20 +295,21 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div class="crop-area" id="cropArea1" style="display:none;"><img id="cropImg1"><canvas class="crop-overlay" id="overlayCanvas1"></canvas></div>
         <div class="img-status" id="imgStatus1"></div>
         <div class="preview-actions" id="imgActions1" style="display:none;">
-          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="resetImg(1)">重新上传</button>
-          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="downloadImg(1)">下载图片</button>
-          <button class="btn-primary" style="padding:8px 16px;font-size:13px;border-radius:8px;" id="confirmImg1" onclick="confirmImg(1)">确认使用</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="clearImgSlot(1)">清除</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="resetImg(1)">重新上传</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="downloadImg(1)">下载</button>
+          <button class="btn-primary" style="padding:8px 12px;font-size:12px;border-radius:8px;" id="confirmImg1" onclick="confirmImg(1)">确认使用</button>
         </div>
       </div>
 
-      <!-- Image 2 -->
+      <!-- Slot 2 -->
       <div class="panel img-editor">
-        <div class="panel-header"><span>图片 2</span></div>
+        <div class="panel-header"><span>槽位 2</span><span id="slotTag2" style="font-size:11px;color:#00b050;font-weight:500;"></span></div>
         <div class="img-upload-zone" id="uploadZone2" onclick="document.getElementById('imgFileInput2').click()">
           <p>点击上传图片，或将图片拖拽到这里</p>
           <input type="file" id="imgFileInput2" accept="image/*" onchange="imgLoaded(event,2)">
         </div>
-        <div class="control-panel" id="imgControls2">
+        <div class="control-panel" id="imgControls2" style="display:none;">
           <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput2" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput2','fontSizeNum2');renderPreview(2)"><input type="number" id="fontSizeNum2" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum2','fontSizeInput2');renderPreview(2)"></div>
           <div class="control-row"><label>左距</label><input type="range" id="padLeftInput2" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput2','padLeftNum2');renderPreview(2)"><input type="number" id="padLeftNum2" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum2','padLeftInput2');renderPreview(2)"></div>
           <div class="control-row"><label>右距</label><input type="range" id="padRightInput2" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput2','padRightNum2');renderPreview(2)"><input type="number" id="padRightNum2" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum2','padRightInput2');renderPreview(2)"></div>
@@ -305,9 +323,66 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div class="crop-area" id="cropArea2" style="display:none;"><img id="cropImg2"><canvas class="crop-overlay" id="overlayCanvas2"></canvas></div>
         <div class="img-status" id="imgStatus2"></div>
         <div class="preview-actions" id="imgActions2" style="display:none;">
-          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="resetImg(2)">重新上传</button>
-          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="downloadImg(2)">下载图片</button>
-          <button class="btn-primary" style="padding:8px 16px;font-size:13px;border-radius:8px;" id="confirmImg2" onclick="confirmImg(2)">确认使用</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="clearImgSlot(2)">清除</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="resetImg(2)">重新上传</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="downloadImg(2)">下载</button>
+          <button class="btn-primary" style="padding:8px 12px;font-size:12px;border-radius:8px;" id="confirmImg2" onclick="confirmImg(2)">确认使用</button>
+        </div>
+      </div>
+
+      <!-- Slot 3 -->
+      <div class="panel img-editor">
+        <div class="panel-header"><span>槽位 3</span><span id="slotTag3" style="font-size:11px;color:#00b050;font-weight:500;"></span></div>
+        <div class="img-upload-zone" id="uploadZone3" onclick="document.getElementById('imgFileInput3').click()">
+          <p>点击上传图片，或将图片拖拽到这里</p>
+          <input type="file" id="imgFileInput3" accept="image/*" onchange="imgLoaded(event,3)">
+        </div>
+        <div class="control-panel" id="imgControls3" style="display:none;">
+          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput3" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput3','fontSizeNum3');renderPreview(3)"><input type="number" id="fontSizeNum3" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum3','fontSizeInput3');renderPreview(3)"></div>
+          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput3" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput3','padLeftNum3');renderPreview(3)"><input type="number" id="padLeftNum3" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum3','padLeftInput3');renderPreview(3)"></div>
+          <div class="control-row"><label>右距</label><input type="range" id="padRightInput3" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput3','padRightNum3');renderPreview(3)"><input type="number" id="padRightNum3" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum3','padRightInput3');renderPreview(3)"></div>
+          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY3" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY3','textOffsetNum3');renderPreview(3)"><input type="number" id="textOffsetNum3" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum3','textOffsetY3');renderPreview(3)"></div>
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity3" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity3','overlayOpacityNum3');renderPreview(3)"><input type="number" id="overlayOpacityNum3" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum3','overlayOpacity3');renderPreview(3)"></div>
+        </div>
+        <div id="textInputRow3" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
+          <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
+          <input type="text" id="overlayText3" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(3)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+        </div>
+        <div class="crop-area" id="cropArea3" style="display:none;"><img id="cropImg3"><canvas class="crop-overlay" id="overlayCanvas3"></canvas></div>
+        <div class="img-status" id="imgStatus3"></div>
+        <div class="preview-actions" id="imgActions3" style="display:none;">
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="clearImgSlot(3)">清除</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="resetImg(3)">重新上传</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="downloadImg(3)">下载</button>
+          <button class="btn-primary" style="padding:8px 12px;font-size:12px;border-radius:8px;" id="confirmImg3" onclick="confirmImg(3)">确认使用</button>
+        </div>
+      </div>
+
+      <!-- Slot 4 -->
+      <div class="panel img-editor">
+        <div class="panel-header"><span>槽位 4</span><span id="slotTag4" style="font-size:11px;color:#00b050;font-weight:500;"></span></div>
+        <div class="img-upload-zone" id="uploadZone4" onclick="document.getElementById('imgFileInput4').click()">
+          <p>点击上传图片，或将图片拖拽到这里</p>
+          <input type="file" id="imgFileInput4" accept="image/*" onchange="imgLoaded(event,4)">
+        </div>
+        <div class="control-panel" id="imgControls4" style="display:none;">
+          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput4" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput4','fontSizeNum4');renderPreview(4)"><input type="number" id="fontSizeNum4" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum4','fontSizeInput4');renderPreview(4)"></div>
+          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput4" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput4','padLeftNum4');renderPreview(4)"><input type="number" id="padLeftNum4" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum4','padLeftInput4');renderPreview(4)"></div>
+          <div class="control-row"><label>右距</label><input type="range" id="padRightInput4" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput4','padRightNum4');renderPreview(4)"><input type="number" id="padRightNum4" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum4','padRightInput4');renderPreview(4)"></div>
+          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY4" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY4','textOffsetNum4');renderPreview(4)"><input type="number" id="textOffsetNum4" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum4','textOffsetY4');renderPreview(4)"></div>
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity4" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity4','overlayOpacityNum4');renderPreview(4)"><input type="number" id="overlayOpacityNum4" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum4','overlayOpacity4');renderPreview(4)"></div>
+        </div>
+        <div id="textInputRow4" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
+          <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
+          <input type="text" id="overlayText4" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(4)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+        </div>
+        <div class="crop-area" id="cropArea4" style="display:none;"><img id="cropImg4"><canvas class="crop-overlay" id="overlayCanvas4"></canvas></div>
+        <div class="img-status" id="imgStatus4"></div>
+        <div class="preview-actions" id="imgActions4" style="display:none;">
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="clearImgSlot(4)">清除</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="resetImg(4)">重新上传</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="downloadImg(4)">下载</button>
+          <button class="btn-primary" style="padding:8px 12px;font-size:12px;border-radius:8px;" id="confirmImg4" onclick="confirmImg(4)">确认使用</button>
         </div>
       </div>
     </div>
@@ -352,7 +427,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
 
 <script>
 /* ===== State ===== */
-var state = { html: '', img1: null, img2: null };
+var state = { html: '', img1: null, img2: null, img3: null, img4: null };
 
 /* ===== Default Templates ===== */
 var defaultTemplates = {
@@ -1145,11 +1220,11 @@ function zoomImg(e, idx) {
   clampImgPos(idx); applyImgPos(idx); renderPreview(idx);
 }
 
-document.addEventListener('mousemove', function(e) { [1,2].forEach(function(i) { if (imgStates[i] && imgStates[i].dragging) moveDrag(e.clientX, e.clientY, i); }); });
-document.addEventListener('touchmove', function(e) { [1,2].forEach(function(i) { if (imgStates[i] && imgStates[i].dragging) { var t = e.touches[0]; moveDrag(t.clientX, t.clientY, i); e.preventDefault(); } }); }, { passive: false });
-document.addEventListener('mouseup', function() { [1,2].forEach(function(i) { endDrag(i); }); });
-document.addEventListener('touchend', function() { [1,2].forEach(function(i) { endDrag(i); }); });
-setupDrag(1); setupDrag(2);
+document.addEventListener('mousemove', function(e) { [1,2,3,4].forEach(function(i) { if (imgStates[i] && imgStates[i].dragging) moveDrag(e.clientX, e.clientY, i); }); });
+document.addEventListener('touchmove', function(e) { [1,2,3,4].forEach(function(i) { if (imgStates[i] && imgStates[i].dragging) { var t = e.touches[0]; moveDrag(t.clientX, t.clientY, i); e.preventDefault(); } }); }, { passive: false });
+document.addEventListener('mouseup', function() { [1,2,3,4].forEach(function(i) { endDrag(i); }); });
+document.addEventListener('touchend', function() { [1,2,3,4].forEach(function(i) { endDrag(i); }); });
+setupDrag(1); setupDrag(2); setupDrag(3); setupDrag(4);
 
 function syncFromSlider(sliderId, numId) { document.getElementById(numId).value = document.getElementById(sliderId).value; }
 function syncFromNumber(numId, sliderId) { document.getElementById(sliderId).value = document.getElementById(numId).value; }
@@ -1162,7 +1237,8 @@ function renderPreview(idx) {
   canvas.width = cropW; canvas.height = cropH;
   ctx.clearRect(0,0,cropW,cropH);
   // overlay
-  var opacity = (parseInt(document.getElementById('overlayOpacity' + idx).value) || 54) / 100;
+  var opVal = parseInt(document.getElementById('overlayOpacity' + idx).value);
+  var opacity = (isNaN(opVal) ? 54 : opVal) / 100;
   ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
   ctx.fillRect(0,0,cropW,cropH);
   // text
@@ -1219,20 +1295,125 @@ function confirmImg(idx) {
   btn.disabled = true; btn.textContent = '上传中…';
   renderFinalCanvas(idx, function(c) {
     var dataUrl = c.toDataURL('image/png');
+    var thumb = c.toDataURL('image/jpeg', 0.6);
     var filename = 'cover' + idx + '.png';
+    // save record locally
+    var records = loadImgRecords();
+    records[idx] = {
+      thumb: thumb,
+      text: document.getElementById('overlayText' + idx).value,
+      fontSize: document.getElementById('fontSizeInput' + idx).value,
+      padLeft: document.getElementById('padLeftInput' + idx).value,
+      padRight: document.getElementById('padRightInput' + idx).value,
+      offsetY: document.getElementById('textOffsetY' + idx).value,
+      opacity: document.getElementById('overlayOpacity' + idx).value,
+      githubUrl: null
+    };
+    saveImgRecords(records);
     uploadToGitHub(dataUrl, filename).then(function(url) {
-      state['img' + idx] = url + '?t=' + Date.now();
-      document.getElementById('imgStatus' + idx).innerHTML = '图片 ' + idx + ' 已上传：<a href="' + url + '" target="_blank" style="color:#00b050;">查看</a>';
+      var fullUrl = url + '?t=' + Date.now();
+      state['img' + idx] = fullUrl;
+      records = loadImgRecords();
+      if (records[idx]) { records[idx].githubUrl = fullUrl; saveImgRecords(records); }
+      document.getElementById('imgStatus' + idx).innerHTML = '槽位 ' + idx + ' 已上传：<a href="' + url + '" target="_blank" style="color:#00b050;">查看</a>';
       btn.textContent = '已确认'; btn.disabled = false;
-      showToast('图片 ' + idx + ' 已确认');
+      showToast('槽位 ' + idx + ' 已确认');
     }).catch(function(err) {
-      // fallback to base64 if upload fails
       state['img' + idx] = dataUrl;
-      document.getElementById('imgStatus' + idx).textContent = '上传失败，已退回 base64 内嵌：' + (err.message || 'unknown');
+      records = loadImgRecords();
+      if (records[idx]) { records[idx].githubUrl = dataUrl; saveImgRecords(records); }
+      document.getElementById('imgStatus' + idx).textContent = '上传失败，已退回 base64 内嵌';
       btn.textContent = '已确认'; btn.disabled = false;
       showToast('上传失败，已退回 base64');
     });
   });
+}
+
+/* ===== Image Records Persistence ===== */
+function loadImgRecords() {
+  try { return JSON.parse(localStorage.getItem('wechat_html_img_records') || '{}'); } catch(e) { return {}; }
+}
+function saveImgRecords(records) {
+  try { localStorage.setItem('wechat_html_img_records', JSON.stringify(records)); } catch(e) {}
+}
+
+function clearImgSlot(idx) {
+  imgStates[idx] = null;
+  state['img' + idx] = null;
+  document.getElementById('imgControls' + idx).style.display = 'none';
+  document.getElementById('textInputRow' + idx).style.display = 'none';
+  document.getElementById('cropArea' + idx).style.display = 'none';
+  document.getElementById('imgActions' + idx).style.display = 'none';
+  document.getElementById('uploadZone' + idx).style.display = 'block';
+  document.getElementById('overlayText' + idx).value = '';
+  document.getElementById('imgStatus' + idx).textContent = '';
+  var defaults = { fontSize: 72, padLeft: 40, padRight: 40, textOffset: 0 };
+  ['fontSize','padLeft','padRight'].forEach(function(k){ document.getElementById(k + 'Input' + idx).value = defaults[k]; document.getElementById(k + 'Num' + idx).value = defaults[k]; });
+  document.getElementById('textOffsetY' + idx).value = defaults.textOffset;
+  document.getElementById('textOffsetNum' + idx).value = defaults.textOffset;
+  document.getElementById('overlayOpacity' + idx).value = 54;
+  document.getElementById('overlayOpacityNum' + idx).value = 54;
+  var btn = document.getElementById('confirmImg' + idx);
+  btn.textContent = '确认使用'; btn.disabled = false;
+  // remove from records
+  var records = loadImgRecords();
+  delete records[idx];
+  saveImgRecords(records);
+  showToast('槽位 ' + idx + ' 已清除');
+}
+
+/* ===== Slot Selection ===== */
+function onSlotSelectChange() {
+  var s1 = document.getElementById('slotForImg1').value;
+  var s2 = document.getElementById('slotForImg2').value;
+  var hint = document.getElementById('slotSelectHint');
+  hint.style.display = (s1 === s2) ? 'inline' : 'none';
+  updateSlotTags();
+}
+
+function updateSlotTags() {
+  var s1 = document.getElementById('slotForImg1').value;
+  var s2 = document.getElementById('slotForImg2').value;
+  [1,2,3,4].forEach(function(i) {
+    var tag = document.getElementById('slotTag' + i);
+    var labels = [];
+    if (String(i) === s1) labels.push('→ 图片1');
+    if (String(i) === s2) labels.push('→ 图片2');
+    tag.textContent = labels.join(' ');
+  });
+}
+
+function restoreImgRecords() {
+  var records = loadImgRecords();
+  [1,2,3,4].forEach(function(idx) {
+    var rec = records[idx];
+    if (!rec || !rec.thumb) return;
+    // show the saved thumbnail as preview
+    document.getElementById('uploadZone' + idx).style.display = 'none';
+    document.getElementById('imgControls' + idx).style.display = 'flex';
+    document.getElementById('textInputRow' + idx).style.display = 'block';
+    document.getElementById('imgActions' + idx).style.display = 'flex';
+    // restore settings
+    if (rec.text) document.getElementById('overlayText' + idx).value = rec.text;
+    if (rec.fontSize) { document.getElementById('fontSizeInput' + idx).value = rec.fontSize; document.getElementById('fontSizeNum' + idx).value = rec.fontSize; }
+    if (rec.padLeft) { document.getElementById('padLeftInput' + idx).value = rec.padLeft; document.getElementById('padLeftNum' + idx).value = rec.padLeft; }
+    if (rec.padRight) { document.getElementById('padRightInput' + idx).value = rec.padRight; document.getElementById('padRightNum' + idx).value = rec.padRight; }
+    if (rec.offsetY) { document.getElementById('textOffsetY' + idx).value = rec.offsetY; document.getElementById('textOffsetNum' + idx).value = rec.offsetY; }
+    if (rec.opacity) { document.getElementById('overlayOpacity' + idx).value = rec.opacity; document.getElementById('overlayOpacityNum' + idx).value = rec.opacity; }
+    // show thumbnail in crop area
+    var cropArea = document.getElementById('cropArea' + idx);
+    cropArea.style.display = 'block';
+    var img = document.getElementById('cropImg' + idx);
+    img.src = rec.thumb;
+    img.style.width = '100%';
+    // restore github url to state
+    if (rec.githubUrl) state['img' + idx] = rec.githubUrl;
+    document.getElementById('imgStatus' + idx).innerHTML = rec.githubUrl
+      ? '已恢复记录：<a href="' + rec.githubUrl.split('?')[0] + '" target="_blank" style="color:#00b050;">查看</a>'
+      : '已恢复本地记录（未上传）';
+    document.getElementById('confirmImg' + idx).textContent = rec.githubUrl ? '已确认' : '确认使用';
+  });
+  updateSlotTags();
 }
 
 function renderFinalCanvas(idx, callback) {
@@ -1243,7 +1424,8 @@ function renderFinalCanvas(idx, callback) {
   ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, 1280, 360);
   var scale = 1280 / getCropW(idx);
   ctx.drawImage(s.cachedImg, s.offX * scale, s.offY * scale, s.naturalW * s.scale * scale, s.naturalH * s.scale * scale);
-  var opacity = (parseInt(document.getElementById('overlayOpacity' + idx).value) || 54) / 100;
+  var opVal = parseInt(document.getElementById('overlayOpacity' + idx).value);
+  var opacity = (isNaN(opVal) ? 54 : opVal) / 100;
   ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')'; ctx.fillRect(0, 0, 1280, 360);
   var text = document.getElementById('overlayText' + idx).value;
   if (text) {
@@ -1279,9 +1461,13 @@ function generateFusion() {
   if (!state.html) { showToast('请先确认第一步 HTML'); return; }
   var template = document.getElementById('templateEditor').value.trim();
   if (!template) { showToast('请先选择或编辑模板'); return; }
-  var url1 = state.img1;
-  var url2 = state.img2;
-  if (!url1 || !url2) { showToast('请确认两张图片已上传'); return; }
+  var s1 = parseInt(document.getElementById('slotForImg1').value);
+  var s2 = parseInt(document.getElementById('slotForImg2').value);
+  if (s1 === s2) { showToast('图片1和图片2不能选同一个槽位'); return; }
+  var url1 = state['img' + s1];
+  var url2 = state['img' + s2];
+  if (!url1) { showToast('槽位 ' + s1 + '（图片1）尚未确认上传'); return; }
+  if (!url2) { showToast('槽位 ' + s2 + '（图片2）尚未确认上传'); return; }
 
   var imgTag1 = '<img src="' + url1 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />';
   var imgTag2 = '<img src="' + url2 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />';
@@ -1322,7 +1508,7 @@ document.getElementById('input').addEventListener('keydown', function(e) {
 
 // recalculate crop area on resize
 window.addEventListener('resize', function() {
-  [1,2].forEach(function(idx) {
+  [1,2,3,4].forEach(function(idx) {
     var s = imgStates[idx];
     if (s && s.loaded) { onRatioChange(idx); }
   });
@@ -1331,6 +1517,10 @@ window.addEventListener('resize', function() {
 // init templates
 renderTemplateList();
 selectTemplate(appData.selectedTemplate || 'EPBox');
+
+// init image records
+restoreImgRecords();
+updateSlotTags();
 </script>
 </body>
 </html>

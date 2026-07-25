@@ -132,9 +132,11 @@ button { border: none; cursor: pointer; transition: all .2s; }
 .preview-actions { display: flex; justify-content: center; gap: 12px; align-items: center; }
 
 /* ---- fusion ---- */
-.fuse-layout { display: flex; gap: 16px; margin-bottom: 20px; }
-@media (max-width: 700px) { .fuse-layout { flex-direction: column; } }
-.fuse-panel { min-width: 200px; max-width: 300px; }
+.fuse-layout { display: flex; gap: 16px; margin-bottom: 20px; align-items: stretch; }
+@media (max-width: 900px) { .fuse-layout { flex-direction: column; } }
+.fuse-panel { flex: 0 0 240px; min-width: 240px; }
+.fuse-editor { flex: 1; min-width: 300px; }
+.snippet-panel { display: flex; flex-direction: column; }
 .template-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
 .template-btn {
   padding: 10px 12px; border-radius: 8px; border: 1px solid #e8e8ed;
@@ -305,24 +307,24 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div class="template-list" id="templateList"></div>
       </div>
       <!-- Template editor -->
-      <div class="panel fuse-panel" style="flex:1;">
+      <div class="panel fuse-editor">
         <div class="panel-header"><span id="templateTitle">EPBox</span></div>
-        <textarea id="templateEditor" style="height:220px;" placeholder="HTML 模板内容…"></textarea>
+        <textarea id="templateEditor" style="flex:1;min-height:220px;height:auto;" placeholder="HTML 模板内容…"></textarea>
         <div style="padding:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;border-top:1px solid #f0f0f0;">
           <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="saveCurrentTemplate()">保存模板</button>
           <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="resetCurrentTemplate()">恢复默认</button>
           <button class="btn-primary" style="padding:10px 32px;font-size:14px;border-radius:8px;margin-left:auto;" onclick="generateFusion()">生成最终 HTML</button>
         </div>
       </div>
-    </div>
 
-    <!-- Snippets -->
-    <div class="panel" style="margin-bottom:20px;">
-      <div class="panel-header"><span>快捷复制</span><span style="font-size:12px;color:#86868b;font-weight:400;">（当前模板：<span id="snippetTemplateName">EPBox</span>）</span></div>
-      <div id="snippetList" style="padding:12px;"></div>
-      <div class="snippet-add">
-        <input type="text" id="newSnippetText" placeholder="输入要快捷复制的文本…">
-        <button class="btn-primary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="addSnippet()">添加</button>
+      <!-- Snippets -->
+      <div class="panel fuse-panel snippet-panel" style="display:flex;flex-direction:column;">
+        <div class="panel-header" style="flex-shrink:0;"><span>快捷复制</span><span style="font-size:12px;color:#86868b;font-weight:400;">（<span id="snippetTemplateName">EPBox</span>）</span></div>
+        <div id="snippetList" style="padding:12px;flex:1;overflow:auto;min-height:120px;"></div>
+        <div class="snippet-add" style="flex-shrink:0;border-top:1px solid #f0f0f0;">
+          <input type="text" id="newSnippetText" placeholder="输入要快捷复制的文本…">
+          <button class="btn-primary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="addSnippet()">添加</button>
+        </div>
       </div>
     </div>
 

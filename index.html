@@ -132,13 +132,43 @@ button { border: none; cursor: pointer; transition: all .2s; }
 .preview-actions { display: flex; justify-content: center; gap: 12px; align-items: center; }
 
 /* ---- fusion ---- */
-.url-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.url-row label { font-size: 13px; color: #86868b; min-width: 60px; }
-.url-row input {
-  flex: 1; padding: 8px 12px; border: 1px solid #e8e8ed; border-radius: 8px;
-  font-size: 13px; outline: none;
+.fuse-layout { display: flex; gap: 16px; margin-bottom: 20px; }
+@media (max-width: 700px) { .fuse-layout { flex-direction: column; } }
+.fuse-panel { min-width: 200px; max-width: 300px; }
+.template-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.template-btn {
+  padding: 10px 12px; border-radius: 8px; border: 1px solid #e8e8ed;
+  background: #fff; color: #1d1d1f; font-size: 14px; cursor: pointer; text-align: left;
+  transition: all .2s;
 }
-.url-row input:focus { border-color: #00b050; }
+.template-btn:hover { background: #f5f5f7; }
+.template-btn.active { background: #00b050; color: #fff; border-color: #00b050; }
+#templateEditor { border-bottom: 1px solid #f0f0f0; }
+.snippet-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: #f9f9fb; border-radius: 8px; margin-bottom: 8px;
+}
+.snippet-text { flex: 1; font-size: 14px; word-break: break-all; }
+.snippet-text input {
+  width: 100%; padding: 6px 10px; border: 1px solid #d2d2d7; border-radius: 6px;
+  font-size: 14px; outline: none;
+}
+.snippet-text input:focus { border-color: #00b050; }
+.snippet-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.snippet-actions button {
+  padding: 4px 10px; font-size: 12px; border-radius: 6px; border: none; cursor: pointer;
+}
+.snippet-actions .btn-copy { background: #00b050; color: #fff; }
+.snippet-actions .btn-edit { background: #e8e8ed; color: #1d1d1f; }
+.snippet-actions .btn-delete { background: #ff3b30; color: #fff; }
+.snippet-add {
+  padding: 12px; border-top: 1px solid #f0f0f0; display: flex; gap: 10px; align-items: center;
+}
+.snippet-add input {
+  flex: 1; padding: 8px 12px; border: 1px solid #d2d2d7; border-radius: 8px;
+  font-size: 14px; outline: none;
+}
+.snippet-add input:focus { border-color: #00b050; }
 .img-status {
   font-size: 12px; color: #86868b; min-height: 18px; margin-bottom: 12px;
 }
@@ -268,20 +298,35 @@ button { border: none; cursor: pointer; transition: all .2s; }
 
   <!-- ========== Fusion Tab ========== -->
   <div class="tab-content" id="tab-fuse">
-    <div class="panel">
-      <div class="panel-header">第三步 HTML 结尾模板</div>
-      <textarea id="fuseTemplate" placeholder="粘贴第三步 HTML 模板…" style="height:180px;margin-bottom:0;"></textarea>
-    </div>
-    <div class="panel">
-      <div class="panel-header">图床图片地址（图片确认后会自动填入）</div>
-      <div style="padding:16px;">
-        <div class="url-row"><label>图片1</label><input type="text" id="imgUrl1" placeholder="图片1 地址"></div>
-        <div class="url-row"><label>图片2</label><input type="text" id="imgUrl2" placeholder="图片2 地址"></div>
+    <div class="fuse-layout">
+      <!-- Template selector -->
+      <div class="panel fuse-panel">
+        <div class="panel-header">选择模板</div>
+        <div class="template-list" id="templateList"></div>
+      </div>
+      <!-- Template editor -->
+      <div class="panel fuse-panel" style="flex:1;">
+        <div class="panel-header"><span id="templateTitle">EPBox</span></div>
+        <textarea id="templateEditor" style="height:220px;" placeholder="HTML 模板内容…"></textarea>
+        <div style="padding:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;border-top:1px solid #f0f0f0;">
+          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="saveCurrentTemplate()">保存模板</button>
+          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="resetCurrentTemplate()">恢复默认</button>
+          <button class="btn-primary" style="padding:10px 32px;font-size:14px;border-radius:8px;margin-left:auto;" onclick="generateFusion()">生成最终 HTML</button>
+        </div>
       </div>
     </div>
-    <div style="text-align:center;margin-bottom:20px;">
-      <button class="btn-primary" style="padding:10px 32px;font-size:14px;border-radius:8px;" onclick="generateFusion()">生成最终 HTML</button>
+
+    <!-- Snippets -->
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="panel-header"><span>快捷复制</span><span style="font-size:12px;color:#86868b;font-weight:400;">（当前模板：<span id="snippetTemplateName">EPBox</span>）</span></div>
+      <div id="snippetList" style="padding:12px;"></div>
+      <div class="snippet-add">
+        <input type="text" id="newSnippetText" placeholder="输入要快捷复制的文本…">
+        <button class="btn-primary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="addSnippet()">添加</button>
+      </div>
     </div>
+
+    <!-- Output -->
     <div class="panel" style="margin-bottom:0;">
       <div class="panel-header"><span>最终输出</span><button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="copyFusion()">复制</button></div>
       <div class="output-area" id="fusionOutput"></div>
@@ -294,6 +339,413 @@ button { border: none; cursor: pointer; transition: all .2s; }
 <script>
 /* ===== State ===== */
 var state = { html: '', img1: null, img2: null };
+
+/* ===== Default Templates ===== */
+var defaultTemplates = {
+  'EPBox': `<section data-role="outer" label="edit by 135editor" data-pm-slice="0 0 []" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-bottom: 0px;outline: 0px;visibility: visible;">
+	<section style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.578px;text-align: center;visibility: visible;"></section>
+	<section data-role="outer" label="edit by 135editor" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;letter-spacing: 0.578px;visibility: visible;">
+		<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;visibility: visible;">
+			<section data-role="outer" label="edit by 135editor" data-pm-slice="0 0 []" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;visibility: visible;">
+				<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+					<section data-role="outer" label="edit by 135editor" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;line-height: normal;letter-spacing: 0.578px;">
+						<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;line-height: normal;letter-spacing: 0.578px;">
+							<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;line-height: normal;letter-spacing: 0.578px;" class="">
+								<section style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-right: 8px;margin-left: 8px;outline: 0px;line-height: normal;" class="">
+									<section data-tools="135编辑器" data-id="93761" style="-webkit-tap-highlight-color: transparent;outline: 0px;" class="_135editor">
+										<section style="-webkit-tap-highlight-color: transparent;margin-right: 8px;margin-left: 8px;outline: 0px;text-align: center;" class="">
+											<section style="-webkit-tap-highlight-color: transparent;outline: 0px;display: inline-block;">
+												<section style="-webkit-tap-highlight-color: transparent;outline: 0px;vertical-align: initial;width: 2.5em;box-sizing:border-box;">
+													<img alt="图片" class="__bg_gif rich_pages wxw-img" data-aistatus="1" data-imgfileid="100012832" src="https://mmbiz.qpic.cn/mmbiz_gif/7QRTvkK2qC6zUP9gShKxKeKvjyQFJdqfaNmjSdSFItodyDs4G28Ia6KAxicferaJFoF7LHqlgo9KRu4IQOcu9dg/640?wx_fmt=gif&&tp=webp&wxfrom=10005&wx_lazy=1#imgIndex=14" data-type="gif" data-width="100%" style="-webkit-tap-highlight-color: transparent;outline: 0px;vertical-align: baseline;display: block;width: 42.5px !important;visibility: visible !important;box-sizing:border-box;" draggable="false" data-ratio="1.5689655172413792" data-w="116"/>
+												</section>
+											</section>
+										</section>
+									</section>
+									<section data-role="paragraph" style="-webkit-tap-highlight-color: transparent;outline: 0px;">
+										<section style="-webkit-tap-highlight-color: transparent;margin-right: 8px;margin-left: 8px;outline: 0px;vertical-align: initial;" class="">
+											<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+												<br/>
+											</p>
+										</section>
+									</section>
+									<section data-tools="135编辑器" data-id="97976" style="-webkit-tap-highlight-color: transparent;outline: 0px;" class="_135editor">
+										<section style="-webkit-tap-highlight-color: transparent;margin: 10px 8px;outline: 0px;text-align: center;">
+											<section style="-webkit-tap-highlight-color: transparent;padding-top: 3px;padding-bottom: 3px;outline: 0px;display: inline-block;border-top: 1px solid rgb(134, 217, 111);border-bottom: 2px solid rgb(134, 217, 111);box-sizing:border-box;" class="">
+												<section style="-webkit-tap-highlight-color: transparent;padding: 3px 15px 3px 8px;outline: 0px;display: flex;justify-content: center;align-items: center;background: rgb(243, 253, 248);color: rgb(120, 193, 156);border-top-right-radius: 15px;box-sizing:border-box;" class="">
+													<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 25px;box-sizing:border-box;" class="">
+														<p>
+															<br/>
+														</p>
+													</section>
+													<section data-brushtype="text" style="-webkit-tap-highlight-color: transparent;margin-left: 5px;outline: 0px;letter-spacing: 1.5px;color: rgb(118, 193, 155);">
+														<p style="-webkit-tap-highlight-color: transparent;outline: 0px;vertical-align: initial;letter-spacing: 2px;">
+															<span style="-webkit-tap-highlight-color: transparent;outline: 0px;color: rgb(146, 208, 80);font-size: 15px;font-family:黑体, SimHei;"><strong style="-webkit-tap-highlight-color: transparent;outline: 0px;"><span><a class="normal_text_link" target="_blank" style="padding-right: 0px;padding-left: 0px;outline: 0px;color: rgb(146, 208, 80);cursor: pointer;" href="https://web.1zhanshou.com/map/index.html" textvalue="查看壹站收EPBox网点" linktype="text" data-linktype="2">查看壹站收EPBox网点</a></span></strong></span>
+														</p>
+													</section>
+												</section>
+											</section>
+										</section>
+									</section>
+									<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;" class="">
+										<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+											<span style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;"><br/></span>
+										</p>
+									</section>
+									<section data-role="paragraph" style="-webkit-tap-highlight-color: transparent;outline: 0px;">
+										<section style="-webkit-tap-highlight-color: transparent;margin-right: 8px;margin-left: 8px;outline: 0px;">
+											<section style="-webkit-tap-highlight-color: transparent;margin: 10px auto;outline: 0px;display: flex;justify-content: center;">
+												<section style="-webkit-tap-highlight-color: transparent;outline: 0px;display: flex;align-items: flex-end;">
+													<section style="-webkit-tap-highlight-color: transparent;outline: 0px;flex-shrink: 0;">
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(10px);-webkit-transform: translateX(10px);-moz-transform: translateX(10px);-o-transform: translateX(10px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(5px);-webkit-transform: translateX(5px);-moz-transform: translateX(5px);-o-transform: translateX(5px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(5px);-webkit-transform: translateX(5px);-moz-transform: translateX(5px);-o-transform: translateX(5px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(10px);-webkit-transform: translateX(10px);-moz-transform: translateX(10px);-o-transform: translateX(10px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+													</section>
+													<section style="-webkit-tap-highlight-color: transparent;padding-right: 20px;padding-left: 20px;outline: 0px;box-sizing:border-box;">
+														<section style="-webkit-tap-highlight-color: transparent;padding-right: 5px;padding-left: 5px;outline: 0px;font-size: 16px;color: rgb(0, 176, 80);text-align: center;border-bottom: 1px solid rgb(0, 176, 80);box-sizing:border-box;" class="">
+															<strong data-brushtype="text" style="-webkit-tap-highlight-color: transparent;outline: 0px;"><span>你可能错过的往期精彩</span></strong>
+														</section>
+													</section>
+													<section style="-webkit-tap-highlight-color: transparent;outline: 0px;flex-shrink: 0;">
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(-10px);-webkit-transform: translateX(-10px);-moz-transform: translateX(-10px);-o-transform: translateX(-10px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(-5px);-webkit-transform: translateX(-5px);-moz-transform: translateX(-5px);-o-transform: translateX(-5px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(-5px);-webkit-transform: translateX(-5px);-moz-transform: translateX(-5px);-o-transform: translateX(-5px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(-10px);-webkit-transform: translateX(-10px);-moz-transform: translateX(-10px);-o-transform: translateX(-10px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+													</section>
+												</section>
+											</section>
+										</section>
+									</section>
+									<section data-role="paragraph" style="-webkit-tap-highlight-color: transparent;outline: 0px;">
+										<section style="-webkit-tap-highlight-color: transparent;margin: 10px 8px;outline: 0px;text-align: center;">
+											<section style="-webkit-tap-highlight-color: transparent;outline: 0px;display: flex;justify-content: center;align-items: center;">
+												<section style="-webkit-tap-highlight-color: transparent;margin-top: -37px;outline: 0px;display: flex;justify-content: space-between;align-items: center;">
+													<section style="-webkit-tap-highlight-color: transparent;margin-top: -8px;outline: 0px;font-size: 28px;">
+														<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;" >
+															<br/>
+														</p>
+													</section>
+												</section>
+											</section>
+										</section>
+									</section>
+								</section>
+								<section style="text-align: center;margin-left: 8px;margin-right: 8px;" class=""></section>
+								<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-right: 8px;margin-left: 8px;outline: 0px;">
+									<span style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;"><br/></span>
+								</p>
+								<p style="text-align: center;margin-left: 8px;margin-right: 8px;" align="center">
+									<a href="https://mp.weixin.qq.com/s?__biz=Mzk0ODQyMjAyNQ==&mid=2247496795&idx=1&sn=69f3b6c902f40463a6c177e103be873b&scene=21#wechat_redirect" imgurl="https://mmecoa.qpic.cn/mmecoa_jpg/FXsTibdz1tAEriaLtQkU2qeBzpHsB9qwA2dQwFtLdBQ6ckaAtpqUWGia5u28DPiaxhlJU7cxO2OeuGZOaqN0RRspQLRUEVajlB1YIVzbfdzb4IU/640?wx_fmt=jpeg&amp;from=appmsg" linktype="image" tab="innerlink" data-itemshowtype="0" target="_blank" data-linktype="1"><span class="js_jump_icon h5_image_link"></span></a>（图片1）
+								</p>
+								<p style="text-align: center;margin-left: 8px;margin-right: 8px;" align="center">
+									<br/>
+								</p>
+								<p style="text-align: center;margin-left: 8px;margin-right: 8px;" align="center">
+									（图片2）
+								</p>
+								<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-right: 8px;margin-left: 8px;outline: 0px;text-align: center;" align="center">
+									<span><br/></span>
+								</p>
+							</section>
+						</section>
+					</section>
+					<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+						<section style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;text-align: center;margin-left: 8px;margin-right: 8px;" class="">
+							<img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OXIPS079n3lMo9QuRI5t6RvuE5OmR4icsk0KszsOdXruIGe4ic8vWLAMQ8Rsbw2AibTlicJy9oKQqsEwvDvrTC2VrQ/640?wx_fmt=other&&tp=webp&wxfrom=10005&wx_lazy=1#imgIndex=18" alt="图片" class="rich_pages wxw-img" data-s="300,640" data-type="jpeg" style="-webkit-tap-highlight-color: transparent;outline: 0px;vertical-align: baseline;letter-spacing: 0.034em;width: 677px !important;visibility: visible !important;box-sizing:border-box;font-family:mp-quote, -apple-system-font, BlinkMacSystemFont, Arial, sans-serif;" title="壹站收公众号二维码关注.jpg" width="444" data-width="444px" data-backw="562" data-backh="301" data-imgfileid="100012834" data-aistatus="1" data-ratio="0.5351851851851852" data-w="1080"/>
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+	</section>
+</section>
+<p style="display: none;">
+	<br/>
+</p>
+<section class="_135editor">
+	<mp-style-type data-value="3"></mp-style-type>
+</section>
+<p>
+	<br/>
+</p>`,
+  '壹站收': `<section data-role="paragraph" class="_135editor">
+	<section data-role="outer" label="edit by 135editor" style="letter-spacing: 0.578px; text-wrap: wrap; margin-bottom: 0px;" data-pm-slice="0 0 []">
+		<section data-role="paragraph">
+			<section style="margin-right: 8px;margin-left: 8px;line-height: 2em;">
+				<span></span>
+			</section>
+		</section>
+	</section>
+	<section data-role="outer" style="margin-bottom: 0px;text-wrap: wrap;letter-spacing: 0.544px;background-color: #ffffff;outline:0px;visibility:visible;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;letter-spacing: 1px;font-size: 15px;color: #262626;line-height: 2.27em;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;"><span>如果你最近</span></span><span style="outline: 0px;letter-spacing: 1px;font-size: 15px;color: #262626;line-height: 2.27em;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;"><span>换了新手机，</span></span><span style="outline: 0px;font-size: var(--articleFontsize);letter-spacing: 0.578px;color: #00b050;"><strong style="outline: 0px;"><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;"><span>旧手机记得来壹站收高价回收，为你的钱包回回血！</span></span></strong></span><span style="outline: 0px;color: #262626;font-size: 15px;letter-spacing: 1px;"><span>选择壹站收的4大理由：</span></span><span style="outline: 0px;color: #262626;font-size: 15px;letter-spacing: 1px;"></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;color: #262626;font-size: 15px;letter-spacing: 1px;"><span></span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.544px;">
+			<span style="outline: 0px;color: #262626;font-size: 15px;letter-spacing: 1px;"></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;color: #00b050;"><strong style="outline: 0px;"><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;line-height: 2.27em;"><span>【安全】</span></span></strong></span><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;color: #262626;line-height: 2.27em;"><span>在回收过程中，回收设备会严格把关您的信息是否彻底删除。回收后会用专业数据清除工具再次处理，保障信息安全。</span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;color: #00b050;"><strong style="outline: 0px;"><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;line-height: 2.27em;"><span>【便捷】</span></span></strong></span><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;color: #262626;line-height: 2.27em;"><span>最快3分钟即可完成整个旧机回收过程，且回收金额均可实现秒到账。</span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;color: #00b050;"><strong style="outline: 0px;"><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;line-height: 2.27em;"><span>【高价】</span></span></strong></span><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;color: #262626;line-height: 2.27em;"><span>通过“数智化”系统，实时监控市场动态价格，让机主能以市场实时的最高价卖出旧机。</span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;color: #00b050;"><strong style="outline: 0px;"><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;line-height: 2.27em;"><span>【环保】</span></span></strong></span><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;color: #262626;line-height: 2.27em;"><span>每回收成功一台旧机，能为地球减排49.1公斤，每一个旧机回收的行为，都是在为地球的明天作出巨大贡献。</span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span></span>
+		</section>
+		<section style="margin: 20px auto;outline: 0px;">
+			<section style="outline: 0px;margin-left: 8px;margin-right: 8px;">
+				<section style="outline: 0px;display: flex;justify-content: flex-start;">
+					<section style="outline: 0px;flex-shrink: 0;display: flex;align-items: center;">
+						<section style="outline: 0px;width: 5px;height: 5px;background-color: #00b050;border-radius: 100%;overflow: hidden;box-sizing:border-box;">
+							<span></span>
+						</section>
+					</section>
+					<section data-width="100%" style="outline: 0px; display: flex; align-items: center; justify-content: flex-start; width: 100%;box-sizing:border-box;max-width:100% !important;">
+						<section data-width="90%" style="outline: 0px; width: 90%; height: 1px; background-color: #00b050; overflow: hidden;box-sizing:border-box;max-width:90% !important;">
+							<span></span>
+						</section>
+					</section>
+				</section>
+				<section style="outline: 0px;display: flex;justify-content: flex-end;">
+					<section data-width="100%" style="outline: 0px; display: flex; align-items: center; justify-content: flex-end; width: 100%;box-sizing:border-box;max-width:100% !important;">
+						<section data-width="90%" style="outline: 0px; width: 90%; height: 1px; background-color: #ffdc61; overflow: hidden;box-sizing:border-box;max-width:90% !important;">
+							<span></span>
+						</section>
+					</section>
+					<section style="outline: 0px;flex-shrink: 0;display: flex;align-items: center;">
+						<section style="outline: 0px;width: 5px;height: 5px;background-color: #ffdc61;border-radius: 100%;overflow: hidden;box-sizing:border-box;">
+							<span></span>
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+		<section style="padding-top: 10px;padding-bottom: 10px;outline: 0px;box-sizing:border-box;">
+			<section style="margin: 10px 8px;padding-bottom: 13px;outline: 0px;transform-style: preserve-3d;box-sizing:border-box;">
+				<section style="outline: 0px;display: flex;justify-content: center;transform: translateZ(10px);-webkit-transform: translateZ(10px);-moz-transform: translateZ(10px);-o-transform: translateZ(10px);">
+					<section style="outline: 0px;background-color: #00b050;display: flex;">
+						<section style="outline: 0px;flex-shrink: 0;">
+							<section style="outline: 0px;width: 0px;height: 1px;border-top: 10px solid #ffffff;border-right: 10px solid transparent;overflow: hidden;box-sizing:border-box;">
+								<span></span>
+							</section>
+							<section style="margin-top: -10px;outline: 0px;width: 0px;height: 1px;border-bottom: 10px solid #f4d79d;border-left: 10px solid transparent;overflow: hidden;box-sizing:border-box;">
+								<span></span>
+							</section>
+						</section>
+						<section style="padding: 4px 5px;outline: 0px;font-size: 16px;color: #ffffff;text-align: center;box-sizing:border-box;">
+							<strong style="outline: 0px;"><span>往期精彩内容</span></strong>
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span></span>
+		</section>
+	</section>
+	<section style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+		<span></span>
+	</section>
+	<section style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+		<span></span>
+	</section>
+	<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" align="center">
+		<span>（图片1）</span>
+	</p>
+	<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" align="center">
+		<span><br/></span>
+	</p>
+	<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" align="center">
+		<span>（图片2）</span>
+	</p>
+	<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" align="center">
+		<span><br/></span>
+	</p>
+	<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" align="center">
+		<span><img class="rich_pages wxw-img" data-s="300,640" data-type="jpeg" style="outline: 0px; vertical-align: baseline; width: 100%; visibility: visible !important;box-sizing:border-box;max-width:100% !important;" data-cropselx1="0" data-cropselx2="562" data-cropsely1="0" data-cropsely2="381" data-backw="562" data-backh="381" data-imgfileid="100003766" data-aistatus="1" src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/lfic4S7GicgmCibzqTlnDyYSRq4Fy8iaVqxpKW0GQ9IZTuvqRwASdM7K3QSibWURDTssLy7Tkr9BeTDeZnXibp1qchzA/640?wx_fmt=other" data-ratio="0.6777777777777778" data-w="1080"/></span>
+	</p>
+	<p style="margin-bottom: 0px;" >
+		<span></span>
+	</p>
+</section>`,
+  '酷换机': `<section data-role="outer" label="edit by 135editor" data-pm-slice="0 0 []">
+	<section data-role="paragraph">
+		<section style="margin: 0px auto;padding: 0px;font-size: 15px;color: rgb(63, 63, 63);line-height: 2;letter-spacing: 1px;background-color: rgb(255, 255, 255);text-align: left;box-sizing: border-box;font-family:-apple-system, sans-serif;">
+			<section>
+				<section style="text-align: center;margin-left: 8px;margin-right: 8px;" class="" >
+					<br/>
+				</section>
+			</section>
+		</section>
+	</section>
+	<section style="margin-right: 8px;margin-left: 8px;outline: 0px;line-height: 2em;" class="">
+		<span style="outline: 0px;font-size: 15px;color: rgb(38, 38, 38);line-height: 2.27em;caret-color: red;letter-spacing: 1px;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;">如果你最近打算换新手机，可以来酷换机的合作门店以旧换新，</span><span style="outline: 0px;font-size: 15px;line-height: 2.27em;caret-color: red;letter-spacing: 1px;color: rgb(0, 111, 255);font-family:微软雅黑, &quot;Microsoft YaHei&quot;;"><strong style="outline: 0px;">旧机高价收，新机享补贴，</strong></span><span style="outline: 0px;font-size: 15px;color: rgb(38, 38, 38);line-height: 2.27em;caret-color: red;letter-spacing: 1px;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;">给你意想不到的新机换新价！</span>
+	</section>
+</section>
+<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);line-height: normal;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+	<br/>
+</p>
+<section style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" class="">
+	<a href="https://web.1zhanshou.com/map/indexkb.html" imgurl="https://mmbiz.qpic.cn/mmbiz_jpg/iaw9nmmHthVetFVX6hZcY30IEaLjX5JT86Dm7Z7oNXKicj8Y3ntYcQ2CuUFzzxYibVFg5lj0z9wia5oKiaEADD37iaAw/640?wx_fmt=other&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1&amp;tp=webp" linktype="image" tab="outerlink" target="_blank" data-linktype="1"><span class="js_jump_icon h5_image_link"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iaw9nmmHthVetFVX6hZcY30IEaLjX5JT86Dm7Z7oNXKicj8Y3ntYcQ2CuUFzzxYibVFg5lj0z9wia5oKiaEADD37iaAw/640?wx_fmt=other&wxfrom=5&wx_lazy=1&wx_co=1&tp=webp" class="rich_pages wxw-img" data-s="300,640" data-type="jpeg" style="outline: 0px;border-width: 0px;border-style: initial;border-color: initial;inset: 0px;width: 562px;visibility: visible !important;vertical-align:baseline;box-sizing:border-box;" data-backw="562" data-backh="350" data-imgfileid="100007809" data-aistatus="1"/></span></a>
+</section>
+<section style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+	<p>
+		<br/>
+	</p>
+</section>
+<section data-role="outer" label="edit by 135editor" style="margin-bottom: 0px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+	<section data-tools="135编辑器" data-id="117092" style="outline: 0px;" class="_135editor">
+		<section style="margin: 20px auto;outline: 0px;">
+			<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+				<section style="outline: 0px;display: flex;justify-content: flex-start;">
+					<section style="outline: 0px;flex-shrink: 0;display: flex;align-items: center;">
+						<section style="outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 112, 192);border-radius: 100%;overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+					</section>
+					<section data-width="100%" style="outline: 0px;display: flex;align-items: center;justify-content: flex-start;width: 656px;box-sizing:border-box;">
+						<section data-width="90%" style="outline: 0px;width: 590.4px;height: 1px;background-color: rgb(0, 112, 192);overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+					</section>
+				</section>
+				<section style="outline: 0px;display: flex;justify-content: flex-end;">
+					<section data-width="100%" style="outline: 0px;display: flex;align-items: center;justify-content: flex-end;width: 656px;box-sizing:border-box;">
+						<section data-width="90%" style="outline: 0px;width: 590.4px;height: 1px;background-color: rgb(255, 220, 97);overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+					</section>
+					<section style="outline: 0px;flex-shrink: 0;display: flex;align-items: center;">
+						<section style="outline: 0px;width: 5px;height: 5px;background-color: rgb(255, 220, 97);border-radius: 100%;overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+	</section>
+</section>
+<section data-role="outer" style="margin-bottom: 0px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+	<section style="padding-top: 10px;padding-bottom: 10px;outline: 0px;box-sizing:border-box;">
+		<section style="margin: 10px 8px;padding-bottom: 13px;outline: 0px;transform-style: preserve-3d;box-sizing:border-box;">
+			<section style="outline: 0px;display: flex;justify-content: center;transform: translateZ(10px);-webkit-transform: translateZ(10px);-moz-transform: translateZ(10px);-o-transform: translateZ(10px);">
+				<section style="outline: 0px;background-color: rgb(0, 112, 192);display: flex;">
+					<section style="outline: 0px;flex-shrink: 0;">
+						<section style="outline: 0px;width: 0px;height: 1px;border-top: 10px solid rgb(255, 255, 255);border-right: 10px solid transparent;overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+						<section style="margin-top: -10px;outline: 0px;width: 0px;height: 1px;border-bottom: 10px solid rgb(244, 215, 157);border-left: 10px solid transparent;overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+					</section>
+					<section style="padding: 4px 5px;outline: 0px;font-size: 16px;color: rgb(255, 255, 255);text-align: center;box-sizing:border-box;">
+						<strong style="outline: 0px;">往期精彩内容</strong>
+					</section>
+				</section>
+			</section>
+		</section>
+	</section>
+</section>
+<p style="margin-left: 8px;margin-right: 8px;text-align:center;" align="center">
+	（图片1）
+</p>
+<p style="margin-left: 8px;margin-right: 8px;text-align:center;" align="center">
+	<br/>
+</p>
+<p style="margin-left: 8px;margin-right: 8px;text-align:center;" align="center">
+	（图片2）<a href="https://mp.weixin.qq.com/s?__biz=Mzk0MDAzOTM0MA==&mid=2247496012&idx=2&sn=3935d2daf802b7bc6a3089244d361a26&scene=21#wechat_redirect" imgurl="https://mmecoa.qpic.cn/mmecoa_jpg/PSb0U7lnqjCb1zqENXxz3MxFoF4OUWrdLyaXeV9bhIaXDbjN4J8Zw8VjrGqulIgTXegfnSrnuO0oUv7dTlYD4JepEXjPn9RUUuAbo6ktFas/640?wx_fmt=jpeg&amp;from=appmsg" linktype="image" tab="innerlink" data-itemshowtype="0" target="_blank" data-linktype="1"><span class="js_jump_icon h5_image_link"></span></a>
+</p>
+<p style="margin-left: 8px;margin-right: 8px;text-align:center;" align="center">
+	<br/>
+</p>
+<section style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" class="">
+	<img src="https://mmbiz.qpic.cn/mmbiz_jpg/iaw9nmmHthVeb9WE5UdeeKFTc4QQorb7ib7qY5fFSpoLyHMpsjIy38ahxv0oQQ9eKCt5o5dHeCD4SWZHcyFreY8w/640?wx_fmt=other&from=appmsg&wxfrom=5&wx_lazy=1&wx_co=1&tp=webp" class="rich_pages wxw-img" data-s="300,640" data-type="jpeg" style="outline: 0px;width: 562px;visibility: visible !important;vertical-align:baseline;box-sizing:border-box;" data-cropselx1="0" data-cropselx2="562" data-cropsely1="0" data-cropsely2="386" data-backw="562" data-backh="387" data-imgfileid="100007810" data-aistatus="1"/>
+</section>
+<p style="display: none;">
+	<br/>
+</p>
+<section class="_135editor">
+	<mp-style-type data-value="3"></mp-style-type>
+</section>
+<p>
+	<br/>
+</p>`
+};
+
+/* ===== App Data ===== */
+var appData = loadAppData();
 
 /* ===== GitHub Image Hosting ===== */
 function getGHToken() {
@@ -329,6 +781,131 @@ function uploadToGitHub(dataUrl, filename) {
       .then(function(data) { resolve(data.content.download_url); })
       .catch(reject);
   });
+}
+
+
+/* ===== Template & Snippet Management ===== */
+function loadAppData() {
+  var saved = localStorage.getItem('wechat_html_helper_data');
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) { return initAppData(); }
+  }
+  return initAppData();
+}
+
+function initAppData() {
+  return {
+    templates: {},
+    snippets: { 'EPBox': [], '壹站收': [], '酷换机': [] },
+    selectedTemplate: 'EPBox'
+  };
+}
+
+function saveAppData() {
+  localStorage.setItem('wechat_html_helper_data', JSON.stringify(appData));
+}
+
+function getTemplateHtml(name) {
+  return appData.templates[name] || defaultTemplates[name] || '';
+}
+
+function selectTemplate(name) {
+  appData.selectedTemplate = name;
+  saveAppData();
+  renderTemplateList();
+  document.getElementById('templateTitle').textContent = name;
+  document.getElementById('snippetTemplateName').textContent = name;
+  document.getElementById('templateEditor').value = getTemplateHtml(name);
+  renderSnippets();
+}
+
+function saveCurrentTemplate() {
+  var name = appData.selectedTemplate;
+  appData.templates[name] = document.getElementById('templateEditor').value;
+  saveAppData();
+  showToast('模板 ' + name + ' 已保存');
+}
+
+function resetCurrentTemplate() {
+  var name = appData.selectedTemplate;
+  appData.templates[name] = defaultTemplates[name];
+  saveAppData();
+  document.getElementById('templateEditor').value = defaultTemplates[name];
+  showToast('已恢复 ' + name + ' 默认模板');
+}
+
+function renderTemplateList() {
+  var container = document.getElementById('templateList');
+  container.innerHTML = '';
+  Object.keys(defaultTemplates).forEach(function(name) {
+    var btn = document.createElement('button');
+    btn.className = 'template-btn' + (name === appData.selectedTemplate ? ' active' : '');
+    btn.textContent = name;
+    btn.onclick = function() { selectTemplate(name); };
+    container.appendChild(btn);
+  });
+}
+
+/* ===== Snippets ===== */
+function renderSnippets() {
+  var list = document.getElementById('snippetList');
+  list.innerHTML = '';
+  var items = appData.snippets[appData.selectedTemplate] || [];
+  if (items.length === 0) {
+    list.innerHTML = '<div style="color:#86868b;font-size:13px;padding:8px 0;">暂无快捷复制内容</div>';
+    return;
+  }
+  items.forEach(function(item, idx) {
+    var div = document.createElement('div');
+    div.className = 'snippet-item';
+    div.innerHTML = '<div class="snippet-text"><span>' + escapeHtml(item) + '</span></div>' +
+      '<div class="snippet-actions">' +
+      '<button class="btn-copy" onclick="copySnippet(' + idx + ')">复制</button>' +
+      '<button class="btn-edit" onclick="editSnippet(' + idx + ')">编辑</button>' +
+      '<button class="btn-delete" onclick="deleteSnippet(' + idx + ')">删除</button>' +
+      '</div>';
+    list.appendChild(div);
+  });
+}
+
+function escapeHtml(text) {
+  var div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function addSnippet() {
+  var input = document.getElementById('newSnippetText');
+  var text = input.value.trim();
+  if (!text) { showToast('请输入文本'); return; }
+  if (!appData.snippets[appData.selectedTemplate]) appData.snippets[appData.selectedTemplate] = [];
+  appData.snippets[appData.selectedTemplate].push(text);
+  saveAppData();
+  input.value = '';
+  renderSnippets();
+  showToast('已添加');
+}
+
+function editSnippet(idx) {
+  var items = appData.snippets[appData.selectedTemplate];
+  var newText = prompt('编辑快捷复制文本：', items[idx]);
+  if (newText === null) return;
+  items[idx] = newText;
+  saveAppData();
+  renderSnippets();
+  showToast('已更新');
+}
+
+function deleteSnippet(idx) {
+  var items = appData.snippets[appData.selectedTemplate];
+  items.splice(idx, 1);
+  saveAppData();
+  renderSnippets();
+  showToast('已删除');
+}
+
+function copySnippet(idx) {
+  copyText(appData.snippets[appData.selectedTemplate][idx]);
 }
 
 /* ===== Tab Switch ===== */
@@ -640,15 +1217,15 @@ function downloadImg(idx) {
 /* ===== Fusion ===== */
 function generateFusion() {
   if (!state.html) { showToast('请先确认第一步 HTML'); return; }
-  var template = document.getElementById('fuseTemplate').value.trim();
-  if (!template) { showToast('请先粘贴第三步 HTML 模板'); return; }
-  var url1 = state.img1 || document.getElementById('imgUrl1').value.trim();
-  var url2 = state.img2 || document.getElementById('imgUrl2').value.trim();
+  var template = document.getElementById('templateEditor').value.trim();
+  if (!template) { showToast('请先选择或编辑模板'); return; }
+  var url1 = state.img1;
+  var url2 = state.img2;
   if (!url1 || !url2) { showToast('请确认两张图片已上传'); return; }
 
   var imgTag1 = '<img src="' + url1 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />';
   var imgTag2 = '<img src="' + url2 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />';
-  var filled = template.replace(/（图片1）/g, imgTag1).replace(/（图片2）/g, imgTag2);
+  var filled = template.replace(/[（(]图片\s?1[）)]/g, imgTag1).replace(/[（(]图片\s?2[）)]/g, imgTag2);
   var finalHtml = state.html + '\n' + filled;
   document.getElementById('fusionOutput').textContent = finalHtml;
   showToast('最终 HTML 已生成');
@@ -690,6 +1267,10 @@ window.addEventListener('resize', function() {
     if (s && s.loaded) { onRatioChange(idx); }
   });
 });
+
+// init templates
+renderTemplateList();
+selectTemplate(appData.selectedTemplate || 'EPBox');
 </script>
 </body>
 </html>

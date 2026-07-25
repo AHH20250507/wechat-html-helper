@@ -132,20 +132,30 @@ button { border: none; cursor: pointer; transition: all .2s; }
 .preview-actions { display: flex; justify-content: center; gap: 12px; align-items: center; }
 
 /* ---- fusion ---- */
-.fuse-layout { display: flex; gap: 16px; margin-bottom: 20px; align-items: stretch; }
-@media (max-width: 900px) { .fuse-layout { flex-direction: column; } }
-.fuse-panel { flex: 0 0 240px; min-width: 240px; }
-.fuse-editor { flex: 1; min-width: 300px; }
-.snippet-panel { display: flex; flex-direction: column; }
-.template-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-.template-btn {
-  padding: 10px 12px; border-radius: 8px; border: 1px solid #e8e8ed;
-  background: #fff; color: #1d1d1f; font-size: 14px; cursor: pointer; text-align: left;
-  transition: all .2s;
+.fuse-editor-card { margin-bottom: 20px; }
+.fuse-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
 }
-.template-btn:hover { background: #f5f5f7; }
+.template-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.template-btn {
+  padding: 6px 16px; border-radius: 20px; border: 1px solid #e8e8ed;
+  background: #f5f5f7; color: #1d1d1f; font-size: 13px; cursor: pointer;
+  transition: all .2s; white-space: nowrap;
+}
+.template-btn:hover { background: #e8e8ed; }
 .template-btn.active { background: #00b050; color: #fff; border-color: #00b050; }
-#templateEditor { border-bottom: 1px solid #f0f0f0; }
+#templateEditor {
+  width: 100%; height: 260px; border: none; border-bottom: 1px solid #f0f0f0;
+  padding: 16px; font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px; line-height: 1.6; color: #1d1d1f; background: transparent;
+  resize: vertical; outline: none;
+}
+.fuse-actions {
+  padding: 12px 16px; display: flex; gap: 10px; align-items: center;
+  border-top: 1px solid #f0f0f0;
+}
+.fuse-actions button { padding: 8px 16px; font-size: 13px; border-radius: 8px; }
 .snippet-item {
   display: flex; align-items: center; gap: 10px; padding: 10px 12px;
   background: #f9f9fb; border-radius: 8px; margin-bottom: 8px;
@@ -170,7 +180,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
   flex: 1; padding: 8px 12px; border: 1px solid #d2d2d7; border-radius: 8px;
   font-size: 14px; outline: none;
 }
-.snippet-add input:focus { border-color: #00b050; }
+.snippet-add button { padding: 8px 16px; font-size: 13px; border-radius: 8px; }
 .img-status {
   font-size: 12px; color: #86868b; min-height: 18px; margin-bottom: 12px;
 }
@@ -300,31 +310,26 @@ button { border: none; cursor: pointer; transition: all .2s; }
 
   <!-- ========== Fusion Tab ========== -->
   <div class="tab-content" id="tab-fuse">
-    <div class="fuse-layout">
-      <!-- Template selector -->
-      <div class="panel fuse-panel">
-        <div class="panel-header">选择模板</div>
-        <div class="template-list" id="templateList"></div>
+    <!-- Template editor -->
+    <div class="panel fuse-editor-card">
+      <div class="panel-header fuse-header">
+        <div class="template-tabs" id="templateList"></div>
+        <button class="btn-primary" style="padding:8px 20px;font-size:13px;border-radius:8px;" onclick="generateFusion()">生成最终 HTML</button>
       </div>
-      <!-- Template editor -->
-      <div class="panel fuse-editor">
-        <div class="panel-header"><span id="templateTitle">EPBox</span></div>
-        <textarea id="templateEditor" style="flex:1;min-height:220px;height:auto;" placeholder="HTML 模板内容…"></textarea>
-        <div style="padding:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;border-top:1px solid #f0f0f0;">
-          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="saveCurrentTemplate()">保存模板</button>
-          <button class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="resetCurrentTemplate()">恢复默认</button>
-          <button class="btn-primary" style="padding:10px 32px;font-size:14px;border-radius:8px;margin-left:auto;" onclick="generateFusion()">生成最终 HTML</button>
-        </div>
+      <textarea id="templateEditor" placeholder="HTML 模板内容…"></textarea>
+      <div class="fuse-actions">
+        <button class="btn-secondary" onclick="saveCurrentTemplate()">保存模板</button>
+        <button class="btn-secondary" onclick="resetCurrentTemplate()">恢复默认</button>
       </div>
+    </div>
 
-      <!-- Snippets -->
-      <div class="panel fuse-panel snippet-panel" style="display:flex;flex-direction:column;">
-        <div class="panel-header" style="flex-shrink:0;"><span>快捷复制</span><span style="font-size:12px;color:#86868b;font-weight:400;">（<span id="snippetTemplateName">EPBox</span>）</span></div>
-        <div id="snippetList" style="padding:12px;flex:1;overflow:auto;min-height:120px;"></div>
-        <div class="snippet-add" style="flex-shrink:0;border-top:1px solid #f0f0f0;">
-          <input type="text" id="newSnippetText" placeholder="输入要快捷复制的文本…">
-          <button class="btn-primary" style="padding:8px 16px;font-size:13px;border-radius:8px;" onclick="addSnippet()">添加</button>
-        </div>
+    <!-- Snippets -->
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="panel-header"><span>快捷复制</span><span style="font-size:12px;color:#86868b;font-weight:400;">（当前模板：<span id="snippetTemplateName">EPBox</span>）</span></div>
+      <div id="snippetList" style="padding:12px;"></div>
+      <div class="snippet-add">
+        <input type="text" id="newSnippetText" placeholder="输入要快捷复制的文本…">
+        <button class="btn-primary" onclick="addSnippet()">添加</button>
       </div>
     </div>
 

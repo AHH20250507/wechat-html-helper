@@ -320,6 +320,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
       <div class="fuse-actions">
         <button class="btn-secondary" onclick="saveCurrentTemplate()">保存模板</button>
         <button class="btn-secondary" onclick="resetCurrentTemplate()">恢复默认</button>
+        <button class="btn-secondary" style="margin-left:auto;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="resetAllData()">重置数据</button>
       </div>
     </div>
 
@@ -793,11 +794,17 @@ function uploadToGitHub(dataUrl, filename) {
 
 /* ===== Template & Snippet Management ===== */
 function loadAppData() {
+  var defaults = initAppData();
   var saved = localStorage.getItem('wechat_html_helper_data');
-  if (saved) {
-    try { return JSON.parse(saved); } catch(e) { return initAppData(); }
-  }
-  return initAppData();
+  if (!saved) return defaults;
+  try {
+    var data = JSON.parse(saved);
+    return {
+      templates: data.templates || defaults.templates,
+      snippets: data.snippets || defaults.snippets,
+      selectedTemplate: data.selectedTemplate || defaults.selectedTemplate
+    };
+  } catch(e) { return defaults; }
 }
 
 function initAppData() {
@@ -813,7 +820,9 @@ function saveAppData() {
 }
 
 function getTemplateHtml(name) {
-  return appData.templates[name] || defaultTemplates[name] || '';
+  var saved = appData.templates[name];
+  if (saved && saved.trim()) return saved;
+  return defaultTemplates[name] || '';
 }
 
 function selectTemplate(name) {
@@ -839,6 +848,12 @@ function resetCurrentTemplate() {
   saveAppData();
   document.getElementById('templateEditor').value = defaultTemplates[name];
   showToast('已恢复 ' + name + ' 默认模板');
+}
+
+function resetAllData() {
+  if (!confirm('确定要重置所有本地保存的模板和快捷复制数据吗？')) return;
+  localStorage.removeItem('wechat_html_helper_data');
+  location.reload();
 }
 
 function renderTemplateList() {

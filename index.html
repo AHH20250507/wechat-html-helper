@@ -799,8 +799,13 @@ function loadAppData() {
   if (!saved) return defaults;
   try {
     var data = JSON.parse(saved);
+    var templates = {};
+    Object.keys(defaultTemplates).forEach(function(name) {
+      var savedTmpl = data.templates && data.templates[name];
+      templates[name] = (savedTmpl && savedTmpl.trim()) ? savedTmpl : defaultTemplates[name];
+    });
     return {
-      templates: data.templates || defaults.templates,
+      templates: templates,
       snippets: data.snippets || defaults.snippets,
       selectedTemplate: data.selectedTemplate || defaults.selectedTemplate
     };
@@ -809,7 +814,7 @@ function loadAppData() {
 
 function initAppData() {
   return {
-    templates: {},
+    templates: { 'EPBox': defaultTemplates['EPBox'], '壹站收': defaultTemplates['壹站收'], '酷换机': defaultTemplates['酷换机'] },
     snippets: { 'EPBox': [], '壹站收': [], '酷换机': [] },
     selectedTemplate: 'EPBox'
   };
@@ -837,9 +842,15 @@ function selectTemplate(name) {
 
 function saveCurrentTemplate() {
   var name = appData.selectedTemplate;
-  appData.templates[name] = document.getElementById('templateEditor').value;
+  var value = document.getElementById('templateEditor').value.trim();
+  if (!value) {
+    delete appData.templates[name];
+    showToast('已清空，下次加载将使用默认模板');
+  } else {
+    appData.templates[name] = value;
+    showToast('模板 ' + name + ' 已保存');
+  }
   saveAppData();
-  showToast('模板 ' + name + ' 已保存');
 }
 
 function resetCurrentTemplate() {

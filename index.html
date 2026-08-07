@@ -1555,7 +1555,12 @@ function downloadImg(idx) {
 var EPBOX_FIXED_HEAD = `<section style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.578px;text-align: center;visibility: visible;" >
 		<img alt="壹站收旧头图.gif" class="rich_pages wxw-img __bg_gif" data-aistatus="1" data-backh="86" data-backw="428" data-imgfileid="0" src="https://mmecoa.qpic.cn/mmecoa_gif/FXsTibdz1tAFVoibkXqmTQ0yh4YTYvCKhYhqsMzffYx3kruIQGNbXKTIaqPedpOLbyqgClBzGoyu0sVGWicuqwheKDpLibrsIeDlicZqktvepJps/640?wx_fmt=gif&from=appmsg&tp=webp&wxfrom=10005&wx_lazy=1#imgIndex=0" data-type="gif" data-width="428px" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;vertical-align: baseline;width: 661px !important;visibility: visible !important;box-sizing:border-box;" title="壹站收旧头图.gif" width="428" data-ratio="0.20093023255813955" data-w="1075"/>
 	</section>`;
-var EPBOX_EMPTY_HEAD = '<section style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.578px;text-align: center;visibility: visible;"></section>';
+
+function replaceFirstImg(html, replacement) {
+  var m = html.match(/<img[\s\S]*?>/i);
+  if (m) return html.slice(0, m.index) + replacement + html.slice(m.index + m[0].length);
+  return replacement + '\n' + html;
+}
 
 function generateFusion() {
   if (!state.html) { showToast('请先确认第一步 HTML'); return; }
@@ -1569,12 +1574,12 @@ function generateFusion() {
   var url2 = state['img' + s2];
   var imgTag1 = url1 ? '<img src="' + url1 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />' : '';
   var imgTag2 = url2 ? '<img src="' + url2 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />' : '';
-  // EPBox 模板：首图替换为固定头图
-  if (appData.selectedTemplate === 'EPBox' && template.indexOf(EPBOX_EMPTY_HEAD) !== -1) {
-    template = template.split(EPBOX_EMPTY_HEAD).join(EPBOX_FIXED_HEAD);
-  }
   var filled = template.replace(/[（(]图片\s?1[）)]/g, imgTag1).replace(/[（(]图片\s?2[）)]/g, imgTag2);
   var finalHtml = state.html + '\n' + filled;
+  // EPBox 模板：全文首图（最终输出第一张图）替换为固定头图；全文无图则在开头插入
+  if (appData.selectedTemplate === 'EPBox') {
+    finalHtml = replaceFirstImg(finalHtml, EPBOX_FIXED_HEAD);
+  }
   document.getElementById('fusionOutput').textContent = finalHtml;
   showToast('最终 HTML 已生成');
 }

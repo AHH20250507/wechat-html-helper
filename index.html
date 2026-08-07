@@ -1345,13 +1345,13 @@ function renderPreview(idx) {
     var offsetY = (parseInt(document.getElementById('textOffsetY' + idx).value) || 0) * scale;
     ctx.fillStyle = '#ffffff';
     ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     var lines = wrapText(ctx, text, cropW - padLeft - padRight);
     var lineHeight = fontSize * 1.2;
     var totalH = lines.length * lineHeight;
-    var centerX = cropW / 2;
+    var leftX = padLeft;
     var centerY = (cropH - totalH) / 2 + lineHeight / 2 + offsetY;
-    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
+    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], leftX, centerY + i * lineHeight);
   }
 }
 
@@ -1529,12 +1529,13 @@ function renderFinalCanvas(idx, callback) {
     var offsetY = parseInt(document.getElementById('textOffsetY' + idx).value) || 0;
     ctx.fillStyle = '#ffffff';
     ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     var lines = wrapText(ctx, text, 1280 - padLeft - padRight);
     var lineHeight = fontSize * 1.2;
     var totalH = lines.length * lineHeight;
-    var centerX = 640, centerY = (360 - totalH) / 2 + lineHeight / 2 + offsetY;
-    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
+    var leftX = padLeft;
+    var centerY = (360 - totalH) / 2 + lineHeight / 2 + offsetY;
+    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], leftX, centerY + i * lineHeight);
   }
   callback(c);
 }

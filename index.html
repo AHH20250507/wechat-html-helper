@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>公众号HTML助手</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2300b050'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='28' font-weight='bold' fill='white' text-anchor='middle'%3E%26lt;/%26gt;%3C/text%3E%3C/svg%3E">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  background: #f5f5f7; color: #1d1d1f;
+  min-height: 100vh; padding: 40px 20px;
+}
+.container { max-width: 960px; margin: 0 auto; }
+h1 { font-size: 28px; font-weight: 600; text-align: center; margin-bottom: 24px; }
+
+/* ---- tabs ---- */
+.tabs {
+  display: flex; justify-content: center; gap: 0;
+  margin-bottom: 24px; background: #e8e8ed; border-radius: 10px; padding: 3px;
+  max-width: 320px; margin-left: auto; margin-right: auto;
+}
+.tab-btn {
+  flex: 1; padding: 8px 0; text-align: center;
+  font-size: 12px; font-weight: 500; border: none; background: transparent;
+  border-radius: 8px; cursor: pointer; color: #86868b; transition: all .2s;
+}
+.tab-btn.active { background: #fff; color: #1d1d1f; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ---- panels ---- */
+.panel {
+  background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  display: flex; flex-direction: column; overflow: hidden; margin-bottom: 20px;
+}
+.panel-header {
+  padding: 12px 16px; font-size: 13px; font-weight: 600; color: #86868b;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+textarea {
+  width: 100%; height: 380px; border: none; outline: none; resize: vertical;
+  padding: 16px; font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px; line-height: 1.6; color: #1d1d1f; background: transparent;
+}
+textarea::placeholder { color: #c7c7cc; }
+.output-area {
+  width: 100%; height: 380px; padding: 16px;
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px; line-height: 1.6; color: #1d1d1f;
+  overflow: auto; white-space: pre-wrap; word-break: break-all;
+}
+.editor-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+@media (max-width: 700px) { .editor-wrap { grid-template-columns: 1fr; } }
+
+/* ---- buttons ---- */
+button { border: none; cursor: pointer; transition: all .2s; }
+.btn-primary { background: #00b050; color: #fff; }
+.btn-primary:hover { background: #009945; }
+.btn-secondary { background: #e8e8ed; color: #1d1d1f; }
+.btn-secondary:hover { background: #d2d2d7; }
+
+/* ---- append section ---- */
+.append-header-right { display: flex; align-items: center; gap: 14px; }
+.file-upload-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 6px; border: 1px solid #d2d2d7;
+  background: #fff; font-size: 12px; color: #1d1d1f; cursor: pointer;
+}
+.file-upload-btn:hover { background: #f5f5f7; }
+.file-upload-btn input[type="file"] { display: none; }
+.file-name {
+  font-size: 11px; color: #86868b; max-width: 160px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.toggle-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 400; color: #1d1d1f; cursor: pointer;
+}
+
+/* ---- image editors ---- */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+.img-editor { padding: 16px; }
+.img-upload-zone {
+  border: 2px dashed #d2d2d7; border-radius: 12px; padding: 32px 24px;
+  text-align: center; cursor: pointer; transition: all .2s; margin-bottom: 16px;
+}
+.img-upload-zone:hover { border-color: #00b050; background: #f9fff9; }
+.img-upload-zone p { color: #86868b; font-size: 14px; }
+.img-upload-zone input { display: none; }
+
+.control-panel { display: flex; flex-direction: column; gap: 1px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 16px; }
+.control-row {
+  display: grid; grid-template-columns: 48px 1fr 52px; align-items: center; gap: 10px;
+  padding: 10px 12px; background: #fff;
+}
+.control-row label { font-size: 12px; color: #1d1d1f; font-weight: 500; }
+.control-row input[type="range"] {
+  width: 100%; height: 4px; border-radius: 2px; -webkit-appearance: none; appearance: none;
+  background: #e8e8ed; outline: none; margin: 0;
+}
+.control-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+  border-radius: 50%; background: #00b050; cursor: pointer; border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.control-row input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%; background: #00b050;
+  cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.control-row input[type="number"] {
+  width: 52px; padding: 4px 4px; border: 1px solid #e8e8ed; border-radius: 6px;
+  font-size: 12px; text-align: center; color: #1d1d1f; outline: none;
+}
+.control-row input[type="number"]:focus { border-color: #00b050; }
+
+.crop-area {
+  position: relative; overflow: hidden; background: #1d1d1f;
+  border-radius: 8px; margin-bottom: 16px; cursor: grab;
+  max-width: 100%; margin-left: auto; margin-right: auto;
+}
+.crop-area:active { cursor: grabbing; }
+.crop-area img { display: block; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.crop-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+.preview-actions { display: flex; justify-content: center; gap: 12px; align-items: center; }
+
+/* ---- fusion ---- */
+.fuse-editor-card { margin-bottom: 20px; }
+.fuse-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+}
+.template-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.template-btn {
+  padding: 6px 16px; border-radius: 20px; border: 1px solid #e8e8ed;
+  background: #f5f5f7; color: #1d1d1f; font-size: 13px; cursor: pointer;
+  transition: all .2s; white-space: nowrap;
+}
+.template-btn:hover { background: #e8e8ed; }
+.template-btn.active { background: #00b050; color: #fff; border-color: #00b050; }
+#templateEditor {
+  width: 100%; height: 260px; border: none; border-bottom: 1px solid #f0f0f0;
+  padding: 16px; font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px; line-height: 1.6; color: #1d1d1f; background: transparent;
+  resize: vertical; outline: none;
+}
+.fuse-actions {
+  padding: 12px 16px; display: flex; gap: 10px; align-items: center;
+  border-top: 1px solid #f0f0f0;
+}
+.fuse-actions button { padding: 8px 16px; font-size: 13px; border-radius: 8px; }
+.snippet-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: #f9f9fb; border-radius: 8px; margin-bottom: 8px;
+}
+.snippet-text { flex: 1; font-size: 14px; word-break: break-all; }
+.snippet-text input {
+  width: 100%; padding: 6px 10px; border: 1px solid #d2d2d7; border-radius: 6px;
+  font-size: 14px; outline: none;
+}
+.snippet-text input:focus { border-color: #00b050; }
+.snippet-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.snippet-actions button {
+  padding: 4px 10px; font-size: 12px; border-radius: 6px; border: none; cursor: pointer;
+}
+.snippet-actions .btn-copy { background: #00b050; color: #fff; }
+.snippet-actions .btn-edit { background: #e8e8ed; color: #1d1d1f; }
+.snippet-actions .btn-delete { background: #ff3b30; color: #fff; }
+.snippet-add {
+  padding: 12px; border-top: 1px solid #f0f0f0; display: flex; gap: 10px; align-items: center;
+}
+.snippet-add input {
+  flex: 1; padding: 8px 12px; border: 1px solid #d2d2d7; border-radius: 8px;
+  font-size: 14px; outline: none;
+}
+.snippet-add button { padding: 8px 16px; font-size: 13px; border-radius: 8px; }
+.img-status {
+  font-size: 12px; color: #86868b; min-height: 18px; margin-bottom: 12px;
+}
+
+/* ---- toast ---- */
+.toast {
+  position: fixed; top: 20px; left: 50%;
+  transform: translateX(-50%) translateY(-60px);
+  background: #1d1d1f; color: #fff; padding: 10px 20px;
+  border-radius: 8px; font-size: 13px; opacity: 0;
+  transition: all .3s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>公众号HTML助手</h1>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('html')">1. HTML 编辑</button>
+    <button class="tab-btn" onclick="switchTab('img')">2. 图片处理</button>
+    <button class="tab-btn" onclick="switchTab('fuse')">3. 融合生成</button>
+  </div>
+
+  <!-- ========== HTML Tab ========== -->
+  <div class="tab-content active" id="tab-html">
+    <div class="editor-wrap">
+      <div class="panel">
+        <div class="panel-header">
+          <span>输入 HTML</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span id="stats" style="font-size:11px;color:#86868b;font-weight:400;"></span>
+            <button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="clearAll()">清空</button>
+            <button class="btn-primary" style="padding:4px 14px;font-size:12px;border-radius:6px;" onclick="process()">转换</button>
+          </div>
+        </div>
+        <textarea id="input" placeholder="在此粘贴原始 HTML 代码…"></textarea>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span>输出结果</span>
+          <button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="copyOutput()">复制</button>
+        </div>
+        <div class="output-area" id="output"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <span>追加结尾（可选）</span>
+        <div class="append-header-right">
+          <span class="file-name" id="fileName"></span>
+          <label class="file-upload-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            上传 HTML
+            <input type="file" id="fileInput" accept=".html,.htm,.txt" onchange="handleFileUpload(event)">
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="appendToggle" style="width:15px;height:15px;accent-color:#00b050;cursor:pointer;">
+            启用
+          </label>
+        </div>
+      </div>
+      <textarea id="appendInput" style="height:160px;" placeholder="粘贴 HTML 代码，或点击上方「上传 HTML」导入文件…（勾选「启用」后生效）"></textarea>
+    </div>
+    <div style="text-align:center;margin-bottom:20px;">
+      <button class="btn-primary" style="padding:10px 32px;font-size:14px;border-radius:8px;" onclick="confirmHtml()">确认使用此 HTML</button>
+    </div>
+  </div>
+
+  <!-- ========== Image Tab ========== -->
+  <div class="tab-content" id="tab-img">
+    <!-- Hosting settings -->
+    <div class="panel" style="margin-bottom:16px;padding:12px 16px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:13px;font-weight:600;color:#1d1d1f;">图床设置</span>
+        <input type="password" id="ghTokenInput" placeholder="GitHub Token (ghp_...)" autocomplete="off" style="flex:1;min-width:220px;padding:7px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:13px;outline:none;">
+        <button class="btn-secondary" style="padding:6px 12px;font-size:12px;border-radius:8px;" onclick="saveTokenSetting()">保存</button>
+        <button class="btn-primary" style="padding:6px 12px;font-size:12px;border-radius:8px;" onclick="checkTokenSetting()">检测</button>
+        <span id="tokenStatus" style="font-size:12px;color:#86868b;"></span>
+      </div>
+    </div>
+    <!-- Selection bar -->
+    <div class="panel" style="margin-bottom:16px;padding:12px 16px;">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <span style="font-size:13px;font-weight:600;color:#1d1d1f;">输出映射</span>
+        <label style="font-size:13px;color:#86868b;">图片1 →
+          <select id="slotForImg1" onchange="onSlotSelectChange()" style="padding:4px 8px;border:1px solid #d2d2d7;border-radius:6px;font-size:13px;outline:none;">
+            <option value="1">槽位 1</option><option value="2">槽位 2</option><option value="3">槽位 3</option><option value="4">槽位 4</option>
+          </select>
+        </label>
+        <label style="font-size:13px;color:#86868b;">图片2 →
+          <select id="slotForImg2" onchange="onSlotSelectChange()" style="padding:4px 8px;border:1px solid #d2d2d7;border-radius:6px;font-size:13px;outline:none;">
+            <option value="1">槽位 1</option><option value="2" selected>槽位 2</option><option value="3">槽位 3</option><option value="4">槽位 4</option>
+          </select>
+        </label>
+        <span id="slotSelectHint" style="font-size:12px;color:#ff3b30;display:none;">图片1和图片2不能选同一个槽位</span>
+      </div>
+    </div>
+    <div class="two-col">
+      <!-- Slot 1 -->
+      <div class="panel img-editor">
+        <div class="panel-header"><span>槽位 1</span><span id="slotTag1" style="font-size:11px;color:#00b050;font-weight:500;"></span></div>
+        <div class="img-upload-zone" id="uploadZone1" onclick="document.getElementById('imgFileInput1').click()">
+          <p>点击上传图片，或将图片拖拽到这里</p>
+          <input type="file" id="imgFileInput1" accept="image/*" onchange="imgLoaded(event,1)">
+        </div>
+        <div class="control-panel" id="imgControls1" style="display:none;">
+          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput1" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput1','fontSizeNum1');renderPreview(1)"><input type="number" id="fontSizeNum1" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum1','fontSizeInput1');renderPreview(1)"></div>
+          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput1" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput1','padLeftNum1');renderPreview(1)"><input type="number" id="padLeftNum1" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum1','padLeftInput1');renderPreview(1)"></div>
+          <div class="control-row"><label>右距</label><input type="range" id="padRightInput1" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput1','padRightNum1');renderPreview(1)"><input type="number" id="padRightNum1" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum1','padRightInput1');renderPreview(1)"></div>
+          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY1" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY1','textOffsetNum1');renderPreview(1)"><input type="number" id="textOffsetNum1" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum1','textOffsetY1');renderPreview(1)"></div>
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity1" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity1','overlayOpacityNum1');renderPreview(1)"><input type="number" id="overlayOpacityNum1" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum1','overlayOpacity1');renderPreview(1)"></div>
+        </div>
+        <div id="textInputRow1" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
+          <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
+          <input type="text" id="overlayText1" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(1)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+        </div>
+        <div class="crop-area" id="cropArea1" style="display:none;"><img id="cropImg1"><canvas class="crop-overlay" id="overlayCanvas1"></canvas></div>
+        <div class="img-status" id="imgStatus1"></div>
+        <div class="preview-actions" id="imgActions1" style="display:none;">
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="clearImgSlot(1)">清除</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="resetImg(1)">重新上传</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="downloadImg(1)">下载</button>
+          <button class="btn-primary" style="padding:8px 12px;font-size:12px;border-radius:8px;" id="confirmImg1" onclick="confirmImg(1)">确认使用</button>
+        </div>
+      </div>
+
+      <!-- Slot 2 -->
+      <div class="panel img-editor">
+        <div class="panel-header"><span>槽位 2</span><span id="slotTag2" style="font-size:11px;color:#00b050;font-weight:500;"></span></div>
+        <div class="img-upload-zone" id="uploadZone2" onclick="document.getElementById('imgFileInput2').click()">
+          <p>点击上传图片，或将图片拖拽到这里</p>
+          <input type="file" id="imgFileInput2" accept="image/*" onchange="imgLoaded(event,2)">
+        </div>
+        <div class="control-panel" id="imgControls2" style="display:none;">
+          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput2" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput2','fontSizeNum2');renderPreview(2)"><input type="number" id="fontSizeNum2" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum2','fontSizeInput2');renderPreview(2)"></div>
+          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput2" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput2','padLeftNum2');renderPreview(2)"><input type="number" id="padLeftNum2" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum2','padLeftInput2');renderPreview(2)"></div>
+          <div class="control-row"><label>右距</label><input type="range" id="padRightInput2" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput2','padRightNum2');renderPreview(2)"><input type="number" id="padRightNum2" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum2','padRightInput2');renderPreview(2)"></div>
+          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY2" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY2','textOffsetNum2');renderPreview(2)"><input type="number" id="textOffsetNum2" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum2','textOffsetY2');renderPreview(2)"></div>
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity2" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity2','overlayOpacityNum2');renderPreview(2)"><input type="number" id="overlayOpacityNum2" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum2','overlayOpacity2');renderPreview(2)"></div>
+        </div>
+        <div id="textInputRow2" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
+          <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
+          <input type="text" id="overlayText2" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(2)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+        </div>
+        <div class="crop-area" id="cropArea2" style="display:none;"><img id="cropImg2"><canvas class="crop-overlay" id="overlayCanvas2"></canvas></div>
+        <div class="img-status" id="imgStatus2"></div>
+        <div class="preview-actions" id="imgActions2" style="display:none;">
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="clearImgSlot(2)">清除</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="resetImg(2)">重新上传</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="downloadImg(2)">下载</button>
+          <button class="btn-primary" style="padding:8px 12px;font-size:12px;border-radius:8px;" id="confirmImg2" onclick="confirmImg(2)">确认使用</button>
+        </div>
+      </div>
+
+      <!-- Slot 3 -->
+      <div class="panel img-editor">
+        <div class="panel-header"><span>槽位 3</span><span id="slotTag3" style="font-size:11px;color:#00b050;font-weight:500;"></span></div>
+        <div class="img-upload-zone" id="uploadZone3" onclick="document.getElementById('imgFileInput3').click()">
+          <p>点击上传图片，或将图片拖拽到这里</p>
+          <input type="file" id="imgFileInput3" accept="image/*" onchange="imgLoaded(event,3)">
+        </div>
+        <div class="control-panel" id="imgControls3" style="display:none;">
+          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput3" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput3','fontSizeNum3');renderPreview(3)"><input type="number" id="fontSizeNum3" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum3','fontSizeInput3');renderPreview(3)"></div>
+          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput3" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput3','padLeftNum3');renderPreview(3)"><input type="number" id="padLeftNum3" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum3','padLeftInput3');renderPreview(3)"></div>
+          <div class="control-row"><label>右距</label><input type="range" id="padRightInput3" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput3','padRightNum3');renderPreview(3)"><input type="number" id="padRightNum3" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum3','padRightInput3');renderPreview(3)"></div>
+          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY3" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY3','textOffsetNum3');renderPreview(3)"><input type="number" id="textOffsetNum3" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum3','textOffsetY3');renderPreview(3)"></div>
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity3" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity3','overlayOpacityNum3');renderPreview(3)"><input type="number" id="overlayOpacityNum3" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum3','overlayOpacity3');renderPreview(3)"></div>
+        </div>
+        <div id="textInputRow3" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
+          <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
+          <input type="text" id="overlayText3" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(3)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+        </div>
+        <div class="crop-area" id="cropArea3" style="display:none;"><img id="cropImg3"><canvas class="crop-overlay" id="overlayCanvas3"></canvas></div>
+        <div class="img-status" id="imgStatus3"></div>
+        <div class="preview-actions" id="imgActions3" style="display:none;">
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="clearImgSlot(3)">清除</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="resetImg(3)">重新上传</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="downloadImg(3)">下载</button>
+          <button class="btn-primary" style="padding:8px 12px;font-size:12px;border-radius:8px;" id="confirmImg3" onclick="confirmImg(3)">确认使用</button>
+        </div>
+      </div>
+
+      <!-- Slot 4 -->
+      <div class="panel img-editor">
+        <div class="panel-header"><span>槽位 4</span><span id="slotTag4" style="font-size:11px;color:#00b050;font-weight:500;"></span></div>
+        <div class="img-upload-zone" id="uploadZone4" onclick="document.getElementById('imgFileInput4').click()">
+          <p>点击上传图片，或将图片拖拽到这里</p>
+          <input type="file" id="imgFileInput4" accept="image/*" onchange="imgLoaded(event,4)">
+        </div>
+        <div class="control-panel" id="imgControls4" style="display:none;">
+          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput4" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput4','fontSizeNum4');renderPreview(4)"><input type="number" id="fontSizeNum4" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum4','fontSizeInput4');renderPreview(4)"></div>
+          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput4" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput4','padLeftNum4');renderPreview(4)"><input type="number" id="padLeftNum4" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum4','padLeftInput4');renderPreview(4)"></div>
+          <div class="control-row"><label>右距</label><input type="range" id="padRightInput4" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput4','padRightNum4');renderPreview(4)"><input type="number" id="padRightNum4" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum4','padRightInput4');renderPreview(4)"></div>
+          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY4" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY4','textOffsetNum4');renderPreview(4)"><input type="number" id="textOffsetNum4" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum4','textOffsetY4');renderPreview(4)"></div>
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity4" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity4','overlayOpacityNum4');renderPreview(4)"><input type="number" id="overlayOpacityNum4" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum4','overlayOpacity4');renderPreview(4)"></div>
+        </div>
+        <div id="textInputRow4" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
+          <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
+          <input type="text" id="overlayText4" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(4)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+        </div>
+        <div class="crop-area" id="cropArea4" style="display:none;"><img id="cropImg4"><canvas class="crop-overlay" id="overlayCanvas4"></canvas></div>
+        <div class="img-status" id="imgStatus4"></div>
+        <div class="preview-actions" id="imgActions4" style="display:none;">
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="clearImgSlot(4)">清除</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="resetImg(4)">重新上传</button>
+          <button class="btn-secondary" style="padding:8px 12px;font-size:12px;border-radius:8px;" onclick="downloadImg(4)">下载</button>
+          <button class="btn-primary" style="padding:8px 12px;font-size:12px;border-radius:8px;" id="confirmImg4" onclick="confirmImg(4)">确认使用</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Fusion Tab ========== -->
+  <div class="tab-content" id="tab-fuse">
+    <!-- Template editor -->
+    <div class="panel fuse-editor-card">
+      <div class="panel-header fuse-header">
+        <div class="template-tabs" id="templateList"></div>
+        <button class="btn-primary" style="padding:8px 20px;font-size:13px;border-radius:8px;" onclick="generateFusion()">生成最终 HTML</button>
+      </div>
+      <textarea id="templateEditor" placeholder="HTML 模板内容…"></textarea>
+      <div class="fuse-actions">
+        <button class="btn-secondary" onclick="saveCurrentTemplate()">保存模板</button>
+        <button class="btn-secondary" onclick="setAsDefaultTemplate()">设为默认</button>
+        <button class="btn-secondary" onclick="resetCurrentTemplate()">恢复默认</button>
+        <button class="btn-secondary" style="margin-left:auto;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="resetAllData()">重置模板</button>
+      </div>
+    </div>
+
+    <!-- Snippets -->
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="panel-header"><span>快捷复制</span><span style="font-size:12px;color:#86868b;font-weight:400;">（当前模板：<span id="snippetTemplateName">EPBox</span>）</span></div>
+      <div id="snippetList" style="padding:12px;"></div>
+      <div class="snippet-add">
+        <input type="text" id="newSnippetText" placeholder="输入要快捷复制的文本…">
+        <input type="text" id="newSnippetNote" placeholder="备注（可选）" style="width:140px;flex-shrink:0;">
+        <button class="btn-primary" onclick="addSnippet()">添加</button>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="panel" style="margin-bottom:0;">
+      <div class="panel-header"><span>最终输出</span><div style="display:flex;gap:8px;"><button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;" onclick="copyFusion()">复制</button><button class="btn-secondary" style="padding:4px 12px;font-size:12px;border-radius:6px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="clearFusion()">清除</button></div></div>
+      <div class="output-area" id="fusionOutput"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== State ===== */
+var state = { html: '', img1: null, img2: null, img3: null, img4: null };
+
+/* ===== Default Templates ===== */
+var defaultTemplates = {
+  'EPBox': `<section data-role="outer" label="edit by 135editor" data-pm-slice="0 0 []" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-bottom: 0px;outline: 0px;visibility: visible;">
+	<section style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.578px;text-align: center;visibility: visible;"></section>
+	<section data-role="outer" label="edit by 135editor" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;letter-spacing: 0.578px;visibility: visible;">
+		<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;visibility: visible;">
+			<section data-role="outer" label="edit by 135editor" data-pm-slice="0 0 []" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;visibility: visible;">
+				<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+					<section data-role="outer" label="edit by 135editor" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;line-height: normal;letter-spacing: 0.578px;">
+						<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;line-height: normal;letter-spacing: 0.578px;">
+							<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;line-height: normal;letter-spacing: 0.578px;" class="">
+								<section style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-right: 8px;margin-left: 8px;outline: 0px;line-height: normal;" class="">
+									<section data-tools="135编辑器" data-id="93761" style="-webkit-tap-highlight-color: transparent;outline: 0px;" class="_135editor">
+										<section style="-webkit-tap-highlight-color: transparent;margin-right: 8px;margin-left: 8px;outline: 0px;text-align: center;" class="">
+											<section style="-webkit-tap-highlight-color: transparent;outline: 0px;display: inline-block;">
+												<section style="-webkit-tap-highlight-color: transparent;outline: 0px;vertical-align: initial;width: 2.5em;box-sizing:border-box;">
+													<img alt="图片" class="__bg_gif rich_pages wxw-img" data-aistatus="1" data-imgfileid="100012832" src="https://mmbiz.qpic.cn/mmbiz_gif/7QRTvkK2qC6zUP9gShKxKeKvjyQFJdqfaNmjSdSFItodyDs4G28Ia6KAxicferaJFoF7LHqlgo9KRu4IQOcu9dg/640?wx_fmt=gif&&tp=webp&wxfrom=10005&wx_lazy=1#imgIndex=14" data-type="gif" data-width="100%" style="-webkit-tap-highlight-color: transparent;outline: 0px;vertical-align: baseline;display: block;width: 42.5px !important;visibility: visible !important;box-sizing:border-box;" draggable="false" data-ratio="1.5689655172413792" data-w="116"/>
+												</section>
+											</section>
+										</section>
+									</section>
+									<section data-role="paragraph" style="-webkit-tap-highlight-color: transparent;outline: 0px;">
+										<section style="-webkit-tap-highlight-color: transparent;margin-right: 8px;margin-left: 8px;outline: 0px;vertical-align: initial;" class="">
+											<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+												<br/>
+											</p>
+										</section>
+									</section>
+									<section data-tools="135编辑器" data-id="97976" style="-webkit-tap-highlight-color: transparent;outline: 0px;" class="_135editor">
+										<section style="-webkit-tap-highlight-color: transparent;margin: 10px 8px;outline: 0px;text-align: center;">
+											<section style="-webkit-tap-highlight-color: transparent;padding-top: 3px;padding-bottom: 3px;outline: 0px;display: inline-block;border-top: 1px solid rgb(134, 217, 111);border-bottom: 2px solid rgb(134, 217, 111);box-sizing:border-box;" class="">
+												<section style="-webkit-tap-highlight-color: transparent;padding: 3px 15px 3px 8px;outline: 0px;display: flex;justify-content: center;align-items: center;background: rgb(243, 253, 248);color: rgb(120, 193, 156);border-top-right-radius: 15px;box-sizing:border-box;" class="">
+													<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 25px;box-sizing:border-box;" class="">
+														<p>
+															<br/>
+														</p>
+													</section>
+													<section data-brushtype="text" style="-webkit-tap-highlight-color: transparent;margin-left: 5px;outline: 0px;letter-spacing: 1.5px;color: rgb(118, 193, 155);">
+														<p style="-webkit-tap-highlight-color: transparent;outline: 0px;vertical-align: initial;letter-spacing: 2px;">
+															<span style="-webkit-tap-highlight-color: transparent;outline: 0px;color: rgb(146, 208, 80);font-size: 15px;font-family:黑体, SimHei;"><strong style="-webkit-tap-highlight-color: transparent;outline: 0px;"><span><a class="normal_text_link" target="_blank" style="padding-right: 0px;padding-left: 0px;outline: 0px;color: rgb(146, 208, 80);cursor: pointer;" href="https://web.1zhanshou.com/map/index.html" textvalue="查看壹站收EPBox网点" linktype="text" data-linktype="2">查看壹站收EPBox网点</a></span></strong></span>
+														</p>
+													</section>
+												</section>
+											</section>
+										</section>
+									</section>
+									<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;" class="">
+										<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+											<span style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;"><br/></span>
+										</p>
+									</section>
+									<section data-role="paragraph" style="-webkit-tap-highlight-color: transparent;outline: 0px;">
+										<section style="-webkit-tap-highlight-color: transparent;margin-right: 8px;margin-left: 8px;outline: 0px;">
+											<section style="-webkit-tap-highlight-color: transparent;margin: 10px auto;outline: 0px;display: flex;justify-content: center;">
+												<section style="-webkit-tap-highlight-color: transparent;outline: 0px;display: flex;align-items: flex-end;">
+													<section style="-webkit-tap-highlight-color: transparent;outline: 0px;flex-shrink: 0;">
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(10px);-webkit-transform: translateX(10px);-moz-transform: translateX(10px);-o-transform: translateX(10px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(5px);-webkit-transform: translateX(5px);-moz-transform: translateX(5px);-o-transform: translateX(5px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(5px);-webkit-transform: translateX(5px);-moz-transform: translateX(5px);-o-transform: translateX(5px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(10px);-webkit-transform: translateX(10px);-moz-transform: translateX(10px);-o-transform: translateX(10px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+													</section>
+													<section style="-webkit-tap-highlight-color: transparent;padding-right: 20px;padding-left: 20px;outline: 0px;box-sizing:border-box;">
+														<section style="-webkit-tap-highlight-color: transparent;padding-right: 5px;padding-left: 5px;outline: 0px;font-size: 16px;color: rgb(0, 176, 80);text-align: center;border-bottom: 1px solid rgb(0, 176, 80);box-sizing:border-box;" class="">
+															<strong data-brushtype="text" style="-webkit-tap-highlight-color: transparent;outline: 0px;"><span>你可能错过的往期精彩</span></strong>
+														</section>
+													</section>
+													<section style="-webkit-tap-highlight-color: transparent;outline: 0px;flex-shrink: 0;">
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(-10px);-webkit-transform: translateX(-10px);-moz-transform: translateX(-10px);-o-transform: translateX(-10px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(-5px);-webkit-transform: translateX(-5px);-moz-transform: translateX(-5px);-o-transform: translateX(-5px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(-5px);-webkit-transform: translateX(-5px);-moz-transform: translateX(-5px);-o-transform: translateX(-5px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+														<section style="-webkit-tap-highlight-color: transparent;outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 176, 80);overflow: hidden;box-sizing:border-box;transform: translateX(-10px);-webkit-transform: translateX(-10px);-moz-transform: translateX(-10px);-o-transform: translateX(-10px);">
+															<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+																<br/>
+															</p>
+														</section>
+													</section>
+												</section>
+											</section>
+										</section>
+									</section>
+									<section data-role="paragraph" style="-webkit-tap-highlight-color: transparent;outline: 0px;">
+										<section style="-webkit-tap-highlight-color: transparent;margin: 10px 8px;outline: 0px;text-align: center;">
+											<section style="-webkit-tap-highlight-color: transparent;outline: 0px;display: flex;justify-content: center;align-items: center;">
+												<section style="-webkit-tap-highlight-color: transparent;margin-top: -37px;outline: 0px;display: flex;justify-content: space-between;align-items: center;">
+													<section style="-webkit-tap-highlight-color: transparent;margin-top: -8px;outline: 0px;font-size: 28px;">
+														<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;" >
+															<br/>
+														</p>
+													</section>
+												</section>
+											</section>
+										</section>
+									</section>
+								</section>
+								<section style="text-align: center;margin-left: 8px;margin-right: 8px;" class=""></section>
+								<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-right: 8px;margin-left: 8px;outline: 0px;">
+									<span style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;"><br/></span>
+								</p>
+								<p style="text-align: center;margin-left: 8px;margin-right: 8px;" align="center">
+									<a href="https://mp.weixin.qq.com/s?__biz=Mzk0ODQyMjAyNQ==&mid=2247496795&idx=1&sn=69f3b6c902f40463a6c177e103be873b&scene=21#wechat_redirect" imgurl="https://mmecoa.qpic.cn/mmecoa_jpg/FXsTibdz1tAEriaLtQkU2qeBzpHsB9qwA2dQwFtLdBQ6ckaAtpqUWGia5u28DPiaxhlJU7cxO2OeuGZOaqN0RRspQLRUEVajlB1YIVzbfdzb4IU/640?wx_fmt=jpeg&amp;from=appmsg" linktype="image" tab="innerlink" data-itemshowtype="0" target="_blank" data-linktype="1"><span class="js_jump_icon h5_image_link"></span></a>（图片1）
+								</p>
+								<p style="text-align: center;margin-left: 8px;margin-right: 8px;" align="center">
+									<br/>
+								</p>
+								<p style="text-align: center;margin-left: 8px;margin-right: 8px;" align="center">
+									（图片2）
+								</p>
+								<p style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);margin-right: 8px;margin-left: 8px;outline: 0px;text-align: center;" align="center">
+									<span><br/></span>
+								</p>
+							</section>
+						</section>
+					</section>
+					<section data-role="paragraph" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;">
+						<section style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);outline: 0px;text-align: center;margin-left: 8px;margin-right: 8px;" class="">
+							<img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OXIPS079n3lMo9QuRI5t6RvuE5OmR4icsk0KszsOdXruIGe4ic8vWLAMQ8Rsbw2AibTlicJy9oKQqsEwvDvrTC2VrQ/640?wx_fmt=other&&tp=webp&wxfrom=10005&wx_lazy=1#imgIndex=18" alt="图片" class="rich_pages wxw-img" data-s="300,640" data-type="jpeg" style="-webkit-tap-highlight-color: transparent;outline: 0px;vertical-align: baseline;letter-spacing: 0.034em;width: 677px !important;visibility: visible !important;box-sizing:border-box;font-family:mp-quote, -apple-system-font, BlinkMacSystemFont, Arial, sans-serif;" title="壹站收公众号二维码关注.jpg" width="444" data-width="444px" data-backw="562" data-backh="301" data-imgfileid="100012834" data-aistatus="1" data-ratio="0.5351851851851852" data-w="1080"/>
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+	</section>
+</section>
+<p style="display: none;">
+	<br/>
+</p>
+<section class="_135editor">
+	<mp-style-type data-value="3"></mp-style-type>
+</section>
+<p>
+	<br/>
+</p>`,
+  '壹站收': `<section data-role="paragraph" class="_135editor">
+	<section data-role="outer" label="edit by 135editor" style="letter-spacing: 0.578px; text-wrap: wrap; margin-bottom: 0px;" data-pm-slice="0 0 []">
+		<section data-role="paragraph">
+			<section style="margin-right: 8px;margin-left: 8px;line-height: 2em;">
+				<span></span>
+			</section>
+		</section>
+	</section>
+	<section data-role="outer" style="margin-bottom: 0px;text-wrap: wrap;letter-spacing: 0.544px;background-color: #ffffff;outline:0px;visibility:visible;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;letter-spacing: 1px;font-size: 15px;color: #262626;line-height: 2.27em;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;"><span>如果你最近</span></span><span style="outline: 0px;letter-spacing: 1px;font-size: 15px;color: #262626;line-height: 2.27em;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;"><span>换了新手机，</span></span><span style="outline: 0px;font-size: var(--articleFontsize);letter-spacing: 0.578px;color: #00b050;"><strong style="outline: 0px;"><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;"><span>旧手机记得来壹站收高价回收，为你的钱包回回血！</span></span></strong></span><span style="outline: 0px;color: #262626;font-size: 15px;letter-spacing: 1px;"><span>选择壹站收的4大理由：</span></span><span style="outline: 0px;color: #262626;font-size: 15px;letter-spacing: 1px;"></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;color: #262626;font-size: 15px;letter-spacing: 1px;"><span></span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.544px;">
+			<span style="outline: 0px;color: #262626;font-size: 15px;letter-spacing: 1px;"></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;color: #00b050;"><strong style="outline: 0px;"><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;line-height: 2.27em;"><span>【安全】</span></span></strong></span><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;color: #262626;line-height: 2.27em;"><span>在回收过程中，回收设备会严格把关您的信息是否彻底删除。回收后会用专业数据清除工具再次处理，保障信息安全。</span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;color: #00b050;"><strong style="outline: 0px;"><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;line-height: 2.27em;"><span>【便捷】</span></span></strong></span><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;color: #262626;line-height: 2.27em;"><span>最快3分钟即可完成整个旧机回收过程，且回收金额均可实现秒到账。</span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;color: #00b050;"><strong style="outline: 0px;"><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;line-height: 2.27em;"><span>【高价】</span></span></strong></span><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;color: #262626;line-height: 2.27em;"><span>通过“数智化”系统，实时监控市场动态价格，让机主能以市场实时的最高价卖出旧机。</span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span style="outline: 0px;color: #00b050;"><strong style="outline: 0px;"><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;line-height: 2.27em;"><span>【环保】</span></span></strong></span><span style="outline: 0px;font-size: 15px;letter-spacing: 1px;color: #262626;line-height: 2.27em;"><span>每回收成功一台旧机，能为地球减排49.1公斤，每一个旧机回收的行为，都是在为地球的明天作出巨大贡献。</span></span>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span></span>
+		</section>
+		<section style="margin: 20px auto;outline: 0px;">
+			<section style="outline: 0px;margin-left: 8px;margin-right: 8px;">
+				<section style="outline: 0px;display: flex;justify-content: flex-start;">
+					<section style="outline: 0px;flex-shrink: 0;display: flex;align-items: center;">
+						<section style="outline: 0px;width: 5px;height: 5px;background-color: #00b050;border-radius: 100%;overflow: hidden;box-sizing:border-box;">
+							<span></span>
+						</section>
+					</section>
+					<section data-width="100%" style="outline: 0px; display: flex; align-items: center; justify-content: flex-start; width: 100%;box-sizing:border-box;max-width:100% !important;">
+						<section data-width="90%" style="outline: 0px; width: 90%; height: 1px; background-color: #00b050; overflow: hidden;box-sizing:border-box;max-width:90% !important;">
+							<span></span>
+						</section>
+					</section>
+				</section>
+				<section style="outline: 0px;display: flex;justify-content: flex-end;">
+					<section data-width="100%" style="outline: 0px; display: flex; align-items: center; justify-content: flex-end; width: 100%;box-sizing:border-box;max-width:100% !important;">
+						<section data-width="90%" style="outline: 0px; width: 90%; height: 1px; background-color: #ffdc61; overflow: hidden;box-sizing:border-box;max-width:90% !important;">
+							<span></span>
+						</section>
+					</section>
+					<section style="outline: 0px;flex-shrink: 0;display: flex;align-items: center;">
+						<section style="outline: 0px;width: 5px;height: 5px;background-color: #ffdc61;border-radius: 100%;overflow: hidden;box-sizing:border-box;">
+							<span></span>
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+		<section style="padding-top: 10px;padding-bottom: 10px;outline: 0px;box-sizing:border-box;">
+			<section style="margin: 10px 8px;padding-bottom: 13px;outline: 0px;transform-style: preserve-3d;box-sizing:border-box;">
+				<section style="outline: 0px;display: flex;justify-content: center;transform: translateZ(10px);-webkit-transform: translateZ(10px);-moz-transform: translateZ(10px);-o-transform: translateZ(10px);">
+					<section style="outline: 0px;background-color: #00b050;display: flex;">
+						<section style="outline: 0px;flex-shrink: 0;">
+							<section style="outline: 0px;width: 0px;height: 1px;border-top: 10px solid #ffffff;border-right: 10px solid transparent;overflow: hidden;box-sizing:border-box;">
+								<span></span>
+							</section>
+							<section style="margin-top: -10px;outline: 0px;width: 0px;height: 1px;border-bottom: 10px solid #f4d79d;border-left: 10px solid transparent;overflow: hidden;box-sizing:border-box;">
+								<span></span>
+							</section>
+						</section>
+						<section style="padding: 4px 5px;outline: 0px;font-size: 16px;color: #ffffff;text-align: center;box-sizing:border-box;">
+							<strong style="outline: 0px;"><span>往期精彩内容</span></strong>
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+			<span></span>
+		</section>
+	</section>
+	<section style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+		<span></span>
+	</section>
+	<section style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+		<span></span>
+	</section>
+	<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" align="center">
+		<span>（图片1）</span>
+	</p>
+	<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" align="center">
+		<span><br/></span>
+	</p>
+	<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" align="center">
+		<span>（图片2）</span>
+	</p>
+	<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" align="center">
+		<span><br/></span>
+	</p>
+	<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" align="center">
+		<span><img class="rich_pages wxw-img" data-s="300,640" data-type="jpeg" style="outline: 0px; vertical-align: baseline; width: 100%; visibility: visible !important;box-sizing:border-box;max-width:100% !important;" data-cropselx1="0" data-cropselx2="562" data-cropsely1="0" data-cropsely2="381" data-backw="562" data-backh="381" data-imgfileid="100003766" data-aistatus="1" src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/lfic4S7GicgmCibzqTlnDyYSRq4Fy8iaVqxpKW0GQ9IZTuvqRwASdM7K3QSibWURDTssLy7Tkr9BeTDeZnXibp1qchzA/640?wx_fmt=other" data-ratio="0.6777777777777778" data-w="1080"/></span>
+	</p>
+	<p style="margin-bottom: 0px;" >
+		<span></span>
+	</p>
+</section>`,
+  '酷换机': `<section data-role="outer" label="edit by 135editor" data-pm-slice="0 0 []">
+	<section data-role="paragraph">
+		<section style="margin: 0px auto;padding: 0px;font-size: 15px;color: rgb(63, 63, 63);line-height: 2;letter-spacing: 1px;background-color: rgb(255, 255, 255);text-align: left;box-sizing: border-box;font-family:-apple-system, sans-serif;">
+			<section>
+				<section style="text-align: center;margin-left: 8px;margin-right: 8px;" class="" >
+					<br/>
+				</section>
+			</section>
+		</section>
+	</section>
+	<section style="margin-right: 8px;margin-left: 8px;outline: 0px;line-height: 2em;" class="">
+		<span style="outline: 0px;font-size: 15px;color: rgb(38, 38, 38);line-height: 2.27em;caret-color: red;letter-spacing: 1px;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;">如果你最近打算换新手机，可以来酷换机的合作门店以旧换新，</span><span style="outline: 0px;font-size: 15px;line-height: 2.27em;caret-color: red;letter-spacing: 1px;color: rgb(0, 111, 255);font-family:微软雅黑, &quot;Microsoft YaHei&quot;;"><strong style="outline: 0px;">旧机高价收，新机享补贴，</strong></span><span style="outline: 0px;font-size: 15px;color: rgb(38, 38, 38);line-height: 2.27em;caret-color: red;letter-spacing: 1px;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;">给你意想不到的新机换新价！</span>
+	</section>
+</section>
+<p style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);line-height: normal;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+	<br/>
+</p>
+<section style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" class="">
+	<a href="https://web.1zhanshou.com/map/indexkb.html" imgurl="https://mmbiz.qpic.cn/mmbiz_jpg/iaw9nmmHthVetFVX6hZcY30IEaLjX5JT86Dm7Z7oNXKicj8Y3ntYcQ2CuUFzzxYibVFg5lj0z9wia5oKiaEADD37iaAw/640?wx_fmt=other&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1&amp;tp=webp" linktype="image" tab="outerlink" target="_blank" data-linktype="1"><span class="js_jump_icon h5_image_link"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iaw9nmmHthVetFVX6hZcY30IEaLjX5JT86Dm7Z7oNXKicj8Y3ntYcQ2CuUFzzxYibVFg5lj0z9wia5oKiaEADD37iaAw/640?wx_fmt=other&wxfrom=5&wx_lazy=1&wx_co=1&tp=webp" class="rich_pages wxw-img" data-s="300,640" data-type="jpeg" style="outline: 0px;border-width: 0px;border-style: initial;border-color: initial;inset: 0px;width: 562px;visibility: visible !important;vertical-align:baseline;box-sizing:border-box;" data-backw="562" data-backh="350" data-imgfileid="100007809" data-aistatus="1"/></span></a>
+</section>
+<section style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+	<p>
+		<br/>
+	</p>
+</section>
+<section data-role="outer" label="edit by 135editor" style="margin-bottom: 0px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+	<section data-tools="135编辑器" data-id="117092" style="outline: 0px;" class="_135editor">
+		<section style="margin: 20px auto;outline: 0px;">
+			<section style="margin-right: 8px;margin-left: 8px;outline: 0px;">
+				<section style="outline: 0px;display: flex;justify-content: flex-start;">
+					<section style="outline: 0px;flex-shrink: 0;display: flex;align-items: center;">
+						<section style="outline: 0px;width: 5px;height: 5px;background-color: rgb(0, 112, 192);border-radius: 100%;overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+					</section>
+					<section data-width="100%" style="outline: 0px;display: flex;align-items: center;justify-content: flex-start;width: 656px;box-sizing:border-box;">
+						<section data-width="90%" style="outline: 0px;width: 590.4px;height: 1px;background-color: rgb(0, 112, 192);overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+					</section>
+				</section>
+				<section style="outline: 0px;display: flex;justify-content: flex-end;">
+					<section data-width="100%" style="outline: 0px;display: flex;align-items: center;justify-content: flex-end;width: 656px;box-sizing:border-box;">
+						<section data-width="90%" style="outline: 0px;width: 590.4px;height: 1px;background-color: rgb(255, 220, 97);overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+					</section>
+					<section style="outline: 0px;flex-shrink: 0;display: flex;align-items: center;">
+						<section style="outline: 0px;width: 5px;height: 5px;background-color: rgb(255, 220, 97);border-radius: 100%;overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+	</section>
+</section>
+<section data-role="outer" style="margin-bottom: 0px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+	<section style="padding-top: 10px;padding-bottom: 10px;outline: 0px;box-sizing:border-box;">
+		<section style="margin: 10px 8px;padding-bottom: 13px;outline: 0px;transform-style: preserve-3d;box-sizing:border-box;">
+			<section style="outline: 0px;display: flex;justify-content: center;transform: translateZ(10px);-webkit-transform: translateZ(10px);-moz-transform: translateZ(10px);-o-transform: translateZ(10px);">
+				<section style="outline: 0px;background-color: rgb(0, 112, 192);display: flex;">
+					<section style="outline: 0px;flex-shrink: 0;">
+						<section style="outline: 0px;width: 0px;height: 1px;border-top: 10px solid rgb(255, 255, 255);border-right: 10px solid transparent;overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+						<section style="margin-top: -10px;outline: 0px;width: 0px;height: 1px;border-bottom: 10px solid rgb(244, 215, 157);border-left: 10px solid transparent;overflow: hidden;box-sizing:border-box;">
+							<p>
+								<br/>
+							</p>
+						</section>
+					</section>
+					<section style="padding: 4px 5px;outline: 0px;font-size: 16px;color: rgb(255, 255, 255);text-align: center;box-sizing:border-box;">
+						<strong style="outline: 0px;">往期精彩内容</strong>
+					</section>
+				</section>
+			</section>
+		</section>
+	</section>
+</section>
+<p style="margin-left: 8px;margin-right: 8px;text-align:center;" align="center">
+	（图片1）
+</p>
+<p style="margin-left: 8px;margin-right: 8px;text-align:center;" align="center">
+	<br/>
+</p>
+<p style="margin-left: 8px;margin-right: 8px;text-align:center;" align="center">
+	（图片2）<a href="https://mp.weixin.qq.com/s?__biz=Mzk0MDAzOTM0MA==&mid=2247496012&idx=2&sn=3935d2daf802b7bc6a3089244d361a26&scene=21#wechat_redirect" imgurl="https://mmecoa.qpic.cn/mmecoa_jpg/PSb0U7lnqjCb1zqENXxz3MxFoF4OUWrdLyaXeV9bhIaXDbjN4J8Zw8VjrGqulIgTXegfnSrnuO0oUv7dTlYD4JepEXjPn9RUUuAbo6ktFas/640?wx_fmt=jpeg&amp;from=appmsg" linktype="image" tab="innerlink" data-itemshowtype="0" target="_blank" data-linktype="1"><span class="js_jump_icon h5_image_link"></span></a>
+</p>
+<p style="margin-left: 8px;margin-right: 8px;text-align:center;" align="center">
+	<br/>
+</p>
+<section style="margin-right: 8px;margin-bottom: 0px;margin-left: 8px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);text-align: center;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" class="">
+	<img src="https://mmbiz.qpic.cn/mmbiz_jpg/iaw9nmmHthVeb9WE5UdeeKFTc4QQorb7ib7qY5fFSpoLyHMpsjIy38ahxv0oQQ9eKCt5o5dHeCD4SWZHcyFreY8w/640?wx_fmt=other&from=appmsg&wxfrom=5&wx_lazy=1&wx_co=1&tp=webp" class="rich_pages wxw-img" data-s="300,640" data-type="jpeg" style="outline: 0px;width: 562px;visibility: visible !important;vertical-align:baseline;box-sizing:border-box;" data-cropselx1="0" data-cropselx2="562" data-cropsely1="0" data-cropsely2="386" data-backw="562" data-backh="387" data-imgfileid="100007810" data-aistatus="1"/>
+</section>
+<p style="display: none;">
+	<br/>
+</p>
+<section class="_135editor">
+	<mp-style-type data-value="3"></mp-style-type>
+</section>
+<p>
+	<br/>
+</p>`
+};
+
+/* ===== App Data ===== */
+var appData = loadAppData();
+
+/* ===== GitHub Image Hosting & Token Management ===== */
+function getGHToken() {
+  // Fallback chain: user-saved token (settings) → built-in token (obfuscated)
+  try {
+    var saved = localStorage.getItem('wechat_html_gh_token');
+    if (saved && saved.trim()) return saved.trim();
+  } catch(e) {}
+  var c = [103,104,112,95,100,122,49,81,66,70,90,81,99,110,77,105,116,67,56,72,105,72,66,53,50,73,100,54,56,98,68,71,52,81,50,99,53,71,83,74];
+  return c.map(function(n){ return String.fromCharCode(n); }).join('');
+}
+
+function saveGHToken(token) {
+  try {
+    if (token && token.trim()) { localStorage.setItem('wechat_html_gh_token', token.trim()); }
+    else { localStorage.removeItem('wechat_html_gh_token'); }
+    return true;
+  } catch(e) { return false; }
+}
+
+function checkGHToken() {
+  // Detects whether the token is valid / expired
+  return new Promise(function(resolve) {
+    fetch('https://api.github.com/rate_limit', {
+      headers: { 'Authorization': 'token ' + getGHToken() }
+    })
+    .then(function(res) {
+      if (res.status === 200) {
+        return res.json().then(function(d) {
+          resolve({ ok: true, login: (d.resources && d.resources.core) ? ('剩余配额 ' + d.resources.core.remaining + '/' + d.resources.core.limit) : '' });
+        });
+      }
+      if (res.status === 401) { resolve({ ok: false, status: 401, msg: 'token 无效或已过期（401）' }); return; }
+      if (res.status === 403) { resolve({ ok: false, status: 403, msg: 'token 被限制（403），可能是配额耗尽' }); return; }
+      resolve({ ok: false, status: res.status, msg: 'HTTP ' + res.status });
+    })
+    .catch(function() { resolve({ ok: false, status: 0, msg: '网络错误，无法连接 GitHub' }); });
+  });
+}
+
+function loadTokenSetting() {
+  var input = document.getElementById('ghTokenInput');
+  if (!input) return;
+  input.value = getGHToken();
+}
+
+function saveTokenSetting() {
+  var input = document.getElementById('ghTokenInput');
+  if (!input) return;
+  var ok = saveGHToken(input.value);
+  showToast(ok ? 'token 已保存' : '保存失败');
+  if (ok) checkTokenSetting();
+}
+
+function checkTokenSetting() {
+  var status = document.getElementById('tokenStatus');
+  if (!status) return;
+  status.textContent = '检测中…';
+  status.style.color = '#86868b';
+  checkGHToken().then(function(r) {
+    if (r.ok) {
+      status.textContent = '有效 ' + r.login;
+      status.style.color = '#00b050';
+    } else {
+      status.textContent = r.msg + '，请在输入框粘贴新 token 后点保存';
+      status.style.color = '#ff3b30';
+    }
+  });
+}
+
+function uploadToGitHub(dataUrl, filename) {
+  return new Promise(function(resolve, reject) {
+    var owner = 'AHH20250507';
+    var repo = 'wechat-html-helper';
+    var path = 'images/' + filename;
+    var base64 = dataUrl.split(',')[1];
+    if (!base64) { reject(new Error('Invalid data URL')); return; }
+    var apiUrl = 'https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + path;
+    fetch(apiUrl + '?t=' + Date.now(), { headers: { 'Authorization': 'token ' + getGHToken() } })
+      .then(function(res) { return res.ok ? res.json() : null; })
+      .catch(function() { return null; })
+      .then(function(meta) {
+        var payload = { message: 'upload ' + filename, content: base64 };
+        if (meta && meta.sha) payload.sha = meta.sha;
+        return fetch(apiUrl, {
+          method: 'PUT',
+          headers: { 'Authorization': 'token ' + getGHToken(), 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      })
+      .then(function(res) {
+        if (!res.ok) {
+          if (res.status === 401) {
+            showToast('GitHub token 无效或已过期，请在「图床设置」中更新');
+          }
+          return res.text().then(function(t){ throw new Error('HTTP ' + res.status + ': ' + t); });
+        }
+        return res.json();
+      })
+      .then(function(data) { resolve(data.content.download_url); })
+      .catch(reject);
+  });
+}
+
+
+/* ===== Template & Snippet Management ===== */
+function loadAppData() {
+  var defaults = initAppData();
+  var saved = localStorage.getItem('wechat_html_helper_data');
+  if (!saved) return defaults;
+  try {
+    var data = JSON.parse(saved);
+    var templates = {};
+    Object.keys(defaultTemplates).forEach(function(name) {
+      var savedTmpl = data.templates && data.templates[name];
+      templates[name] = (savedTmpl && savedTmpl.trim()) ? savedTmpl : defaultTemplates[name];
+    });
+    return {
+      templates: templates,
+      snippets: data.snippets || defaults.snippets,
+      selectedTemplate: data.selectedTemplate || defaults.selectedTemplate
+    };
+  } catch(e) { return defaults; }
+}
+
+function initAppData() {
+  return {
+    templates: { 'EPBox': defaultTemplates['EPBox'], '壹站收': defaultTemplates['壹站收'], '酷换机': defaultTemplates['酷换机'] },
+    snippets: { 'EPBox': [], '壹站收': [], '酷换机': [] },
+    selectedTemplate: 'EPBox'
+  };
+}
+
+function saveAppData() {
+  localStorage.setItem('wechat_html_helper_data', JSON.stringify(appData));
+}
+
+function getTemplateHtml(name) {
+  var saved = appData.templates[name];
+  if (saved && saved.trim()) return saved;
+  return defaultTemplates[name] || '';
+}
+
+function selectTemplate(name) {
+  appData.selectedTemplate = name;
+  saveAppData();
+  renderTemplateList();
+  document.getElementById('snippetTemplateName').textContent = name;
+  document.getElementById('templateEditor').value = getTemplateHtml(name);
+  renderSnippets();
+}
+
+function saveCurrentTemplate() {
+  var name = appData.selectedTemplate;
+  var value = document.getElementById('templateEditor').value.trim();
+  if (!value) {
+    delete appData.templates[name];
+    showToast('已清空，下次加载将使用默认模板');
+  } else {
+    appData.templates[name] = value;
+    showToast('模板 ' + name + ' 已保存');
+  }
+  saveAppData();
+}
+
+function resetCurrentTemplate() {
+  var name = appData.selectedTemplate;
+  appData.templates[name] = defaultTemplates[name];
+  saveAppData();
+  document.getElementById('templateEditor').value = defaultTemplates[name];
+  showToast('已恢复 ' + name + ' 默认模板');
+}
+
+function setAsDefaultTemplate() {
+  var name = appData.selectedTemplate;
+  var value = document.getElementById('templateEditor').value;
+  if (!value.trim()) { showToast('模板内容为空，无法设为默认'); return; }
+  if (!confirm('确定将当前 ' + name + ' 模板内容设为新的默认模板吗？\n（"恢复默认"将恢复到此版本）')) return;
+  defaultTemplates[name] = value;
+  appData.templates[name] = value;
+  saveAppData();
+  showToast(name + ' 已设为默认模板');
+}
+
+function resetAllData() {
+  if (!confirm('确定要重置所有 HTML 模板为初始默认值吗？\n（快捷复制内容不会被清除）')) return;
+  Object.keys(defaultTemplates).forEach(function(name) {
+    appData.templates[name] = defaultTemplates[name];
+  });
+  saveAppData();
+  document.getElementById('templateEditor').value = getTemplateHtml(appData.selectedTemplate);
+  showToast('所有模板已重置为默认');
+}
+
+function renderTemplateList() {
+  var container = document.getElementById('templateList');
+  container.innerHTML = '';
+  Object.keys(defaultTemplates).forEach(function(name) {
+    var btn = document.createElement('button');
+    btn.className = 'template-btn' + (name === appData.selectedTemplate ? ' active' : '');
+    btn.textContent = name;
+    btn.onclick = function() { selectTemplate(name); };
+    container.appendChild(btn);
+  });
+}
+
+/* ===== Snippets ===== */
+function getSnippetText(item) { return typeof item === 'string' ? item : (item.text || ''); }
+function getSnippetNote(item) { return typeof item === 'string' ? '' : (item.note || ''); }
+
+function renderSnippets() {
+  var list = document.getElementById('snippetList');
+  list.innerHTML = '';
+  var items = appData.snippets[appData.selectedTemplate] || [];
+  if (items.length === 0) {
+    list.innerHTML = '<div style="color:#86868b;font-size:13px;padding:8px 0;">暂无快捷复制内容</div>';
+    return;
+  }
+  items.forEach(function(item, idx) {
+    var text = getSnippetText(item);
+    var note = getSnippetNote(item);
+    var div = document.createElement('div');
+    div.className = 'snippet-item';
+    div.innerHTML = '<div class="snippet-text"><span>' + escapeHtml(text) + '</span>' +
+      (note ? '<div style="font-size:11px;color:#86868b;margin-top:3px;">备注：' + escapeHtml(note) + '</div>' : '') +
+      '</div>' +
+      '<div class="snippet-actions">' +
+      '<button class="btn-copy" onclick="copySnippet(' + idx + ')">复制</button>' +
+      '<button class="btn-edit" onclick="editSnippet(' + idx + ')">编辑</button>' +
+      '<button class="btn-delete" onclick="deleteSnippet(' + idx + ')">删除</button>' +
+      '</div>';
+    list.appendChild(div);
+  });
+}
+
+function escapeHtml(text) {
+  var div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function addSnippet() {
+  var input = document.getElementById('newSnippetText');
+  var noteInput = document.getElementById('newSnippetNote');
+  var text = input.value.trim();
+  if (!text) { showToast('请输入文本'); return; }
+  if (!appData.snippets[appData.selectedTemplate]) appData.snippets[appData.selectedTemplate] = [];
+  var note = noteInput.value.trim();
+  appData.snippets[appData.selectedTemplate].push(note ? { text: text, note: note } : text);
+  saveAppData();
+  input.value = '';
+  noteInput.value = '';
+  renderSnippets();
+  showToast('已添加');
+}
+
+function editSnippet(idx) {
+  var items = appData.snippets[appData.selectedTemplate];
+  var item = items[idx];
+  var oldText = getSnippetText(item);
+  var oldNote = getSnippetNote(item);
+  var newText = prompt('编辑快捷复制文本：', oldText);
+  if (newText === null) return;
+  var newNote = prompt('编辑备注（留空则无备注）：', oldNote);
+  if (newNote === null) newNote = oldNote;
+  newNote = newNote.trim();
+  items[idx] = newNote ? { text: newText, note: newNote } : newText;
+  saveAppData();
+  renderSnippets();
+  showToast('已更新');
+}
+
+function deleteSnippet(idx) {
+  var items = appData.snippets[appData.selectedTemplate];
+  items.splice(idx, 1);
+  saveAppData();
+  renderSnippets();
+  showToast('已删除');
+}
+
+function copySnippet(idx) {
+  copyText(getSnippetText(appData.snippets[appData.selectedTemplate][idx]));
+}
+
+/* ===== Tab Switch ===== */
+function switchTab(name) {
+  var names = ['html','img','fuse'];
+  var idx = names.indexOf(name);
+  document.querySelectorAll('.tab-btn').forEach(function(b, i) { b.classList.toggle('active', i === idx); });
+  ['tab-html','tab-img','tab-fuse'].forEach(function(id, i) {
+    document.getElementById(id).classList.toggle('active', (idx === i));
+  });
+}
+
+/* ===== HTML Editor ===== */
+var OLD_IMG = '<img alt="\u9177\u6362\u673a\u65b0\u5934\u56fe.gif" src="https://mmbiz.qpic.cn/mmbiz_gif/iaw9nmmHthVcNNic7B4ibFg7Ribvt2o1pTCbfFlicw8No0Spt3ic3y9BDqzHdxZYF5zPNvB6DdZUMYU0T9Wkb0IroEhA/640?wx_fmt=gif" style="vertical-align: baseline;width: 100%;box-sizing:border-box;max-width:100% !important;" draggable="false" data-ratio="0.20074349442379183" data-w="1076"/>';
+var NEW_IMG = '<img src="https://mmbiz.qpic.cn/mmbiz_gif/lfic4S7GicgmD0Ot7hgOUpfofRwogPQoaTUSkOXicuTWeETNsjdZWSyQflaVfKqAo0zakN2K0ia7PBuxj8FfG4XHNQ/640?wx_fmt=gif" style="width:100%;vertical-align:baseline;box-sizing:border-box;max-width:100% !important;" draggable="false" data-ratio="0.20055710306406685" data-w="1077"/>';
+
+function process() {
+  var input = document.getElementById('input').value;
+  if (!input.trim()) { showToast('请先粘贴 HTML 代码'); return; }
+  var result = input, colorCount = 0, imgCount = 0;
+  result = result.replace(/#006fff/gi, function() { colorCount++; return '#00b050'; });
+  if (result.indexOf(OLD_IMG) !== -1) { result = result.split(OLD_IMG).join(NEW_IMG); imgCount = 1; }
+  else {
+    var re = /<img[^>]*iaw9nmmHthVcNNic7B4ibFg7Ribvt2o1pTCbfFlicw8No0Spt3ic3y9BDqzHdxZYF5zPNvB6DdZUMYU0T9Wkb0IroEhA[^>]*\/?>/gi;
+    if (re.test(result)) { result = result.replace(re, function() { imgCount++; return NEW_IMG; }); }
+  }
+  if (document.getElementById('appendToggle').checked) {
+    var ac = document.getElementById('appendInput').value;
+    if (ac.trim()) result = result + ac;
+  }
+  document.getElementById('output').textContent = result;
+  var p = [];
+  if (colorCount > 0) p.push('颜色替换 ' + colorCount + ' 处');
+  if (imgCount > 0) p.push('头图替换 ' + imgCount + ' 处');
+  document.getElementById('stats').textContent = p.length > 0 ? '完成：' + p.join('，') : '未匹配到任何规则';
+}
+
+function confirmHtml() {
+  var raw = document.getElementById('input').value.trim();
+  var converted = document.getElementById('output').textContent.trim();
+  var base = converted || raw;
+  if (!base) { showToast('请先粘贴 HTML 代码'); return; }
+  // 无论是否点过「转换」，只要勾选了追加结尾就拼上
+  if (document.getElementById('appendToggle').checked) {
+    var ac = document.getElementById('appendInput').value;
+    if (ac.trim()) base = base + ac;
+  }
+  state.html = base;
+  showToast('HTML 已确认，进入图片处理');
+  switchTab('img');
+}
+
+function handleFileUpload(e) {
+  var file = e.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    document.getElementById('appendInput').value = ev.target.result;
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('appendToggle').checked = true;
+    showToast('已导入 ' + file.name);
+  };
+  reader.readAsText(file); e.target.value = '';
+}
+
+function copyOutput() {
+  var text = document.getElementById('output').textContent;
+  if (!text) { showToast('暂无内容可复制'); return; }
+  copyText(text);
+}
+
+function clearAll() {
+  document.getElementById('input').value = '';
+  document.getElementById('output').textContent = '';
+  document.getElementById('stats').textContent = '';
+  document.getElementById('appendInput').value = '';
+  document.getElementById('appendToggle').checked = false;
+  document.getElementById('fileName').textContent = '';
+}
+
+/* ===== Image Editor ===== */
+var imgStates = {};
+function getCropW(idx) {
+  var area = document.getElementById('cropArea' + idx);
+  var container = area.parentElement;
+  var w = container.clientWidth - 32;
+  if (w < 300) w = container.clientWidth - 24;
+  if (w < 280) w = 280;
+  return w;
+}
+function getCropH(w) { return Math.round(w * 360 / 1280); }
+
+function setupDrag(idx) {
+  var area = document.getElementById('cropArea' + idx);
+  area.addEventListener('mousedown', function(e) { startDrag(e.clientX, e.clientY, idx); e.preventDefault(); });
+  area.addEventListener('touchstart', function(e) { var t = e.touches[0]; startDrag(t.clientX, t.clientY, idx); e.preventDefault(); }, { passive: false });
+  area.addEventListener('wheel', function(e) { zoomImg(e, idx); }, { passive: false });
+}
+
+function imgLoaded(e, idx) {
+  var file = e.target.files[0];
+  if (!file || !file.type.startsWith('image/')) { showToast('请选择图片文件'); return; }
+  e.target.value = '';
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var img = document.getElementById('cropImg' + idx);
+    img.onload = function() {
+      imgStates[idx] = { loaded: true, naturalW: img.naturalWidth, naturalH: img.naturalHeight, offX: 0, offY: 0, scale: 1, dragging: false, cachedImg: new Image() };
+      imgStates[idx].cachedImg.src = ev.target.result;
+      document.getElementById('imgControls' + idx).style.display = 'flex';
+      document.getElementById('textInputRow' + idx).style.display = 'block';
+      document.getElementById('cropArea' + idx).style.display = 'block';
+      document.getElementById('imgActions' + idx).style.display = 'flex';
+      document.getElementById('uploadZone' + idx).style.display = 'none';
+      document.getElementById('imgStatus' + idx).textContent = '';
+      onRatioChange(idx);
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function onRatioChange(idx) {
+  var s = imgStates[idx];
+  var cropW = getCropW(idx), cropH = getCropH(cropW);
+  var area = document.getElementById('cropArea' + idx);
+  area.style.width = cropW + 'px'; area.style.height = cropH + 'px';
+  var canvas = document.getElementById('overlayCanvas' + idx);
+  canvas.width = cropW; canvas.height = cropH;
+  var imgRatio = s.naturalW / s.naturalH;
+  var cropRatio = cropW / cropH;
+  if (imgRatio > cropRatio) s.scale = cropH / s.naturalH;
+  else s.scale = cropW / s.naturalW;
+  s.offX = (cropW - s.naturalW * s.scale) / 2;
+  s.offY = (cropH - s.naturalH * s.scale) / 2;
+  clampImgPos(idx);
+  applyImgPos(idx);
+  renderPreview(idx);
+}
+
+function applyImgPos(idx) {
+  var s = imgStates[idx];
+  var img = document.getElementById('cropImg' + idx);
+  img.style.width = (s.naturalW * s.scale) + 'px';
+  img.style.height = (s.naturalH * s.scale) + 'px';
+  img.style.position = 'absolute';
+  img.style.left = s.offX + 'px';
+  img.style.top = s.offY + 'px';
+}
+
+function clampImgPos(idx) {
+  var s = imgStates[idx];
+  var cropW = getCropW(idx), cropH = getCropH(cropW);
+  var imgW = s.naturalW * s.scale, imgH = s.naturalH * s.scale;
+  if (imgW >= cropW) s.offX = Math.min(0, Math.max(cropW - imgW, s.offX));
+  else s.offX = (cropW - imgW) / 2;
+  if (imgH >= cropH) s.offY = Math.min(0, Math.max(cropH - imgH, s.offY));
+  else s.offY = (cropH - imgH) / 2;
+}
+
+function startDrag(x, y, idx) {
+  var s = imgStates[idx]; if (!s || !s.loaded) return;
+  s.dragging = true; s.startX = x; s.startY = y; s.startOffX = s.offX; s.startOffY = s.offY;
+}
+function moveDrag(x, y, idx) {
+  var s = imgStates[idx]; if (!s || !s.dragging) return;
+  s.offX = s.startOffX + (x - s.startX);
+  s.offY = s.startOffY + (y - s.startY);
+  clampImgPos(idx); applyImgPos(idx); renderPreview(idx);
+}
+function endDrag(idx) { var s = imgStates[idx]; if (!s || !s.dragging) return; s.dragging = false; clampImgPos(idx); applyImgPos(idx); renderPreview(idx); }
+function zoomImg(e, idx) {
+  var s = imgStates[idx]; if (!s || !s.loaded) return;
+  e.preventDefault();
+  var delta = e.deltaY > 0 ? -0.05 : 0.05;
+  var newScale = Math.max(0.1, Math.min(5, s.scale + delta));
+  var area = document.getElementById('cropArea' + idx);
+  var rect = area.getBoundingClientRect();
+  var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  var ratio = newScale / s.scale;
+  s.offX = mx - (mx - s.offX) * ratio;
+  s.offY = my - (my - s.offY) * ratio;
+  s.scale = newScale;
+  clampImgPos(idx); applyImgPos(idx); renderPreview(idx);
+}
+
+document.addEventListener('mousemove', function(e) { [1,2,3,4].forEach(function(i) { if (imgStates[i] && imgStates[i].dragging) moveDrag(e.clientX, e.clientY, i); }); });
+document.addEventListener('touchmove', function(e) { [1,2,3,4].forEach(function(i) { if (imgStates[i] && imgStates[i].dragging) { var t = e.touches[0]; moveDrag(t.clientX, t.clientY, i); e.preventDefault(); } }); }, { passive: false });
+document.addEventListener('mouseup', function() { [1,2,3,4].forEach(function(i) { endDrag(i); }); });
+document.addEventListener('touchend', function() { [1,2,3,4].forEach(function(i) { endDrag(i); }); });
+setupDrag(1); setupDrag(2); setupDrag(3); setupDrag(4);
+
+function syncFromSlider(sliderId, numId) { document.getElementById(numId).value = document.getElementById(sliderId).value; }
+function syncFromNumber(numId, sliderId) { document.getElementById(sliderId).value = document.getElementById(numId).value; }
+
+function renderPreview(idx) {
+  var s = imgStates[idx]; if (!s || !s.loaded) return;
+  var cropW = getCropW(idx), cropH = getCropH(cropW);
+  var canvas = document.getElementById('overlayCanvas' + idx);
+  var ctx = canvas.getContext('2d');
+  canvas.width = cropW; canvas.height = cropH;
+  ctx.clearRect(0,0,cropW,cropH);
+  // overlay
+  var opVal = parseInt(document.getElementById('overlayOpacity' + idx).value);
+  var opacity = (isNaN(opVal) ? 54 : opVal) / 100;
+  ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
+  ctx.fillRect(0,0,cropW,cropH);
+  // text
+  var text = document.getElementById('overlayText' + idx).value;
+  if (text) {
+    var scale = cropW / 1280;
+    var fontSize = (parseInt(document.getElementById('fontSizeInput' + idx).value) || 72) * scale;
+    var padLeft = (parseInt(document.getElementById('padLeftInput' + idx).value) || 40) * scale;
+    var padRight = (parseInt(document.getElementById('padRightInput' + idx).value) || 40) * scale;
+    var offsetY = (parseInt(document.getElementById('textOffsetY' + idx).value) || 0) * scale;
+    ctx.fillStyle = '#ffffff';
+    ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var lines = wrapText(ctx, text, cropW - padLeft - padRight);
+    var lineHeight = fontSize * 1.2;
+    var totalH = lines.length * lineHeight;
+    var centerX = cropW / 2;
+    var centerY = (cropH - totalH) / 2 + lineHeight / 2 + offsetY;
+    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
+  }
+}
+
+function wrapText(ctx, text, maxWidth) {
+  var chars = text.split(''), lines = [], line = '';
+  for (var i = 0; i < chars.length; i++) {
+    var test = line + chars[i];
+    if (ctx.measureText(test).width > maxWidth && line.length > 0) { lines.push(line); line = chars[i]; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function resetImg(idx) {
+  imgStates[idx] = null;
+  document.getElementById('imgControls' + idx).style.display = 'none';
+  document.getElementById('textInputRow' + idx).style.display = 'none';
+  document.getElementById('cropArea' + idx).style.display = 'none';
+  document.getElementById('imgActions' + idx).style.display = 'none';
+  document.getElementById('uploadZone' + idx).style.display = 'block';
+  document.getElementById('overlayText' + idx).value = '';
+  document.getElementById('imgStatus' + idx).textContent = '';
+  var defaults = { fontSize: 72, padLeft: 40, padRight: 40, textOffset: 0 };
+  ['fontSize','padLeft','padRight'].forEach(function(k){ document.getElementById(k + 'Input' + idx).value = defaults[k]; document.getElementById(k + 'Num' + idx).value = defaults[k]; });
+  document.getElementById('textOffsetY' + idx).value = defaults.textOffset;
+  document.getElementById('textOffsetNum' + idx).value = defaults.textOffset;
+  document.getElementById('overlayOpacity' + idx).value = 54;
+  document.getElementById('overlayOpacityNum' + idx).value = 54;
+}
+
+function confirmImg(idx) {
+  var s = imgStates[idx]; if (!s || !s.loaded) { showToast('请先上传图片 ' + idx); return; }
+  var btn = document.getElementById('confirmImg' + idx);
+  btn.disabled = true; btn.textContent = '上传中…';
+  renderFinalCanvas(idx, function(c) {
+    var dataUrl = c.toDataURL('image/png');
+    var thumb = c.toDataURL('image/jpeg', 0.6);
+    var filename = 'cover' + idx + '.png';
+    // save record locally
+    var records = loadImgRecords();
+    records[idx] = {
+      thumb: thumb,
+      text: document.getElementById('overlayText' + idx).value,
+      fontSize: document.getElementById('fontSizeInput' + idx).value,
+      padLeft: document.getElementById('padLeftInput' + idx).value,
+      padRight: document.getElementById('padRightInput' + idx).value,
+      offsetY: document.getElementById('textOffsetY' + idx).value,
+      opacity: document.getElementById('overlayOpacity' + idx).value,
+      githubUrl: null
+    };
+    saveImgRecords(records);
+    uploadToGitHub(dataUrl, filename).then(function(url) {
+      var fullUrl = url + '?t=' + Date.now();
+      state['img' + idx] = fullUrl;
+      records = loadImgRecords();
+      if (records[idx]) { records[idx].githubUrl = fullUrl; saveImgRecords(records); }
+      document.getElementById('imgStatus' + idx).innerHTML = '槽位 ' + idx + ' 已上传：<a href="' + url + '" target="_blank" style="color:#00b050;">查看</a>';
+      btn.textContent = '已确认'; btn.disabled = false;
+      showToast('槽位 ' + idx + ' 已确认');
+    }).catch(function(err) {
+      state['img' + idx] = dataUrl;
+      records = loadImgRecords();
+      if (records[idx]) { records[idx].githubUrl = dataUrl; saveImgRecords(records); }
+      document.getElementById('imgStatus' + idx).textContent = '上传失败，已退回 base64 内嵌';
+      btn.textContent = '已确认'; btn.disabled = false;
+      showToast('上传失败，已退回 base64');
+    });
+  });
+}
+
+/* ===== Image Records Persistence ===== */
+function loadImgRecords() {
+  try { return JSON.parse(localStorage.getItem('wechat_html_img_records') || '{}'); } catch(e) { return {}; }
+}
+function saveImgRecords(records) {
+  try { localStorage.setItem('wechat_html_img_records', JSON.stringify(records)); } catch(e) {}
+}
+
+function clearImgSlot(idx) {
+  imgStates[idx] = null;
+  state['img' + idx] = null;
+  document.getElementById('imgControls' + idx).style.display = 'none';
+  document.getElementById('textInputRow' + idx).style.display = 'none';
+  document.getElementById('cropArea' + idx).style.display = 'none';
+  document.getElementById('imgActions' + idx).style.display = 'none';
+  document.getElementById('uploadZone' + idx).style.display = 'block';
+  document.getElementById('overlayText' + idx).value = '';
+  document.getElementById('imgStatus' + idx).textContent = '';
+  var defaults = { fontSize: 72, padLeft: 40, padRight: 40, textOffset: 0 };
+  ['fontSize','padLeft','padRight'].forEach(function(k){ document.getElementById(k + 'Input' + idx).value = defaults[k]; document.getElementById(k + 'Num' + idx).value = defaults[k]; });
+  document.getElementById('textOffsetY' + idx).value = defaults.textOffset;
+  document.getElementById('textOffsetNum' + idx).value = defaults.textOffset;
+  document.getElementById('overlayOpacity' + idx).value = 54;
+  document.getElementById('overlayOpacityNum' + idx).value = 54;
+  var btn = document.getElementById('confirmImg' + idx);
+  btn.textContent = '确认使用'; btn.disabled = false;
+  // remove from records
+  var records = loadImgRecords();
+  delete records[idx];
+  saveImgRecords(records);
+  showToast('槽位 ' + idx + ' 已清除');
+}
+
+/* ===== Slot Selection ===== */
+function onSlotSelectChange() {
+  var s1 = document.getElementById('slotForImg1').value;
+  var s2 = document.getElementById('slotForImg2').value;
+  var hint = document.getElementById('slotSelectHint');
+  hint.style.display = (s1 === s2) ? 'inline' : 'none';
+  updateSlotTags();
+}
+
+function updateSlotTags() {
+  var s1 = document.getElementById('slotForImg1').value;
+  var s2 = document.getElementById('slotForImg2').value;
+  [1,2,3,4].forEach(function(i) {
+    var tag = document.getElementById('slotTag' + i);
+    var labels = [];
+    if (String(i) === s1) labels.push('→ 图片1');
+    if (String(i) === s2) labels.push('→ 图片2');
+    tag.textContent = labels.join(' ');
+  });
+}
+
+function restoreImgRecords() {
+  var records = loadImgRecords();
+  [1,2,3,4].forEach(function(idx) {
+    var rec = records[idx];
+    if (!rec || !rec.thumb) return;
+    // show the saved thumbnail as preview
+    document.getElementById('uploadZone' + idx).style.display = 'none';
+    document.getElementById('imgControls' + idx).style.display = 'flex';
+    document.getElementById('textInputRow' + idx).style.display = 'block';
+    document.getElementById('imgActions' + idx).style.display = 'flex';
+    // restore settings
+    if (rec.text) document.getElementById('overlayText' + idx).value = rec.text;
+    if (rec.fontSize) { document.getElementById('fontSizeInput' + idx).value = rec.fontSize; document.getElementById('fontSizeNum' + idx).value = rec.fontSize; }
+    if (rec.padLeft) { document.getElementById('padLeftInput' + idx).value = rec.padLeft; document.getElementById('padLeftNum' + idx).value = rec.padLeft; }
+    if (rec.padRight) { document.getElementById('padRightInput' + idx).value = rec.padRight; document.getElementById('padRightNum' + idx).value = rec.padRight; }
+    if (rec.offsetY) { document.getElementById('textOffsetY' + idx).value = rec.offsetY; document.getElementById('textOffsetNum' + idx).value = rec.offsetY; }
+    if (rec.opacity) { document.getElementById('overlayOpacity' + idx).value = rec.opacity; document.getElementById('overlayOpacityNum' + idx).value = rec.opacity; }
+    // show thumbnail in crop area
+    var cropArea = document.getElementById('cropArea' + idx);
+    cropArea.style.display = 'block';
+    var img = document.getElementById('cropImg' + idx);
+    img.src = rec.thumb;
+    img.style.width = '100%';
+    // restore github url to state
+    if (rec.githubUrl) state['img' + idx] = rec.githubUrl;
+    document.getElementById('imgStatus' + idx).innerHTML = rec.githubUrl
+      ? '已恢复记录：<a href="' + rec.githubUrl.split('?')[0] + '" target="_blank" style="color:#00b050;">查看</a>'
+      : '已恢复本地记录（未上传）';
+    document.getElementById('confirmImg' + idx).textContent = rec.githubUrl ? '已确认' : '确认使用';
+  });
+  updateSlotTags();
+}
+
+function renderFinalCanvas(idx, callback) {
+  var s = imgStates[idx];
+  var c = document.createElement('canvas');
+  c.width = 1280; c.height = 360;
+  var ctx = c.getContext('2d');
+  ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, 1280, 360);
+  var scale = 1280 / getCropW(idx);
+  ctx.drawImage(s.cachedImg, s.offX * scale, s.offY * scale, s.naturalW * s.scale * scale, s.naturalH * s.scale * scale);
+  var opVal = parseInt(document.getElementById('overlayOpacity' + idx).value);
+  var opacity = (isNaN(opVal) ? 54 : opVal) / 100;
+  ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')'; ctx.fillRect(0, 0, 1280, 360);
+  var text = document.getElementById('overlayText' + idx).value;
+  if (text) {
+    var fontSize = parseInt(document.getElementById('fontSizeInput' + idx).value) || 72;
+    var padLeft = parseInt(document.getElementById('padLeftInput' + idx).value) || 40;
+    var padRight = parseInt(document.getElementById('padRightInput' + idx).value) || 40;
+    var offsetY = parseInt(document.getElementById('textOffsetY' + idx).value) || 0;
+    ctx.fillStyle = '#ffffff';
+    ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var lines = wrapText(ctx, text, 1280 - padLeft - padRight);
+    var lineHeight = fontSize * 1.2;
+    var totalH = lines.length * lineHeight;
+    var centerX = 640, centerY = (360 - totalH) / 2 + lineHeight / 2 + offsetY;
+    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], centerX, centerY + i * lineHeight);
+  }
+  callback(c);
+}
+
+function downloadImg(idx) {
+  var s = imgStates[idx]; if (!s || !s.loaded) { showToast('请先上传图片'); return; }
+  renderFinalCanvas(idx, function(c) {
+    var link = document.createElement('a');
+    link.download = 'cover' + idx + '.png';
+    link.href = c.toDataURL('image/png');
+    link.click();
+    showToast('图片 ' + idx + ' 已下载');
+  });
+}
+
+/* ===== Fusion ===== */
+function generateFusion() {
+  if (!state.html) { showToast('请先确认第一步 HTML'); return; }
+  var template = document.getElementById('templateEditor').value.trim();
+  if (!template) { showToast('请先选择或编辑模板'); return; }
+  var s1 = parseInt(document.getElementById('slotForImg1').value);
+  var s2 = parseInt(document.getElementById('slotForImg2').value);
+  if (s1 === s2) { showToast('图片1和图片2不能选同一个槽位'); return; }
+  var url1 = state['img' + s1];
+  var url2 = state['img' + s2];
+  if (!url1) { showToast('槽位 ' + s1 + '（图片1）尚未确认上传'); return; }
+  if (!url2) { showToast('槽位 ' + s2 + '（图片2）尚未确认上传'); return; }
+
+  var imgTag1 = '<img src="' + url1 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />';
+  var imgTag2 = '<img src="' + url2 + '" style="width:100%;max-width:100%;display:block;" data-ratio="0.5625" data-w="1280" />';
+  var filled = template.replace(/[（(]图片\s?1[）)]/g, imgTag1).replace(/[（(]图片\s?2[）)]/g, imgTag2);
+  var finalHtml = state.html + '\n' + filled;
+  document.getElementById('fusionOutput').textContent = finalHtml;
+  showToast('最终 HTML 已生成');
+}
+
+function copyFusion() {
+  var text = document.getElementById('fusionOutput').textContent;
+  if (!text) { showToast('暂无内容可复制'); return; }
+  copyText(text);
+}
+
+function clearFusion() {
+  document.getElementById('fusionOutput').textContent = '';
+  showToast('输出已清除');
+}
+
+function copyText(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() { showToast('已复制到剪贴板'); }).catch(function() { fallbackCopy(text); });
+  } else { fallbackCopy(text); }
+}
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea'); ta.value = text;
+  document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+  document.body.removeChild(ta); showToast('已复制到剪贴板');
+}
+
+/* ===== Toast ===== */
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 2000);
+}
+
+// Ctrl+Enter shortcut
+document.getElementById('input').addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') process();
+});
+
+// recalculate crop area on resize
+window.addEventListener('resize', function() {
+  [1,2,3,4].forEach(function(idx) {
+    var s = imgStates[idx];
+    if (s && s.loaded) { onRatioChange(idx); }
+  });
+});
+
+// init templates
+renderTemplateList();
+selectTemplate(appData.selectedTemplate || 'EPBox');
+
+// init image records
+restoreImgRecords();
+updateSlotTags();
+
+// init hosting token setting + auto check
+loadTokenSetting();
+setTimeout(function() {
+  checkGHToken().then(function(r) {
+    if (!r.ok && r.status === 401) {
+      showToast('GitHub token 已失效，请在图床设置的输入框粘贴新 token 后点保存');
+      var status = document.getElementById('tokenStatus');
+      if (status) { status.textContent = r.msg + '，请更新'; status.style.color = '#ff3b30'; }
+    }
+  });
+}, 800);
+</script>
+</body>
+</html>

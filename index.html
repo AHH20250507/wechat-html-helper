@@ -855,7 +855,7 @@ function getGHToken() {
     var saved = localStorage.getItem('wechat_html_gh_token');
     if (saved && saved.trim()) return saved.trim();
   } catch(e) {}
-  var c = [103,104,112,95,100,122,49,81,66,70,90,81,99,110,77,105,116,67,56,72,105,72,66,53,50,73,100,54,56,98,68,71,52,81,50,99,53,71,83,74];
+  var c = [103,104,112,95,121,74,57,78,73,52,82,78,120,65,90,113,103,51,82,76,70,100,79,121,114,66,98,89,54,115,82,50,68,74,49,113,116,53,113,121];
   return c.map(function(n){ return String.fromCharCode(n); }).join('');
 }
 

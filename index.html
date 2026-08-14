@@ -103,6 +103,31 @@ button { border: none; cursor: pointer; transition: all .2s; }
 .img-upload-zone p { color: #86868b; font-size: 14px; }
 .img-upload-zone input { display: none; }
 
+.control-panel { display: flex; flex-direction: column; gap: 1px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 16px; }
+.control-row {
+  display: grid; grid-template-columns: 48px 1fr 52px; align-items: center; gap: 10px;
+  padding: 10px 12px; background: #fff;
+}
+.control-row label { font-size: 12px; color: #1d1d1f; font-weight: 500; }
+.control-row input[type="range"] {
+  width: 100%; height: 4px; border-radius: 2px; -webkit-appearance: none; appearance: none;
+  background: #e8e8ed; outline: none; margin: 0;
+}
+.control-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
+  border-radius: 50%; background: #00b050; cursor: pointer; border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.control-row input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%; background: #00b050;
+  cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.control-row input[type="number"] {
+  width: 52px; padding: 4px 4px; border: 1px solid #e8e8ed; border-radius: 6px;
+  font-size: 12px; text-align: center; color: #1d1d1f; outline: none;
+}
+.control-row input[type="number"]:focus { border-color: #00b050; }
+
 .crop-area {
   position: relative; overflow: hidden; background: #1d1d1f;
   border-radius: 8px; margin-bottom: 16px; cursor: grab;
@@ -296,6 +321,9 @@ button { border: none; cursor: pointer; transition: all .2s; }
           <p>点击上传图片，或将图片拖拽到这里</p>
           <input type="file" id="imgFileInput1" accept="image/*" onchange="imgLoaded(event,1)">
         </div>
+        <div class="control-panel" id="imgControls1" style="display:none;">
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity1" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity1','overlayOpacityNum1');renderPreview(1)"><input type="number" id="overlayOpacityNum1" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum1','overlayOpacity1');renderPreview(1)"></div>
+        </div>
         <div id="textInputRow1" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
           <input type="text" id="overlayText1" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(1)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
@@ -317,6 +345,9 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div class="img-upload-zone" id="uploadZone2" onclick="document.getElementById('imgFileInput2').click()">
           <p>点击上传图片，或将图片拖拽到这里</p>
           <input type="file" id="imgFileInput2" accept="image/*" onchange="imgLoaded(event,2)">
+        </div>
+        <div class="control-panel" id="imgControls2" style="display:none;">
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity2" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity2','overlayOpacityNum2');renderPreview(2)"><input type="number" id="overlayOpacityNum2" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum2','overlayOpacity2');renderPreview(2)"></div>
         </div>
         <div id="textInputRow2" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
@@ -340,6 +371,9 @@ button { border: none; cursor: pointer; transition: all .2s; }
           <p>点击上传图片，或将图片拖拽到这里</p>
           <input type="file" id="imgFileInput3" accept="image/*" onchange="imgLoaded(event,3)">
         </div>
+        <div class="control-panel" id="imgControls3" style="display:none;">
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity3" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity3','overlayOpacityNum3');renderPreview(3)"><input type="number" id="overlayOpacityNum3" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum3','overlayOpacity3');renderPreview(3)"></div>
+        </div>
         <div id="textInputRow3" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
           <input type="text" id="overlayText3" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(3)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
@@ -361,6 +395,9 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div class="img-upload-zone" id="uploadZone4" onclick="document.getElementById('imgFileInput4').click()">
           <p>点击上传图片，或将图片拖拽到这里</p>
           <input type="file" id="imgFileInput4" accept="image/*" onchange="imgLoaded(event,4)">
+        </div>
+        <div class="control-panel" id="imgControls4" style="display:none;">
+          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity4" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity4','overlayOpacityNum4');renderPreview(4)"><input type="number" id="overlayOpacityNum4" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum4','overlayOpacity4');renderPreview(4)"></div>
         </div>
         <div id="textInputRow4" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
@@ -1454,6 +1491,7 @@ function imgLoaded(e, idx) {
       document.getElementById('textInputRow' + idx).style.display = 'block';
       document.getElementById('cropArea' + idx).style.display = 'block';
       document.getElementById('imgActions' + idx).style.display = 'flex';
+      document.getElementById('imgControls' + idx).style.display = 'flex';
       document.getElementById('uploadZone' + idx).style.display = 'none';
       document.getElementById('imgStatus' + idx).textContent = '';
       var hint = document.getElementById('restoreHint' + idx);
@@ -1535,6 +1573,24 @@ document.addEventListener('mouseup', function() { [1,2,3,4].forEach(function(i) 
 document.addEventListener('touchend', function() { [1,2,3,4].forEach(function(i) { endDrag(i); }); });
 setupDrag(1); setupDrag(2); setupDrag(3); setupDrag(4);
 
+function syncFromSlider(sliderId, numId) {
+  var s = document.getElementById(sliderId), n = document.getElementById(numId);
+  n.value = s.value;
+}
+function syncFromNumber(numId, sliderId) {
+  var n = document.getElementById(numId), s = document.getElementById(sliderId);
+  var v = parseInt(n.value, 10);
+  if (isNaN(v)) v = 54;
+  v = Math.max(0, Math.min(100, v));
+  n.value = v; s.value = v;
+}
+function getOverlayOpacity(idx) {
+  var el = document.getElementById('overlayOpacity' + idx);
+  if (!el) return 0.54;
+  var v = parseInt(el.value, 10);
+  return (isNaN(v) ? 54 : v) / 100;
+}
+
 function renderPreview(idx) {
   var s = imgStates[idx]; if (!s || !s.loaded) return;
   var cropW = getCropW(idx), cropH = getCropH(cropW);
@@ -1542,8 +1598,8 @@ function renderPreview(idx) {
   var ctx = canvas.getContext('2d');
   canvas.width = cropW; canvas.height = cropH;
   ctx.clearRect(0,0,cropW,cropH);
-  // 蒙层：固定 54% 黑（PSD 实测值）
-  ctx.fillStyle = 'rgba(0,0,0,0.54)';
+  // 蒙层：透明度由滑块控制（默认 54% 黑，即 PSD 实测值）
+  ctx.fillStyle = 'rgba(0,0,0,' + getOverlayOpacity(idx) + ')';
   ctx.fillRect(0,0,cropW,cropH);
   // 文字：完全按 PSD 复刻 —— MicrosoftYaHei 72px、字距 0、左对齐、行距 1.75、
   // 颜色 #FCF8F8、左边距 81、右边距 105、首行 ink 顶部落点 y=93（均 1280x360 基准）
@@ -1614,6 +1670,9 @@ function resetImg(idx) {
   document.getElementById('textInputRow' + idx).style.display = 'none';
   document.getElementById('cropArea' + idx).style.display = 'none';
   document.getElementById('imgActions' + idx).style.display = 'none';
+  document.getElementById('imgControls' + idx).style.display = 'none';
+  document.getElementById('overlayOpacity' + idx).value = 54;
+  document.getElementById('overlayOpacityNum' + idx).value = 54;
   document.getElementById('uploadZone' + idx).style.display = 'block';
   document.getElementById('overlayText' + idx).value = '';
   document.getElementById('imgStatus' + idx).textContent = '';
@@ -1632,6 +1691,7 @@ function confirmImg(idx) {
     records[idx] = {
       thumb: thumb,
       text: document.getElementById('overlayText' + idx).value,
+      opacity: parseInt(document.getElementById('overlayOpacity' + idx).value, 10),
       githubUrl: null
     };
     renderBaseCanvas(idx, function(b) { records[idx].source = b.toDataURL('image/jpeg', 0.85); saveImgRecords(records); });
@@ -1668,6 +1728,9 @@ function clearImgSlot(idx) {
   document.getElementById('textInputRow' + idx).style.display = 'none';
   document.getElementById('cropArea' + idx).style.display = 'none';
   document.getElementById('imgActions' + idx).style.display = 'none';
+  document.getElementById('imgControls' + idx).style.display = 'none';
+  document.getElementById('overlayOpacity' + idx).value = 54;
+  document.getElementById('overlayOpacityNum' + idx).value = 54;
   document.getElementById('uploadZone' + idx).style.display = 'block';
   document.getElementById('overlayText' + idx).value = '';
   document.getElementById('imgStatus' + idx).textContent = '';
@@ -1710,8 +1773,14 @@ function restoreImgRecords() {
     document.getElementById('uploadZone' + idx).style.display = 'none';
     document.getElementById('textInputRow' + idx).style.display = 'block';
     document.getElementById('imgActions' + idx).style.display = 'flex';
-    // restore text (样式固定为 PSD 复刻参数，无需恢复旧滑块值)
+    document.getElementById('imgControls' + idx).style.display = 'flex';
+    // restore text (文字样式固定为 PSD 复刻参数，无需恢复旧滑块值)
     if (rec.text !== undefined) document.getElementById('overlayText' + idx).value = rec.text;
+    // restore overlay opacity (default 54 = PSD 实测值)
+    var op = parseInt(rec.opacity, 10);
+    if (isNaN(op)) op = 54;
+    document.getElementById('overlayOpacity' + idx).value = op;
+    document.getElementById('overlayOpacityNum' + idx).value = op;
     var cropArea = document.getElementById('cropArea' + idx);
     cropArea.style.display = 'block';
     if (rec.source) {
@@ -1755,7 +1824,7 @@ function renderBaseCanvas(idx, callback) {
 function renderFinalCanvas(idx, callback) {
   renderBaseCanvas(idx, function(c) {
   var ctx = c.getContext('2d');
-  ctx.fillStyle = 'rgba(0,0,0,0.54)'; ctx.fillRect(0, 0, 1280, 360);
+  ctx.fillStyle = 'rgba(0,0,0,' + getOverlayOpacity(idx) + ')'; ctx.fillRect(0, 0, 1280, 360);
   var text = document.getElementById('overlayText' + idx).value;
   if (text) {
     ctx.fillStyle = '#FCF8F8';

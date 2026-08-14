@@ -103,31 +103,6 @@ button { border: none; cursor: pointer; transition: all .2s; }
 .img-upload-zone p { color: #86868b; font-size: 14px; }
 .img-upload-zone input { display: none; }
 
-.control-panel { display: flex; flex-direction: column; gap: 1px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.06); margin-bottom: 16px; }
-.control-row {
-  display: grid; grid-template-columns: 48px 1fr 52px; align-items: center; gap: 10px;
-  padding: 10px 12px; background: #fff;
-}
-.control-row label { font-size: 12px; color: #1d1d1f; font-weight: 500; }
-.control-row input[type="range"] {
-  width: 100%; height: 4px; border-radius: 2px; -webkit-appearance: none; appearance: none;
-  background: #e8e8ed; outline: none; margin: 0;
-}
-.control-row input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
-  border-radius: 50%; background: #00b050; cursor: pointer; border: 2px solid #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,.15);
-}
-.control-row input[type="range"]::-moz-range-thumb {
-  width: 16px; height: 16px; border-radius: 50%; background: #00b050;
-  cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15);
-}
-.control-row input[type="number"] {
-  width: 52px; padding: 4px 4px; border: 1px solid #e8e8ed; border-radius: 6px;
-  font-size: 12px; text-align: center; color: #1d1d1f; outline: none;
-}
-.control-row input[type="number"]:focus { border-color: #00b050; }
-
 .crop-area {
   position: relative; overflow: hidden; background: #1d1d1f;
   border-radius: 8px; margin-bottom: 16px; cursor: grab;
@@ -321,13 +296,6 @@ button { border: none; cursor: pointer; transition: all .2s; }
           <p>点击上传图片，或将图片拖拽到这里</p>
           <input type="file" id="imgFileInput1" accept="image/*" onchange="imgLoaded(event,1)">
         </div>
-        <div class="control-panel" id="imgControls1" style="display:none;">
-          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput1" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput1','fontSizeNum1');renderPreview(1)"><input type="number" id="fontSizeNum1" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum1','fontSizeInput1');renderPreview(1)"></div>
-          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput1" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput1','padLeftNum1');renderPreview(1)"><input type="number" id="padLeftNum1" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum1','padLeftInput1');renderPreview(1)"></div>
-          <div class="control-row"><label>右距</label><input type="range" id="padRightInput1" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput1','padRightNum1');renderPreview(1)"><input type="number" id="padRightNum1" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum1','padRightInput1');renderPreview(1)"></div>
-          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY1" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY1','textOffsetNum1');renderPreview(1)"><input type="number" id="textOffsetNum1" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum1','textOffsetY1');renderPreview(1)"></div>
-          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity1" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity1','overlayOpacityNum1');renderPreview(1)"><input type="number" id="overlayOpacityNum1" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum1','overlayOpacity1');renderPreview(1)"></div>
-        </div>
         <div id="textInputRow1" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
           <input type="text" id="overlayText1" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(1)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
@@ -349,13 +317,6 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div class="img-upload-zone" id="uploadZone2" onclick="document.getElementById('imgFileInput2').click()">
           <p>点击上传图片，或将图片拖拽到这里</p>
           <input type="file" id="imgFileInput2" accept="image/*" onchange="imgLoaded(event,2)">
-        </div>
-        <div class="control-panel" id="imgControls2" style="display:none;">
-          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput2" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput2','fontSizeNum2');renderPreview(2)"><input type="number" id="fontSizeNum2" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum2','fontSizeInput2');renderPreview(2)"></div>
-          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput2" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput2','padLeftNum2');renderPreview(2)"><input type="number" id="padLeftNum2" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum2','padLeftInput2');renderPreview(2)"></div>
-          <div class="control-row"><label>右距</label><input type="range" id="padRightInput2" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput2','padRightNum2');renderPreview(2)"><input type="number" id="padRightNum2" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum2','padRightInput2');renderPreview(2)"></div>
-          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY2" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY2','textOffsetNum2');renderPreview(2)"><input type="number" id="textOffsetNum2" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum2','textOffsetY2');renderPreview(2)"></div>
-          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity2" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity2','overlayOpacityNum2');renderPreview(2)"><input type="number" id="overlayOpacityNum2" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum2','overlayOpacity2');renderPreview(2)"></div>
         </div>
         <div id="textInputRow2" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
@@ -379,13 +340,6 @@ button { border: none; cursor: pointer; transition: all .2s; }
           <p>点击上传图片，或将图片拖拽到这里</p>
           <input type="file" id="imgFileInput3" accept="image/*" onchange="imgLoaded(event,3)">
         </div>
-        <div class="control-panel" id="imgControls3" style="display:none;">
-          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput3" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput3','fontSizeNum3');renderPreview(3)"><input type="number" id="fontSizeNum3" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum3','fontSizeInput3');renderPreview(3)"></div>
-          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput3" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput3','padLeftNum3');renderPreview(3)"><input type="number" id="padLeftNum3" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum3','padLeftInput3');renderPreview(3)"></div>
-          <div class="control-row"><label>右距</label><input type="range" id="padRightInput3" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput3','padRightNum3');renderPreview(3)"><input type="number" id="padRightNum3" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum3','padRightInput3');renderPreview(3)"></div>
-          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY3" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY3','textOffsetNum3');renderPreview(3)"><input type="number" id="textOffsetNum3" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum3','textOffsetY3');renderPreview(3)"></div>
-          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity3" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity3','overlayOpacityNum3');renderPreview(3)"><input type="number" id="overlayOpacityNum3" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum3','overlayOpacity3');renderPreview(3)"></div>
-        </div>
         <div id="textInputRow3" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
           <input type="text" id="overlayText3" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(3)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
@@ -407,13 +361,6 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div class="img-upload-zone" id="uploadZone4" onclick="document.getElementById('imgFileInput4').click()">
           <p>点击上传图片，或将图片拖拽到这里</p>
           <input type="file" id="imgFileInput4" accept="image/*" onchange="imgLoaded(event,4)">
-        </div>
-        <div class="control-panel" id="imgControls4" style="display:none;">
-          <div class="control-row"><label>字号</label><input type="range" id="fontSizeInput4" min="8" max="200" value="72" oninput="syncFromSlider('fontSizeInput4','fontSizeNum4');renderPreview(4)"><input type="number" id="fontSizeNum4" min="8" max="200" value="72" oninput="syncFromNumber('fontSizeNum4','fontSizeInput4');renderPreview(4)"></div>
-          <div class="control-row"><label>左距</label><input type="range" id="padLeftInput4" min="0" max="200" value="40" oninput="syncFromSlider('padLeftInput4','padLeftNum4');renderPreview(4)"><input type="number" id="padLeftNum4" min="0" max="200" value="40" oninput="syncFromNumber('padLeftNum4','padLeftInput4');renderPreview(4)"></div>
-          <div class="control-row"><label>右距</label><input type="range" id="padRightInput4" min="0" max="200" value="40" oninput="syncFromSlider('padRightInput4','padRightNum4');renderPreview(4)"><input type="number" id="padRightNum4" min="0" max="200" value="40" oninput="syncFromNumber('padRightNum4','padRightInput4');renderPreview(4)"></div>
-          <div class="control-row"><label>上移</label><input type="range" id="textOffsetY4" min="-200" max="200" value="0" oninput="syncFromSlider('textOffsetY4','textOffsetNum4');renderPreview(4)"><input type="number" id="textOffsetNum4" min="-200" max="200" value="0" oninput="syncFromNumber('textOffsetNum4','textOffsetY4');renderPreview(4)"></div>
-          <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity4" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity4','overlayOpacityNum4');renderPreview(4)"><input type="number" id="overlayOpacityNum4" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum4','overlayOpacity4');renderPreview(4)"></div>
         </div>
         <div id="textInputRow4" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
@@ -1504,7 +1451,6 @@ function imgLoaded(e, idx) {
     img.onload = function() {
       imgStates[idx] = { loaded: true, naturalW: img.naturalWidth, naturalH: img.naturalHeight, offX: 0, offY: 0, scale: 1, dragging: false, cachedImg: new Image() };
       imgStates[idx].cachedImg.src = ev.target.result;
-      document.getElementById('imgControls' + idx).style.display = 'flex';
       document.getElementById('textInputRow' + idx).style.display = 'block';
       document.getElementById('cropArea' + idx).style.display = 'block';
       document.getElementById('imgActions' + idx).style.display = 'flex';
@@ -1589,9 +1535,6 @@ document.addEventListener('mouseup', function() { [1,2,3,4].forEach(function(i) 
 document.addEventListener('touchend', function() { [1,2,3,4].forEach(function(i) { endDrag(i); }); });
 setupDrag(1); setupDrag(2); setupDrag(3); setupDrag(4);
 
-function syncFromSlider(sliderId, numId) { document.getElementById(numId).value = document.getElementById(sliderId).value; }
-function syncFromNumber(numId, sliderId) { document.getElementById(sliderId).value = document.getElementById(numId).value; }
-
 function renderPreview(idx) {
   var s = imgStates[idx]; if (!s || !s.loaded) return;
   var cropW = getCropW(idx), cropH = getCropH(cropW);
@@ -1599,28 +1542,22 @@ function renderPreview(idx) {
   var ctx = canvas.getContext('2d');
   canvas.width = cropW; canvas.height = cropH;
   ctx.clearRect(0,0,cropW,cropH);
-  // overlay
-  var opVal = parseInt(document.getElementById('overlayOpacity' + idx).value);
-  var opacity = (isNaN(opVal) ? 54 : opVal) / 100;
-  ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
+  // 蒙层：固定 54% 黑（PSD 实测值）
+  ctx.fillStyle = 'rgba(0,0,0,0.54)';
   ctx.fillRect(0,0,cropW,cropH);
-  // text
+  // 文字：完全按 PSD 复刻 —— MicrosoftYaHei 72px、字距 0、左对齐、行距 1.75、
+  // 颜色 #FCF8F8、左边距 81、右边距 105、首行 ink 顶部落点 y=93（均 1280x360 基准）
   var text = document.getElementById('overlayText' + idx).value;
   if (text) {
     var scale = cropW / 1280;
-    var fontSize = (parseInt(document.getElementById('fontSizeInput' + idx).value) || 72) * scale;
-    var padLeft = (parseInt(document.getElementById('padLeftInput' + idx).value) || 40) * scale;
-    var padRight = (parseInt(document.getElementById('padRightInput' + idx).value) || 40) * scale;
-    var offsetY = (parseInt(document.getElementById('textOffsetY' + idx).value) || 0) * scale;
+    var fontSize = 72 * scale;
     ctx.fillStyle = '#FCF8F8';
     ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    var lines = wrapText(ctx, text, cropW - padLeft - padRight);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    var lines = wrapText(ctx, text, 1097 * scale);
     var lineHeight = fontSize * 1.75;
-    var totalH = lines.length * lineHeight;
-    var leftX = padLeft;
-    var centerY = (cropH - totalH) / 2 + lineHeight / 2 + offsetY;
-    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], leftX, centerY + i * lineHeight);
+    var y0 = psdInkY(ctx, lines[0], 93 * scale);
+    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], 81 * scale, y0 + i * lineHeight);
   }
 }
 
@@ -1650,23 +1587,36 @@ function wrapText(ctx, text, maxWidth) {
   return lines;
 }
 
+// 返回 fillText 的 y 值，使首行文字的 ink 顶部恰好落在 targetInkTop（PSD 实测 93px）。
+// 不同浏览器对字体的 ascent 解释不同（尤其中文黑体），直接量 ink 位置补偿，保证处处一致。
+function psdInkY(ctx, line, targetInkTop) {
+  var probe = document.createElement('canvas');
+  probe.width = 1280; probe.height = 120;
+  var pctx = probe.getContext('2d', { willReadFrequently: true });
+  pctx.font = ctx.font;
+  pctx.textBaseline = 'top';
+  pctx.fillStyle = '#fff';
+  pctx.fillText(line, 0, 0);
+  var d = pctx.getImageData(0, 0, probe.width, probe.height).data;
+  var inkTop = 0;
+  outer: for (var y = 0; y < probe.height; y++) {
+    for (var x = 0; x < probe.width; x++) {
+      if (d[(y * probe.width + x) * 4 + 3] > 0) { inkTop = y; break outer; }
+    }
+  }
+  return targetInkTop - inkTop;
+}
+
 function resetImg(idx) {
   imgStates[idx] = null;
   var hint = document.getElementById('restoreHint' + idx);
   if (hint) hint.style.display = 'none';
-  document.getElementById('imgControls' + idx).style.display = 'none';
   document.getElementById('textInputRow' + idx).style.display = 'none';
   document.getElementById('cropArea' + idx).style.display = 'none';
   document.getElementById('imgActions' + idx).style.display = 'none';
   document.getElementById('uploadZone' + idx).style.display = 'block';
   document.getElementById('overlayText' + idx).value = '';
   document.getElementById('imgStatus' + idx).textContent = '';
-  var defaults = { fontSize: 72, padLeft: 40, padRight: 40, textOffset: 0 };
-  ['fontSize','padLeft','padRight'].forEach(function(k){ document.getElementById(k + 'Input' + idx).value = defaults[k]; document.getElementById(k + 'Num' + idx).value = defaults[k]; });
-  document.getElementById('textOffsetY' + idx).value = defaults.textOffset;
-  document.getElementById('textOffsetNum' + idx).value = defaults.textOffset;
-  document.getElementById('overlayOpacity' + idx).value = 54;
-  document.getElementById('overlayOpacityNum' + idx).value = 54;
 }
 
 function confirmImg(idx) {
@@ -1682,11 +1632,6 @@ function confirmImg(idx) {
     records[idx] = {
       thumb: thumb,
       text: document.getElementById('overlayText' + idx).value,
-      fontSize: document.getElementById('fontSizeInput' + idx).value,
-      padLeft: document.getElementById('padLeftInput' + idx).value,
-      padRight: document.getElementById('padRightInput' + idx).value,
-      offsetY: document.getElementById('textOffsetY' + idx).value,
-      opacity: document.getElementById('overlayOpacity' + idx).value,
       githubUrl: null
     };
     renderBaseCanvas(idx, function(b) { records[idx].source = b.toDataURL('image/jpeg', 0.85); saveImgRecords(records); });
@@ -1720,19 +1665,12 @@ function saveImgRecords(records) {
 function clearImgSlot(idx) {
   imgStates[idx] = null;
   state['img' + idx] = null;
-  document.getElementById('imgControls' + idx).style.display = 'none';
   document.getElementById('textInputRow' + idx).style.display = 'none';
   document.getElementById('cropArea' + idx).style.display = 'none';
   document.getElementById('imgActions' + idx).style.display = 'none';
   document.getElementById('uploadZone' + idx).style.display = 'block';
   document.getElementById('overlayText' + idx).value = '';
   document.getElementById('imgStatus' + idx).textContent = '';
-  var defaults = { fontSize: 72, padLeft: 40, padRight: 40, textOffset: 0 };
-  ['fontSize','padLeft','padRight'].forEach(function(k){ document.getElementById(k + 'Input' + idx).value = defaults[k]; document.getElementById(k + 'Num' + idx).value = defaults[k]; });
-  document.getElementById('textOffsetY' + idx).value = defaults.textOffset;
-  document.getElementById('textOffsetNum' + idx).value = defaults.textOffset;
-  document.getElementById('overlayOpacity' + idx).value = 54;
-  document.getElementById('overlayOpacityNum' + idx).value = 54;
   var btn = document.getElementById('confirmImg' + idx);
   btn.textContent = '确认使用'; btn.disabled = false;
   // remove from records
@@ -1770,16 +1708,10 @@ function restoreImgRecords() {
     if (!rec || !rec.thumb) return;
     // show the saved thumbnail as preview
     document.getElementById('uploadZone' + idx).style.display = 'none';
-    document.getElementById('imgControls' + idx).style.display = 'flex';
     document.getElementById('textInputRow' + idx).style.display = 'block';
     document.getElementById('imgActions' + idx).style.display = 'flex';
-    // restore settings (允许 0 值)
+    // restore text (样式固定为 PSD 复刻参数，无需恢复旧滑块值)
     if (rec.text !== undefined) document.getElementById('overlayText' + idx).value = rec.text;
-    if (rec.fontSize !== undefined) { document.getElementById('fontSizeInput' + idx).value = rec.fontSize; document.getElementById('fontSizeNum' + idx).value = rec.fontSize; }
-    if (rec.padLeft !== undefined) { document.getElementById('padLeftInput' + idx).value = rec.padLeft; document.getElementById('padLeftNum' + idx).value = rec.padLeft; }
-    if (rec.padRight !== undefined) { document.getElementById('padRightInput' + idx).value = rec.padRight; document.getElementById('padRightNum' + idx).value = rec.padRight; }
-    if (rec.offsetY !== undefined) { document.getElementById('textOffsetY' + idx).value = rec.offsetY; document.getElementById('textOffsetNum' + idx).value = rec.offsetY; }
-    if (rec.opacity !== undefined) { document.getElementById('overlayOpacity' + idx).value = rec.opacity; document.getElementById('overlayOpacityNum' + idx).value = rec.opacity; }
     var cropArea = document.getElementById('cropArea' + idx);
     cropArea.style.display = 'block';
     if (rec.source) {
@@ -1823,24 +1755,18 @@ function renderBaseCanvas(idx, callback) {
 function renderFinalCanvas(idx, callback) {
   renderBaseCanvas(idx, function(c) {
   var ctx = c.getContext('2d');
-  var opVal = parseInt(document.getElementById('overlayOpacity' + idx).value);
-  var opacity = (isNaN(opVal) ? 54 : opVal) / 100;
-  ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')'; ctx.fillRect(0, 0, 1280, 360);
+  ctx.fillStyle = 'rgba(0,0,0,0.54)'; ctx.fillRect(0, 0, 1280, 360);
   var text = document.getElementById('overlayText' + idx).value;
   if (text) {
-    var fontSize = parseInt(document.getElementById('fontSizeInput' + idx).value) || 72;
-    var padLeft = parseInt(document.getElementById('padLeftInput' + idx).value) || 40;
-    var padRight = parseInt(document.getElementById('padRightInput' + idx).value) || 40;
-    var offsetY = parseInt(document.getElementById('textOffsetY' + idx).value) || 0;
     ctx.fillStyle = '#FCF8F8';
-    ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    var lines = wrapText(ctx, text, 1280 - padLeft - padRight);
-    var lineHeight = fontSize * 1.75;
-    var totalH = lines.length * lineHeight;
-    var leftX = padLeft;
-    var centerY = (360 - totalH) / 2 + lineHeight / 2 + offsetY;
-    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], leftX, centerY + i * lineHeight);
+    ctx.font = '72px "Microsoft YaHei", "PingFang SC", sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    // 换行宽度 1097：PS 引擎拉丁字宽比浏览器(msyh hmtx)窄约 3px，PSD 框为 1094，
+    // 用 1097 才能保证与 PSD 完全相同的换行（例：'荣耀 Robot' 保持在第一行）
+    var lines = wrapText(ctx, text, 1097);
+    var lineHeight = 126;
+    var y0 = psdInkY(ctx, lines[0], 93);
+    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], 81, y0 + i * lineHeight);
   }
   callback(c);
   });

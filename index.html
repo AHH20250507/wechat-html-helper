@@ -331,6 +331,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div id="textInputRow1" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
           <input type="text" id="overlayText1" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(1)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+          <div id="restoreHint1" style="display:none;font-size:11px;color:#ff9500;margin-top:6px;">旧记录仅可查看，点击「重新上传」后可编辑文字</div>
         </div>
         <div class="crop-area" id="cropArea1" style="display:none;"><img id="cropImg1"><canvas class="crop-overlay" id="overlayCanvas1"></canvas></div>
         <div class="img-status" id="imgStatus1"></div>
@@ -359,6 +360,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div id="textInputRow2" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
           <input type="text" id="overlayText2" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(2)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+          <div id="restoreHint2" style="display:none;font-size:11px;color:#ff9500;margin-top:6px;">旧记录仅可查看，点击「重新上传」后可编辑文字</div>
         </div>
         <div class="crop-area" id="cropArea2" style="display:none;"><img id="cropImg2"><canvas class="crop-overlay" id="overlayCanvas2"></canvas></div>
         <div class="img-status" id="imgStatus2"></div>
@@ -387,6 +389,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div id="textInputRow3" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
           <input type="text" id="overlayText3" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(3)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+          <div id="restoreHint3" style="display:none;font-size:11px;color:#ff9500;margin-top:6px;">旧记录仅可查看，点击「重新上传」后可编辑文字</div>
         </div>
         <div class="crop-area" id="cropArea3" style="display:none;"><img id="cropImg3"><canvas class="crop-overlay" id="overlayCanvas3"></canvas></div>
         <div class="img-status" id="imgStatus3"></div>
@@ -415,6 +418,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
         <div id="textInputRow4" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
           <input type="text" id="overlayText4" placeholder="输入要显示在图片上的文字…" oninput="renderPreview(4)" style="width:100%;margin-top:6px;padding:8px 12px;border:1px solid #d2d2d7;border-radius:8px;font-size:14px;outline:none;">
+          <div id="restoreHint4" style="display:none;font-size:11px;color:#ff9500;margin-top:6px;">旧记录仅可查看，点击「重新上传」后可编辑文字</div>
         </div>
         <div class="crop-area" id="cropArea4" style="display:none;"><img id="cropImg4"><canvas class="crop-overlay" id="overlayCanvas4"></canvas></div>
         <div class="img-status" id="imgStatus4"></div>
@@ -1506,6 +1510,8 @@ function imgLoaded(e, idx) {
       document.getElementById('imgActions' + idx).style.display = 'flex';
       document.getElementById('uploadZone' + idx).style.display = 'none';
       document.getElementById('imgStatus' + idx).textContent = '';
+      var hint = document.getElementById('restoreHint' + idx);
+      if (hint) hint.style.display = 'none';
       onRatioChange(idx);
     };
     img.src = ev.target.result;
@@ -1646,6 +1652,8 @@ function wrapText(ctx, text, maxWidth) {
 
 function resetImg(idx) {
   imgStates[idx] = null;
+  var hint = document.getElementById('restoreHint' + idx);
+  if (hint) hint.style.display = 'none';
   document.getElementById('imgControls' + idx).style.display = 'none';
   document.getElementById('textInputRow' + idx).style.display = 'none';
   document.getElementById('cropArea' + idx).style.display = 'none';
@@ -1669,7 +1677,7 @@ function confirmImg(idx) {
     var dataUrl = c.toDataURL('image/png');
     var thumb = c.toDataURL('image/jpeg', 0.6);
     var filename = 'cover' + idx + '.png';
-    // save record locally
+    // save record locally (含无文字原图快照，刷新后仍可编辑文字)
     var records = loadImgRecords();
     records[idx] = {
       thumb: thumb,
@@ -1681,7 +1689,7 @@ function confirmImg(idx) {
       opacity: document.getElementById('overlayOpacity' + idx).value,
       githubUrl: null
     };
-    saveImgRecords(records);
+    renderBaseCanvas(idx, function(b) { records[idx].source = b.toDataURL('image/jpeg', 0.85); saveImgRecords(records); });
     uploadToGitHub(dataUrl, filename).then(function(url) {
       var fullUrl = url + '?t=' + Date.now();
       state['img' + idx] = fullUrl;
@@ -1765,19 +1773,31 @@ function restoreImgRecords() {
     document.getElementById('imgControls' + idx).style.display = 'flex';
     document.getElementById('textInputRow' + idx).style.display = 'block';
     document.getElementById('imgActions' + idx).style.display = 'flex';
-    // restore settings
-    if (rec.text) document.getElementById('overlayText' + idx).value = rec.text;
-    if (rec.fontSize) { document.getElementById('fontSizeInput' + idx).value = rec.fontSize; document.getElementById('fontSizeNum' + idx).value = rec.fontSize; }
-    if (rec.padLeft) { document.getElementById('padLeftInput' + idx).value = rec.padLeft; document.getElementById('padLeftNum' + idx).value = rec.padLeft; }
-    if (rec.padRight) { document.getElementById('padRightInput' + idx).value = rec.padRight; document.getElementById('padRightNum' + idx).value = rec.padRight; }
-    if (rec.offsetY) { document.getElementById('textOffsetY' + idx).value = rec.offsetY; document.getElementById('textOffsetNum' + idx).value = rec.offsetY; }
-    if (rec.opacity) { document.getElementById('overlayOpacity' + idx).value = rec.opacity; document.getElementById('overlayOpacityNum' + idx).value = rec.opacity; }
-    // show thumbnail in crop area
+    // restore settings (允许 0 值)
+    if (rec.text !== undefined) document.getElementById('overlayText' + idx).value = rec.text;
+    if (rec.fontSize !== undefined) { document.getElementById('fontSizeInput' + idx).value = rec.fontSize; document.getElementById('fontSizeNum' + idx).value = rec.fontSize; }
+    if (rec.padLeft !== undefined) { document.getElementById('padLeftInput' + idx).value = rec.padLeft; document.getElementById('padLeftNum' + idx).value = rec.padLeft; }
+    if (rec.padRight !== undefined) { document.getElementById('padRightInput' + idx).value = rec.padRight; document.getElementById('padRightNum' + idx).value = rec.padRight; }
+    if (rec.offsetY !== undefined) { document.getElementById('textOffsetY' + idx).value = rec.offsetY; document.getElementById('textOffsetNum' + idx).value = rec.offsetY; }
+    if (rec.opacity !== undefined) { document.getElementById('overlayOpacity' + idx).value = rec.opacity; document.getElementById('overlayOpacityNum' + idx).value = rec.opacity; }
     var cropArea = document.getElementById('cropArea' + idx);
     cropArea.style.display = 'block';
-    var img = document.getElementById('cropImg' + idx);
-    img.src = rec.thumb;
-    img.style.width = '100%';
+    if (rec.source) {
+      // 有原图快照：重建完整编辑状态（可改文字/拖动/重新确认）
+      var srcImg = new Image();
+      srcImg.onload = function() {
+        imgStates[idx] = { loaded: true, naturalW: srcImg.naturalWidth, naturalH: srcImg.naturalHeight, offX: 0, offY: 0, scale: 1, dragging: false, cachedImg: srcImg };
+        onRatioChange(idx);
+      };
+      srcImg.src = rec.source;
+    } else {
+      // 旧记录无原图：仅显示缩略图预览，提示需重新上传
+      var img = document.getElementById('cropImg' + idx);
+      img.src = rec.thumb;
+      img.style.width = '100%';
+      var hint = document.getElementById('restoreHint' + idx);
+      if (hint) hint.style.display = 'block';
+    }
     // restore github url to state
     if (rec.githubUrl) state['img' + idx] = rec.githubUrl;
     document.getElementById('imgStatus' + idx).innerHTML = rec.githubUrl
@@ -1788,7 +1808,8 @@ function restoreImgRecords() {
   updateSlotTags();
 }
 
-function renderFinalCanvas(idx, callback) {
+function renderBaseCanvas(idx, callback) {
+  // 1280x360 原图（裁剪后，不含蒙层和文字）
   var s = imgStates[idx];
   var c = document.createElement('canvas');
   c.width = 1280; c.height = 360;
@@ -1796,6 +1817,12 @@ function renderFinalCanvas(idx, callback) {
   ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, 1280, 360);
   var scale = 1280 / getCropW(idx);
   ctx.drawImage(s.cachedImg, s.offX * scale, s.offY * scale, s.naturalW * s.scale * scale, s.naturalH * s.scale * scale);
+  callback(c);
+}
+
+function renderFinalCanvas(idx, callback) {
+  renderBaseCanvas(idx, function(c) {
+  var ctx = c.getContext('2d');
   var opVal = parseInt(document.getElementById('overlayOpacity' + idx).value);
   var opacity = (isNaN(opVal) ? 54 : opVal) / 100;
   ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')'; ctx.fillRect(0, 0, 1280, 360);
@@ -1816,6 +1843,7 @@ function renderFinalCanvas(idx, callback) {
     for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], leftX, centerY + i * lineHeight);
   }
   callback(c);
+  });
 }
 
 function downloadImg(idx) {

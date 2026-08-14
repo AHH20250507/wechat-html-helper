@@ -185,6 +185,12 @@ button { border: none; cursor: pointer; transition: all .2s; }
   font-size: 14px; outline: none;
 }
 .snippet-add button { padding: 8px 16px; font-size: 13px; border-radius: 8px; }
+.page-tab {
+  padding: 5px 14px; font-size: 12px; border-radius: 999px; border: 1px solid #d2d2d7;
+  background: #fff; color: #1d1d1f; cursor: pointer; max-width: 160px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.page-tab.active { background: #00b050; color: #fff; border-color: #00b050; }
 .img-status {
   font-size: 12px; color: #86868b; min-height: 18px; margin-bottom: 12px;
 }
@@ -212,6 +218,17 @@ button { border: none; cursor: pointer; transition: all .2s; }
 
   <!-- ========== HTML Tab ========== -->
   <div class="tab-content active" id="tab-html">
+    <!-- Pages management -->
+    <div class="panel" style="margin-bottom:16px;padding:10px 16px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-size:13px;font-weight:600;color:#1d1d1f;">页面管理</span>
+        <div id="pageList" style="display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:180px;"></div>
+        <button class="btn-secondary" style="padding:5px 12px;font-size:12px;border-radius:999px;" onclick="addPage()">＋ 新增页面</button>
+        <button class="btn-secondary" style="padding:5px 12px;font-size:12px;border-radius:999px;background:#fff7f7;color:#ff3b30;border-color:#ff3b30;" onclick="deletePage()">删除页面</button>
+        <a style="font-size:12px;color:#ff3b30;cursor:pointer;text-decoration:underline;" onclick="clearAllPages()">清空所有页面</a>
+      </div>
+      <div style="font-size:11px;color:#86868b;margin-top:6px;">每个页面独立保存一篇 HTML，双击页面标签可重命名；「确认使用」的 HTML 跟随页面保存</div>
+    </div>
     <div class="editor-wrap">
       <div class="panel">
         <div class="panel-header">
@@ -729,7 +746,7 @@ var defaultTemplates = {
 		<span></span>
 	</p>
 </section>`,
-  '酷换机': `<section data-role="outer" label="edit by 135editor" data-pm-slice="0 0 []">
+  '酷换机（安卓）': `<section data-role="outer" label="edit by 135editor" data-pm-slice="0 0 []">
 	<section data-role="paragraph">
 		<section style="margin: 0px auto;padding: 0px;font-size: 15px;color: rgb(63, 63, 63);line-height: 2;letter-spacing: 1px;background-color: rgb(255, 255, 255);text-align: left;box-sizing: border-box;font-family:-apple-system, sans-serif;">
 			<section>
@@ -842,7 +859,87 @@ var defaultTemplates = {
 </section>
 <p>
 	<br/>
-</p>`
+</p>`,
+  '酷换机（苹果）': `<section data-role="paragraph" class="_135editor">
+	<p style="margin-right: 8px; margin-left: 8px; letter-spacing: 0.578px; text-wrap: wrap; margin-bottom: 0px; text-align: left;" data-pm-slice="0 0 []" align="left">
+		<span style="text-align: justify; caret-color: red; outline: 0px; color: #262626; line-height: 2.27em; letter-spacing: 1px; font-size: 15px;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;">如果你买了新手机，</span><span style="text-align: justify; caret-color: red; outline: 0px; line-height: 2.27em; letter-spacing: 1px; font-size: 15px; color: #006fff;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;"><strong style="outline: 0px;">记得来酷换机的合作门店高价回收旧手机，</strong></span><span style="text-align: justify; caret-color: red; outline: 0px; color: #262626; line-height: 2.27em; letter-spacing: 1px; font-size: 15px;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;">AI智能检测设备精准检测，3分钟完成回收流程，给你惊喜的旧机回收报价！</span>
+	</p>
+</section>
+<section data-role="outer" label="edit by 135editor" style="letter-spacing: 0.578px; text-wrap: wrap; margin-bottom: 0px;">
+	<section data-role="outer" style="outline: 0px;letter-spacing: 0.544px;background-color: rgb(255, 255, 255);visibility: visible;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+		<section data-role="paragraph" style="outline: 0px;visibility: visible;">
+			<p style="margin-right: 8px;margin-left: 8px;outline: 0px;line-height: normal;">
+				<span style="outline: 0px;color: #262626;line-height: 2.27em;letter-spacing: 1px;font-size: 15px;font-family:微软雅黑, &quot;Microsoft YaHei&quot;;"></span>
+			</p>
+		</section>
+	</section>
+	<section data-role="outer" style="background-color: #ffffff;outline:0px;letter-spacing:0.578px;visibility:visible;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;" class="">
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;text-align: center;" class="">
+			<a href="http://kbmall.tradeinbot.cn/shop/Distribution/evaluationChoose?is_share=1&is_close=1" imgurl="https://mmbiz.qpic.cn/mmbiz_jpg/90ZeFj5fwqL1ydiaou0ryU1SjKudneroTOnCLs48GxDxWhDpchlsDzf65y4mhGSIiaiczV2e9MlwCtpYhtl8j8XMw/640?wx_fmt=other" linktype="image" tab="outerlink" target="_blank" data-linktype="1"><span class="js_jump_icon h5_image_link"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/90ZeFj5fwqL1ydiaou0ryU1SjKudneroTOnCLs48GxDxWhDpchlsDzf65y4mhGSIiaiczV2e9MlwCtpYhtl8j8XMw/640?wx_fmt=other" class="rich_pages wxw-img" data-s="300,640" data-type="jpeg" style="outline: 0px; border-width: 0px; border-style: initial; border-color: initial; inset: 0px; width: 100%; vertical-align: baseline; visibility: visible !important;box-sizing:border-box;max-width:100% !important;" data-backw="562" data-backh="350" data-imgfileid="100007821" data-imgqrcoded="1"/></span></a>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;text-align: center;"></section>
+		<section data-role="outer" style="margin-bottom: 0px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+			<section data-tools="135编辑器" data-id="117092" style="outline: 0px;" class="_135editor">
+				<section style="margin: 20px auto;outline: 0px;">
+					<section style="outline: 0px;margin-left: 8px;margin-right: 8px;">
+						<section style="outline: 0px;display: flex;justify-content: flex-start;">
+							<section style="outline: 0px;flex-shrink: 0;display: flex;align-items: center;">
+								<section style="outline: 0px;width: 5px;height: 5px;background-color: #0070c0;border-radius: 100%;overflow: hidden;box-sizing:border-box;" data-ignore-width=""></section>
+							</section>
+							<section data-width="100%" style="outline: 0px; display: flex; align-items: center; justify-content: flex-start; width: 100%;max-width:100% !important;box-sizing:border-box;">
+								<section data-width="90%" style="outline: 0px; width: 90%; height: 1px; background-color: #0070c0; overflow: hidden;box-sizing:border-box;max-width:90% !important;"></section>
+							</section>
+						</section>
+						<section style="outline: 0px;display: flex;justify-content: flex-end;">
+							<section data-width="100%" style="outline: 0px; display: flex; align-items: center; justify-content: flex-end; width: 100%;max-width:100% !important;box-sizing:border-box;">
+								<section data-width="90%" style="outline: 0px; width: 90%; height: 1px; background-color: #ffdc61; overflow: hidden;box-sizing:border-box;max-width:90% !important;"></section>
+							</section>
+							<section style="outline: 0px;flex-shrink: 0;display: flex;align-items: center;">
+								<section style="outline: 0px;width: 5px;height: 5px;background-color: #ffdc61;border-radius: 100%;overflow: hidden;box-sizing:border-box;" data-ignore-width=""></section>
+							</section>
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+		<section data-role="outer" style="margin-bottom: 0px;text-wrap: wrap;outline: 0px;letter-spacing: 0.544px;background-color: #ffffff;font-family:system-ui, -apple-system, BlinkMacSystemFont, &quot;Helvetica Neue&quot;, &quot;PingFang SC&quot;, &quot;Hiragino Sans GB&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Microsoft YaHei&quot;, Arial, sans-serif;">
+			<section style="padding-top: 10px;padding-bottom: 10px;outline: 0px;box-sizing:border-box;" class="">
+				<section style="margin: 10px 8px;padding-bottom: 13px;outline: 0px;transform-style: preserve-3d;box-sizing:border-box;">
+					<section style="outline: 0px;display: flex;justify-content: center;transform: translateZ(10px);-webkit-transform: translateZ(10px);-moz-transform: translateZ(10px);-o-transform: translateZ(10px);">
+						<section style="outline: 0px;background-color: #0070c0;display: flex;">
+							<section style="outline: 0px;flex-shrink: 0;">
+								<section style="outline: 0px;width: 0px;height: 1px;border-top: 10px solid #ffffff;border-right: 10px solid transparent;overflow: hidden;box-sizing:border-box;" data-ignore-width=""></section>
+								<section style="margin-top: -10px;outline: 0px;width: 0px;height: 1px;border-bottom: 10px solid #f4d79d;border-left: 10px solid transparent;overflow: hidden;box-sizing:border-box;" data-ignore-width=""></section>
+							</section>
+							<section style="padding: 4px 5px;outline: 0px;font-size: 16px;color: #ffffff;text-align: center;box-sizing:border-box;">
+								<strong style="outline: 0px;">往期精彩内容</strong>
+							</section>
+						</section>
+					</section>
+				</section>
+			</section>
+		</section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.544px;text-align: center;"></section>
+		<section style="margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.544px;text-align: center;"></section>
+		<p style="margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.544px;text-align: center;" align="center">
+			（图片1）
+		</p>
+		<p style="margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.544px;text-align: center;" align="center">
+			<br/>
+		</p>
+		<p style="margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.544px;text-align: center;" align="center">
+			（图片2）
+		</p>
+		<p style="margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.544px;text-align: center;" align="center">
+			<span ><br/></span>
+		</p>
+		<p style="margin-right: 8px;margin-left: 8px;outline: 0px;letter-spacing: 0.544px;text-align: center;" align="center">
+			<img src="https://mmbiz.qpic.cn/mmbiz_jpg/iaw9nmmHthVeb9WE5UdeeKFTc4QQorb7ib7qY5fFSpoLyHMpsjIy38ahxv0oQQ9eKCt5o5dHeCD4SWZHcyFreY8w/640?wx_fmt=other&from=appmsg" class="rich_pages wxw-img" data-s="300,640" data-type="jpeg" style="outline: 0px; width: 100%; vertical-align: baseline; visibility: visible !important;box-sizing:border-box;max-width:100% !important;" data-cropselx1="0" data-cropselx2="562" data-cropsely1="0" data-cropsely2="386" data-backw="562" data-backh="387" data-imgfileid="100007819"/>
+		</p>
+	</section>
+</section>
+<p style="margin-bottom: 0px;"></p>
+<section></section>`
 };
 
 /* ===== App Data ===== */
@@ -959,6 +1056,15 @@ function loadAppData() {
   if (!saved) return defaults;
   try {
     var data = JSON.parse(saved);
+    // 迁移：旧模板名 '酷换机' → '酷换机（安卓）'
+    if (data.templates && data.templates['酷换机'] && !data.templates['酷换机（安卓）']) {
+      data.templates['酷换机（安卓）'] = data.templates['酷换机'];
+      delete data.templates['酷换机'];
+    }
+    if (data.snippets && data.snippets['酷换机'] && !data.snippets['酷换机（安卓）']) {
+      data.snippets['酷换机（安卓）'] = data.snippets['酷换机'];
+      delete data.snippets['酷换机'];
+    }
     var templates = {};
     Object.keys(defaultTemplates).forEach(function(name) {
       var savedTmpl = data.templates && data.templates[name];
@@ -974,8 +1080,8 @@ function loadAppData() {
 
 function initAppData() {
   return {
-    templates: { 'EPBox': defaultTemplates['EPBox'], '壹站收': defaultTemplates['壹站收'], '酷换机': defaultTemplates['酷换机'] },
-    snippets: { 'EPBox': [], '壹站收': [], '酷换机': [] },
+    templates: { 'EPBox': defaultTemplates['EPBox'], '壹站收': defaultTemplates['壹站收'], '酷换机（安卓）': defaultTemplates['酷换机（安卓）'], '酷换机（苹果）': defaultTemplates['酷换机（苹果）'] },
+    snippets: { 'EPBox': [], '壹站收': [], '酷换机（安卓）': [], '酷换机（苹果）': [] },
     selectedTemplate: 'EPBox'
   };
 }
@@ -1141,6 +1247,122 @@ function switchTab(name) {
   });
 }
 
+/* ===== Pages Management (多页面) ===== */
+var pages = loadPages();
+var currentPageId = pages[0].id;
+
+function loadPages() {
+  try {
+    var saved = JSON.parse(localStorage.getItem('wechat_html_pages') || 'null');
+    if (Array.isArray(saved) && saved.length > 0) {
+      saved.forEach(function(p) { if (!p.id) p.id = 'p' + Date.now() + Math.random().toString(36).slice(2,6); });
+      return saved;
+    }
+  } catch(e) {}
+  return [{ id: 'p' + Date.now(), title: '页面 1', input: '', confirmed: '' }];
+}
+
+function savePages() {
+  try { localStorage.setItem('wechat_html_pages', JSON.stringify(pages)); } catch(e) {}
+}
+
+function getCurrentPage() {
+  var found = pages.filter(function(p) { return p.id === currentPageId; })[0];
+  return found || pages[0];
+}
+
+function renderPageList() {
+  var container = document.getElementById('pageList');
+  if (!container) return;
+  container.innerHTML = '';
+  pages.forEach(function(p) {
+    var btn = document.createElement('button');
+    btn.className = 'page-tab' + (p.id === currentPageId ? ' active' : '');
+    btn.textContent = p.title;
+    btn.title = '点击切换，双击重命名';
+    btn.ondblclick = function() { renamePage(p.id); };
+    btn.onclick = function() { switchPage(p.id); };
+    container.appendChild(btn);
+  });
+}
+
+function applyPageToEditor(p) {
+  document.getElementById('input').value = p.input;
+  document.getElementById('output').textContent = '';
+  document.getElementById('stats').textContent = '';
+  state.html = p.confirmed || '';
+}
+
+function switchPage(id) {
+  var cur = getCurrentPage();
+  if (cur) { cur.input = document.getElementById('input').value; }
+  currentPageId = id;
+  applyPageToEditor(getCurrentPage());
+  savePages();
+  renderPageList();
+}
+
+function addPage() {
+  var cur = getCurrentPage();
+  if (cur) { cur.input = document.getElementById('input').value; }
+  var p = { id: 'p' + Date.now() + Math.random().toString(36).slice(2,6), title: '页面 ' + (pages.length + 1), input: '', confirmed: '' };
+  pages.push(p);
+  currentPageId = p.id;
+  applyPageToEditor(p);
+  savePages();
+  renderPageList();
+  showToast('已新增页面「' + p.title + '」');
+}
+
+function deletePage() {
+  if (pages.length <= 1) { showToast('至少保留一个页面'); return; }
+  var p = getCurrentPage();
+  if (!confirm('确定删除页面「' + p.title + '」吗？')) return;
+  var idx = pages.indexOf(p);
+  pages.splice(idx, 1);
+  currentPageId = pages[Math.min(idx, pages.length - 1)].id;
+  applyPageToEditor(getCurrentPage());
+  savePages();
+  renderPageList();
+  showToast('页面已删除');
+}
+
+function clearAllPages() {
+  if (!confirm('确定清空所有页面吗？\n所有页面内容将被删除，且不可恢复！')) return;
+  if (!confirm('再次确认：真的要一键清空所有页面？')) return;
+  var p = { id: 'p' + Date.now(), title: '页面 1', input: '', confirmed: '' };
+  pages = [p];
+  currentPageId = p.id;
+  applyPageToEditor(p);
+  document.getElementById('appendInput').value = '';
+  document.getElementById('appendToggle').checked = false;
+  document.getElementById('fileName').textContent = '';
+  savePages();
+  renderPageList();
+  showToast('所有页面已清空');
+}
+
+function renamePage(id) {
+  var p = pages.filter(function(x) { return x.id === id; })[0];
+  if (!p) return;
+  var name = prompt('输入页面名称：', p.title);
+  if (name && name.trim()) {
+    p.title = name.trim();
+    savePages();
+    renderPageList();
+  }
+}
+
+// 输入防抖自动保存（400ms）
+var pageSaveTimer = null;
+document.getElementById('input').addEventListener('input', function() {
+  clearTimeout(pageSaveTimer);
+  pageSaveTimer = setTimeout(function() {
+    var p = getCurrentPage();
+    if (p) { p.input = document.getElementById('input').value; savePages(); }
+  }, 400);
+});
+
 /* ===== HTML Editor ===== */
 var OLD_IMG = '<img alt="\u9177\u6362\u673a\u65b0\u5934\u56fe.gif" src="https://mmbiz.qpic.cn/mmbiz_gif/iaw9nmmHthVcNNic7B4ibFg7Ribvt2o1pTCbfFlicw8No0Spt3ic3y9BDqzHdxZYF5zPNvB6DdZUMYU0T9Wkb0IroEhA/640?wx_fmt=gif" style="vertical-align: baseline;width: 100%;box-sizing:border-box;max-width:100% !important;" draggable="false" data-ratio="0.20074349442379183" data-w="1076"/>';
 var NEW_IMG = '<img src="https://mmbiz.qpic.cn/mmbiz_gif/lfic4S7GicgmD0Ot7hgOUpfofRwogPQoaTUSkOXicuTWeETNsjdZWSyQflaVfKqAo0zakN2K0ia7PBuxj8FfG4XHNQ/640?wx_fmt=gif" style="width:100%;vertical-align:baseline;box-sizing:border-box;max-width:100% !important;" draggable="false" data-ratio="0.20055710306406685" data-w="1077"/>';
@@ -1177,6 +1399,8 @@ function confirmHtml() {
     if (ac.trim()) base = base + ac;
   }
   state.html = base;
+  var curPage = getCurrentPage();
+  if (curPage) { curPage.confirmed = base; savePages(); }
   showToast('HTML 已确认，进入图片处理');
   switchTab('img');
 }
@@ -1206,6 +1430,8 @@ function clearAll() {
   document.getElementById('appendInput').value = '';
   document.getElementById('appendToggle').checked = false;
   document.getElementById('fileName').textContent = '';
+  var p = getCurrentPage();
+  if (p) { p.input = ''; savePages(); }
 }
 
 /* ===== Image Editor ===== */
@@ -1625,6 +1851,10 @@ window.addEventListener('resize', function() {
     if (s && s.loaded) { onRatioChange(idx); }
   });
 });
+
+// init pages
+applyPageToEditor(getCurrentPage());
+renderPageList();
 
 // init templates
 renderTemplateList();

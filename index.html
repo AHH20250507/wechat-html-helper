@@ -264,7 +264,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
       <div class="panel-header">
         <span>追加结尾（可选）</span>
         <div class="append-header-right">
-          <button class="collapse-btn" id="appendToggleBtn" onclick="toggleSection('append')">展开 ▾</button>
+          <button class="collapse-btn" id="appendToggleBtn" onclick="toggleSection('append')">收起 ▴</button>
           <span class="file-name" id="fileName"></span>
           <label class="file-upload-btn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -277,7 +277,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
           </label>
         </div>
       </div>
-      <textarea id="appendInput" class="section-body collapsed" style="height:90px;" placeholder="粘贴 HTML 代码，或点击上方「上传 HTML」导入文件…（勾选「启用」后生效）"></textarea>
+      <textarea id="appendInput" class="section-body" style="height:90px;" placeholder="粘贴 HTML 代码，或点击上方「上传 HTML」导入文件…（勾选「启用」后生效）"></textarea>
     </div>
     <div style="text-align:center;margin-bottom:20px;">
       <button class="btn-primary" style="padding:10px 32px;font-size:14px;border-radius:8px;" onclick="confirmHtml()">确认使用此 HTML</button>
@@ -1606,11 +1606,11 @@ function renderPreview(idx) {
     var padLeft = (parseInt(document.getElementById('padLeftInput' + idx).value) || 40) * scale;
     var padRight = (parseInt(document.getElementById('padRightInput' + idx).value) || 40) * scale;
     var offsetY = (parseInt(document.getElementById('textOffsetY' + idx).value) || 0) * scale;
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#FCF8F8';
     ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     var lines = wrapText(ctx, text, cropW - padLeft - padRight);
-    var lineHeight = fontSize * 1.2;
+    var lineHeight = fontSize * 1.75;
     var totalH = lines.length * lineHeight;
     var leftX = padLeft;
     var centerY = (cropH - totalH) / 2 + lineHeight / 2 + offsetY;
@@ -1619,10 +1619,25 @@ function renderPreview(idx) {
 }
 
 function wrapText(ctx, text, maxWidth) {
-  var chars = text.split(''), lines = [], line = '';
-  for (var i = 0; i < chars.length; i++) {
-    var test = line + chars[i];
-    if (ctx.measureText(test).width > maxWidth && line.length > 0) { lines.push(line); line = chars[i]; }
+  // Photoshop-style: break at spaces when possible (whole word moves to next line),
+  // fall back to mid-word break only when a single word exceeds the width
+  var words = text.split(/(\s+)/), lines = [], line = '';
+  function fitWord(w) {
+    if (line !== '') { lines.push(line); line = ''; }
+    if (ctx.measureText(w).width <= maxWidth) { line = w; return; }
+    var chunk = '';
+    for (var j = 0; j < w.length; j++) {
+      var t2 = chunk + w[j];
+      if (chunk && ctx.measureText(t2).width > maxWidth) { lines.push(chunk); chunk = w[j]; }
+      else chunk = t2;
+    }
+    line = chunk;
+  }
+  for (var i = 0; i < words.length; i++) {
+    var w = words[i];
+    if (w === '') continue;
+    var test = line + w;
+    if (ctx.measureText(test).width > maxWidth) fitWord(w);
     else line = test;
   }
   if (line) lines.push(line);
@@ -1790,11 +1805,11 @@ function renderFinalCanvas(idx, callback) {
     var padLeft = parseInt(document.getElementById('padLeftInput' + idx).value) || 40;
     var padRight = parseInt(document.getElementById('padRightInput' + idx).value) || 40;
     var offsetY = parseInt(document.getElementById('textOffsetY' + idx).value) || 0;
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#FCF8F8';
     ctx.font = fontSize + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     var lines = wrapText(ctx, text, 1280 - padLeft - padRight);
-    var lineHeight = fontSize * 1.2;
+    var lineHeight = fontSize * 1.75;
     var totalH = lines.length * lineHeight;
     var leftX = padLeft;
     var centerY = (360 - totalH) / 2 + lineHeight / 2 + offsetY;

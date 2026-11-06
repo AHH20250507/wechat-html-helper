@@ -323,6 +323,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
         </div>
         <div class="control-panel" id="imgControls1" style="display:none;">
           <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity1" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity1','overlayOpacityNum1');renderPreview(1)"><input type="number" id="overlayOpacityNum1" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum1','overlayOpacity1');renderPreview(1)"></div>
+          <div class="control-row"><label for="imageZoom1">缩放</label><input type="range" id="imageZoom1" aria-label="图片缩放" min="0.1" max="5" step="0.01" value="1" oninput="setImageZoom(1,this.value)"><input type="number" id="imageZoomNum1" aria-label="图片缩放倍数" min="0.1" max="5" step="0.01" value="1" oninput="if(this.value !== '' && Number(this.value) >= 0.1 && Number(this.value) <= 5) setImageZoom(1,this.value,undefined,undefined,true)" onchange="setImageZoom(1,this.value);this.value=document.getElementById('imageZoom1').value"><span style="font-size:12px;color:#86868b;">倍</span></div>
         </div>
         <div id="textInputRow1" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
@@ -348,6 +349,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
         </div>
         <div class="control-panel" id="imgControls2" style="display:none;">
           <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity2" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity2','overlayOpacityNum2');renderPreview(2)"><input type="number" id="overlayOpacityNum2" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum2','overlayOpacity2');renderPreview(2)"></div>
+          <div class="control-row"><label for="imageZoom2">缩放</label><input type="range" id="imageZoom2" aria-label="图片缩放" min="0.1" max="5" step="0.01" value="1" oninput="setImageZoom(2,this.value)"><input type="number" id="imageZoomNum2" aria-label="图片缩放倍数" min="0.1" max="5" step="0.01" value="1" oninput="if(this.value !== '' && Number(this.value) >= 0.1 && Number(this.value) <= 5) setImageZoom(2,this.value,undefined,undefined,true)" onchange="setImageZoom(2,this.value);this.value=document.getElementById('imageZoom2').value"><span style="font-size:12px;color:#86868b;">倍</span></div>
         </div>
         <div id="textInputRow2" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
@@ -373,6 +375,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
         </div>
         <div class="control-panel" id="imgControls3" style="display:none;">
           <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity3" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity3','overlayOpacityNum3');renderPreview(3)"><input type="number" id="overlayOpacityNum3" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum3','overlayOpacity3');renderPreview(3)"></div>
+          <div class="control-row"><label for="imageZoom3">缩放</label><input type="range" id="imageZoom3" aria-label="图片缩放" min="0.1" max="5" step="0.01" value="1" oninput="setImageZoom(3,this.value)"><input type="number" id="imageZoomNum3" aria-label="图片缩放倍数" min="0.1" max="5" step="0.01" value="1" oninput="if(this.value !== '' && Number(this.value) >= 0.1 && Number(this.value) <= 5) setImageZoom(3,this.value,undefined,undefined,true)" onchange="setImageZoom(3,this.value);this.value=document.getElementById('imageZoom3').value"><span style="font-size:12px;color:#86868b;">倍</span></div>
         </div>
         <div id="textInputRow3" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
@@ -398,6 +401,7 @@ button { border: none; cursor: pointer; transition: all .2s; }
         </div>
         <div class="control-panel" id="imgControls4" style="display:none;">
           <div class="control-row"><label>蒙层</label><input type="range" id="overlayOpacity4" min="0" max="100" value="54" oninput="syncFromSlider('overlayOpacity4','overlayOpacityNum4');renderPreview(4)"><input type="number" id="overlayOpacityNum4" min="0" max="100" value="54" oninput="syncFromNumber('overlayOpacityNum4','overlayOpacity4');renderPreview(4)"></div>
+          <div class="control-row"><label for="imageZoom4">缩放</label><input type="range" id="imageZoom4" aria-label="图片缩放" min="0.1" max="5" step="0.01" value="1" oninput="setImageZoom(4,this.value)"><input type="number" id="imageZoomNum4" aria-label="图片缩放倍数" min="0.1" max="5" step="0.01" value="1" oninput="if(this.value !== '' && Number(this.value) >= 0.1 && Number(this.value) <= 5) setImageZoom(4,this.value,undefined,undefined,true)" onchange="setImageZoom(4,this.value);this.value=document.getElementById('imageZoom4').value"><span style="font-size:12px;color:#86868b;">倍</span></div>
         </div>
         <div id="textInputRow4" style="display:none;margin-bottom:16px;padding:12px;background:#f5f5f7;border-radius:10px;">
           <label style="font-size:12px;color:#86868b;font-weight:500;">覆盖文字</label>
@@ -1259,10 +1263,14 @@ function loadPages() {
     var saved = JSON.parse(localStorage.getItem('wechat_html_pages') || 'null');
     if (Array.isArray(saved) && saved.length > 0) {
       saved.forEach(function(p) { if (!p.id) p.id = 'p' + Date.now() + Math.random().toString(36).slice(2,6); });
+      // 兼容旧版全局图片记录，仅迁移到原来的第一页。
+      if (!saved[0].images) saved[0].images = JSON.parse(localStorage.getItem('wechat_html_img_records') || '{}');
       return saved;
     }
   } catch(e) {}
-  return [{ id: 'p' + Date.now(), title: '页面 1', input: '', confirmed: '' }];
+  var legacyImages = {};
+  try { legacyImages = JSON.parse(localStorage.getItem('wechat_html_img_records') || '{}'); } catch(e) {}
+  return [{ id: 'p' + Date.now(), title: '页面 1', input: '', confirmed: '', images: legacyImages }];
 }
 
 function savePages() {
@@ -1289,18 +1297,57 @@ function renderPageList() {
   });
 }
 
+function captureCurrentPage() {
+  var p = getCurrentPage();
+  if (!p) return;
+  clearTimeout(pageSaveTimer);
+  p.input = document.getElementById('input').value;
+  p.append = document.getElementById('appendInput').value;
+  p.appendEnabled = document.getElementById('appendToggle').checked;
+  p.fileName = document.getElementById('fileName').textContent;
+  p.slot1 = document.getElementById('slotForImg1').value;
+  p.slot2 = document.getElementById('slotForImg2').value;
+  p.images = p.images || {};
+  [1,2,3,4].forEach(function(idx) {
+    var s = imgStates && imgStates[idx];
+    if (!s || !s.loaded) return;
+    p.images[idx] = Object.assign(p.images[idx] || {}, {
+      source: s.cachedImg.src,
+      thumb: (p.images[idx] || {}).thumb || s.cachedImg.src,
+      text: document.getElementById('overlayText' + idx).value,
+      opacity: parseInt(document.getElementById('overlayOpacity' + idx).value, 10),
+      githubUrl: state['img' + idx],
+      crop: { scale: s.scale / getCropW(idx), x: s.offX / getCropW(idx), y: s.offY / getCropW(idx) }
+    });
+  });
+}
+
 function applyPageToEditor(p) {
-  document.getElementById('input').value = p.input;
+  document.getElementById('input').value = p.input || '';
+  document.getElementById('appendInput').value = p.append || '';
+  document.getElementById('appendToggle').checked = !!p.appendEnabled;
+  document.getElementById('fileName').textContent = p.fileName || '';
+  document.getElementById('slotForImg1').value = p.slot1 || '1';
+  document.getElementById('slotForImg2').value = p.slot2 || '2';
   document.getElementById('output').textContent = '';
   document.getElementById('stats').textContent = '';
   var fout = document.getElementById('fusionOutput');
   if (fout) fout.textContent = '';
   state.html = p.confirmed || '';
+  if (imgStates) {
+    [1,2,3,4].forEach(function(idx) {
+      resetImg(idx);
+      state['img' + idx] = null;
+      var btn = document.getElementById('confirmImg' + idx);
+      btn.textContent = '确认使用'; btn.disabled = false;
+    });
+    restoreImgRecords();
+    onSlotSelectChange();
+  }
 }
 
 function switchPage(id) {
-  var cur = getCurrentPage();
-  if (cur) { cur.input = document.getElementById('input').value; }
+  captureCurrentPage();
   currentPageId = id;
   applyPageToEditor(getCurrentPage());
   savePages();
@@ -1308,9 +1355,8 @@ function switchPage(id) {
 }
 
 function addPage() {
-  var cur = getCurrentPage();
-  if (cur) { cur.input = document.getElementById('input').value; }
-  var p = { id: 'p' + Date.now() + Math.random().toString(36).slice(2,6), title: '页面 ' + (pages.length + 1), input: '', confirmed: '' };
+  captureCurrentPage();
+  var p = { id: 'p' + Date.now() + Math.random().toString(36).slice(2,6), title: '页面 ' + (pages.length + 1), input: '', confirmed: '', images: {} };
   pages.push(p);
   currentPageId = p.id;
   applyPageToEditor(p);
@@ -1320,11 +1366,14 @@ function addPage() {
 }
 
 function deletePage() {
-  if (pages.length <= 1) { showToast('至少保留一个页面'); return; }
   var p = getCurrentPage();
   if (!confirm('确定删除页面「' + p.title + '」吗？')) return;
   var idx = pages.indexOf(p);
   pages.splice(idx, 1);
+  if (!pages.length) pages.push({ id: 'p' + Date.now() + Math.random().toString(36).slice(2,6), title: '页面 1', input: '', confirmed: '', images: {} });
+  pages.forEach(function(page, index) {
+    if (/^页面\s*\d+$/.test(page.title)) page.title = '页面 ' + (index + 1);
+  });
   currentPageId = pages[Math.min(idx, pages.length - 1)].id;
   applyPageToEditor(getCurrentPage());
   savePages();
@@ -1335,7 +1384,7 @@ function deletePage() {
 function clearAllPages() {
   if (!confirm('确定清空所有页面吗？\n所有页面内容将被删除，且不可恢复！')) return;
   if (!confirm('再次确认：真的要一键清空所有页面？')) return;
-  var p = { id: 'p' + Date.now(), title: '页面 1', input: '', confirmed: '' };
+  var p = { id: 'p' + Date.now() + Math.random().toString(36).slice(2,6), title: '页面 1', input: '', confirmed: '', images: {} };
   pages = [p];
   currentPageId = p.id;
   applyPageToEditor(p);
@@ -1432,8 +1481,13 @@ function confirmHtml() {
 
 function handleFileUpload(e) {
   var file = e.target.files[0]; if (!file) return;
+  var owner = getCurrentPage();
   var reader = new FileReader();
   reader.onload = function(ev) {
+    if (pages.indexOf(owner) === -1) return;
+    owner.append = ev.target.result; owner.fileName = file.name; owner.appendEnabled = true;
+    savePages();
+    if (currentPageId !== owner.id) return;
     document.getElementById('appendInput').value = ev.target.result;
     document.getElementById('fileName').textContent = file.name;
     document.getElementById('appendToggle').checked = true;
@@ -1461,6 +1515,7 @@ function clearAll() {
 
 /* ===== Image Editor ===== */
 var imgStates = {};
+var imageLoadRevision = {};
 function getCropW(idx) {
   var area = document.getElementById('cropArea' + idx);
   var container = area.parentElement;
@@ -1482,10 +1537,23 @@ function imgLoaded(e, idx) {
   var file = e.target.files[0];
   if (!file || !file.type.startsWith('image/')) { showToast('请选择图片文件'); return; }
   e.target.value = '';
+  var previousRecord = loadImgRecords()[idx];
+  if (previousRecord) {
+    previousRecord.uploadVersion = (previousRecord.uploadVersion || 0) + 1;
+    previousRecord.githubUrl = null;
+    savePages();
+  }
+  state['img' + idx] = null;
+  var confirmButton = document.getElementById('confirmImg' + idx);
+  confirmButton.textContent = '确认使用'; confirmButton.disabled = false;
+  var ownerId = currentPageId;
+  var revision = imageLoadRevision[idx] = (imageLoadRevision[idx] || 0) + 1;
   var reader = new FileReader();
   reader.onload = function(ev) {
+    if (currentPageId !== ownerId || imageLoadRevision[idx] !== revision) return;
     var img = document.getElementById('cropImg' + idx);
     img.onload = function() {
+      if (currentPageId !== ownerId || imageLoadRevision[idx] !== revision) return;
       imgStates[idx] = { loaded: true, naturalW: img.naturalWidth, naturalH: img.naturalHeight, offX: 0, offY: 0, scale: 1, dragging: false, cachedImg: new Image() };
       imgStates[idx].cachedImg.src = ev.target.result;
       document.getElementById('textInputRow' + idx).style.display = 'block';
@@ -1510,18 +1578,24 @@ function onRatioChange(idx) {
   area.style.width = cropW + 'px'; area.style.height = cropH + 'px';
   var canvas = document.getElementById('overlayCanvas' + idx);
   canvas.width = cropW; canvas.height = cropH;
-  var imgRatio = s.naturalW / s.naturalH;
-  var cropRatio = cropW / cropH;
-  if (imgRatio > cropRatio) s.scale = cropH / s.naturalH;
-  else s.scale = cropW / s.naturalW;
-  s.offX = (cropW - s.naturalW * s.scale) / 2;
-  s.offY = (cropH - s.naturalH * s.scale) / 2;
+  var oldW = s.cropW;
+  var oldScale = s.scale, oldX = s.offX, oldY = s.offY;
+  s.baseScale = Math.max(cropW / s.naturalW, cropH / s.naturalH);
+  if (oldW) {
+    s.scale = oldScale * cropW / oldW;
+    s.offX = oldX * cropW / oldW; s.offY = oldY * cropW / oldW;
+  } else {
+    s.scale = s.baseScale;
+    s.offX = (cropW - s.naturalW * s.scale) / 2;
+    s.offY = (cropH - s.naturalH * s.scale) / 2;
+  }
+  s.cropW = cropW;
   clampImgPos(idx);
   applyImgPos(idx);
   renderPreview(idx);
 }
 
-function applyImgPos(idx) {
+function applyImgPos(idx, preserveInput) {
   var s = imgStates[idx];
   var img = document.getElementById('cropImg' + idx);
   img.style.width = (s.naturalW * s.scale) + 'px';
@@ -1529,6 +1603,7 @@ function applyImgPos(idx) {
   img.style.position = 'absolute';
   img.style.left = s.offX + 'px';
   img.style.top = s.offY + 'px';
+  syncImageZoom(idx, preserveInput);
 }
 
 function clampImgPos(idx) {
@@ -1552,19 +1627,34 @@ function moveDrag(x, y, idx) {
   clampImgPos(idx); applyImgPos(idx); renderPreview(idx);
 }
 function endDrag(idx) { var s = imgStates[idx]; if (!s || !s.dragging) return; s.dragging = false; clampImgPos(idx); applyImgPos(idx); renderPreview(idx); }
+function syncImageZoom(idx, preserveInput) {
+  var s = imgStates[idx];
+  var value = s && s.baseScale ? Math.round(s.scale / s.baseScale * 100) / 100 : 1;
+  document.getElementById('imageZoom' + idx).value = value;
+  var number = document.getElementById('imageZoomNum' + idx);
+  if (!preserveInput) number.value = value;
+}
+
+function setImageZoom(idx, value, anchorX, anchorY, preserveInput) {
+  var s = imgStates[idx]; if (!s || !s.loaded) return;
+  var zoom = Number(value);
+  if (!Number.isFinite(zoom) || value === '') zoom = s.scale / s.baseScale;
+  zoom = Math.max(0.1, Math.min(5, zoom));
+  var newScale = s.baseScale * zoom;
+  var x = anchorX === undefined ? getCropW(idx) / 2 : anchorX;
+  var y = anchorY === undefined ? getCropH(getCropW(idx)) / 2 : anchorY;
+  var ratio = newScale / s.scale;
+  s.offX = x - (x - s.offX) * ratio;
+  s.offY = y - (y - s.offY) * ratio;
+  s.scale = newScale;
+  clampImgPos(idx); applyImgPos(idx, preserveInput); renderPreview(idx);
+}
+
 function zoomImg(e, idx) {
   var s = imgStates[idx]; if (!s || !s.loaded) return;
   e.preventDefault();
-  var delta = e.deltaY > 0 ? -0.05 : 0.05;
-  var newScale = Math.max(0.1, Math.min(5, s.scale + delta));
-  var area = document.getElementById('cropArea' + idx);
-  var rect = area.getBoundingClientRect();
-  var mx = e.clientX - rect.left, my = e.clientY - rect.top;
-  var ratio = newScale / s.scale;
-  s.offX = mx - (mx - s.offX) * ratio;
-  s.offY = my - (my - s.offY) * ratio;
-  s.scale = newScale;
-  clampImgPos(idx); applyImgPos(idx); renderPreview(idx);
+  var rect = document.getElementById('cropArea' + idx).getBoundingClientRect();
+  setImageZoom(idx, s.scale / s.baseScale + (e.deltaY > 0 ? -0.05 : 0.05), e.clientX - rect.left, e.clientY - rect.top);
 }
 
 document.addEventListener('mousemove', function(e) { [1,2,3,4].forEach(function(i) { if (imgStates[i] && imgStates[i].dragging) moveDrag(e.clientX, e.clientY, i); }); });
@@ -1618,28 +1708,19 @@ function renderPreview(idx) {
 }
 
 function wrapText(ctx, text, maxWidth) {
-  // Photoshop-style: break at spaces when possible (whole word moves to next line),
-  // fall back to mid-word break only when a single word exceeds the width
-  var words = text.split(/(\s+)/), lines = [], line = '';
-  function fitWord(w) {
-    if (line !== '') { lines.push(line); line = ''; }
-    if (ctx.measureText(w).width <= maxWidth) { line = w; return; }
-    var chunk = '';
-    for (var j = 0; j < w.length; j++) {
-      var t2 = chunk + w[j];
-      if (chunk && ctx.measureText(t2).width > maxWidth) { lines.push(chunk); chunk = w[j]; }
-      else chunk = t2;
-    }
-    line = chunk;
-  }
-  for (var i = 0; i < words.length; i++) {
-    var w = words[i];
-    if (w === '') continue;
-    var test = line + w;
-    if (ctx.measureText(test).width > maxWidth) fitWord(w);
-    else line = test;
-  }
-  if (line) lines.push(line);
+  // 空格按普通字符保留；仅显式换行或实际超出文字区域时换行。
+  var lines = [];
+  text.split(String.fromCharCode(10)).forEach(function(paragraph) {
+    paragraph = paragraph.split(String.fromCharCode(13)).join('');
+    var line = '';
+    Array.from(paragraph).forEach(function(ch) {
+      if (line && ctx.measureText(line + ch).width > maxWidth) {
+        lines.push(line);
+        line = ch;
+      } else line += ch;
+    });
+    lines.push(line);
+  });
   return lines;
 }
 
@@ -1664,6 +1745,8 @@ function psdInkY(ctx, line, targetInkTop) {
 }
 
 function resetImg(idx) {
+  imageLoadRevision[idx] = (imageLoadRevision[idx] || 0) + 1;
+  document.getElementById('cropImg' + idx).onload = null;
   imgStates[idx] = null;
   var hint = document.getElementById('restoreHint' + idx);
   if (hint) hint.style.display = 'none';
@@ -1673,6 +1756,7 @@ function resetImg(idx) {
   document.getElementById('imgControls' + idx).style.display = 'none';
   document.getElementById('overlayOpacity' + idx).value = 54;
   document.getElementById('overlayOpacityNum' + idx).value = 54;
+  syncImageZoom(idx);
   document.getElementById('uploadZone' + idx).style.display = 'block';
   document.getElementById('overlayText' + idx).value = '';
   document.getElementById('imgStatus' + idx).textContent = '';
@@ -1680,49 +1764,51 @@ function resetImg(idx) {
 
 function confirmImg(idx) {
   var s = imgStates[idx]; if (!s || !s.loaded) { showToast('请先上传图片 ' + idx); return; }
+  var owner = getCurrentPage();
   var btn = document.getElementById('confirmImg' + idx);
   btn.disabled = true; btn.textContent = '上传中…';
   renderFinalCanvas(idx, function(c) {
     var dataUrl = c.toDataURL('image/png');
-    var thumb = c.toDataURL('image/jpeg', 0.6);
-    var filename = 'cover' + idx + '.png';
-    // save record locally (含无文字原图快照，刷新后仍可编辑文字)
-    var records = loadImgRecords();
-    records[idx] = {
-      thumb: thumb,
-      text: document.getElementById('overlayText' + idx).value,
-      opacity: parseInt(document.getElementById('overlayOpacity' + idx).value, 10),
-      githubUrl: null
-    };
-    renderBaseCanvas(idx, function(b) { records[idx].source = b.toDataURL('image/jpeg', 0.85); saveImgRecords(records); });
-    uploadToGitHub(dataUrl, filename).then(function(url) {
-      var fullUrl = url + '?t=' + Date.now();
-      state['img' + idx] = fullUrl;
-      records = loadImgRecords();
-      if (records[idx]) { records[idx].githubUrl = fullUrl; saveImgRecords(records); }
-      document.getElementById('imgStatus' + idx).innerHTML = '槽位 ' + idx + ' 已上传：<a href="' + url + '" target="_blank" style="color:#00b050;">查看</a>';
+    captureCurrentPage();
+    var record = owner.images[idx];
+    record.thumb = c.toDataURL('image/jpeg', 0.6);
+    var uploadVersion = record.uploadVersion = (record.uploadVersion || 0) + 1;
+    var source = record.source;
+    savePages();
+    function finish(url, uploaded) {
+      if (pages.indexOf(owner) === -1 || owner.images[idx] !== record || record.uploadVersion !== uploadVersion || record.source !== source) return;
+      record.githubUrl = url;
+      savePages();
+      if (currentPageId !== owner.id) return;
+      state['img' + idx] = url;
+      var status = document.getElementById('imgStatus' + idx);
+      status.textContent = uploaded ? '槽位 ' + idx + ' 已上传：' : '上传失败，已退回 base64 内嵌';
+      if (uploaded) {
+        var link = document.createElement('a');
+        link.href = url; link.target = '_blank'; link.style.color = '#00b050'; link.textContent = '查看';
+        status.appendChild(link);
+      }
       btn.textContent = '已确认'; btn.disabled = false;
-      showToast('槽位 ' + idx + ' 已确认');
-    }).catch(function(err) {
-      state['img' + idx] = dataUrl;
-      records = loadImgRecords();
-      if (records[idx]) { records[idx].githubUrl = dataUrl; saveImgRecords(records); }
-      document.getElementById('imgStatus' + idx).textContent = '上传失败，已退回 base64 内嵌';
-      btn.textContent = '已确认'; btn.disabled = false;
-      showToast('上传失败，已退回 base64');
-    });
+      showToast(uploaded ? '槽位 ' + idx + ' 已确认' : '上传失败，已退回 base64');
+    }
+    uploadToGitHub(dataUrl, 'cover' + idx + '.png').then(function(url) {
+      finish(url + '?t=' + Date.now(), true);
+    }).catch(function() { finish(dataUrl, false); });
   });
 }
 
 /* ===== Image Records Persistence ===== */
 function loadImgRecords() {
-  try { return JSON.parse(localStorage.getItem('wechat_html_img_records') || '{}'); } catch(e) { return {}; }
+  return getCurrentPage().images || {};
 }
 function saveImgRecords(records) {
-  try { localStorage.setItem('wechat_html_img_records', JSON.stringify(records)); } catch(e) {}
+  getCurrentPage().images = records;
+  savePages();
 }
 
 function clearImgSlot(idx) {
+  imageLoadRevision[idx] = (imageLoadRevision[idx] || 0) + 1;
+  document.getElementById('cropImg' + idx).onload = null;
   imgStates[idx] = null;
   state['img' + idx] = null;
   document.getElementById('textInputRow' + idx).style.display = 'none';
@@ -1731,6 +1817,7 @@ function clearImgSlot(idx) {
   document.getElementById('imgControls' + idx).style.display = 'none';
   document.getElementById('overlayOpacity' + idx).value = 54;
   document.getElementById('overlayOpacityNum' + idx).value = 54;
+  syncImageZoom(idx);
   document.getElementById('uploadZone' + idx).style.display = 'block';
   document.getElementById('overlayText' + idx).value = '';
   document.getElementById('imgStatus' + idx).textContent = '';
@@ -1766,9 +1853,11 @@ function updateSlotTags() {
 
 function restoreImgRecords() {
   var records = loadImgRecords();
+  var ownerId = currentPageId;
   [1,2,3,4].forEach(function(idx) {
     var rec = records[idx];
     if (!rec || !rec.thumb) return;
+    var revision = imageLoadRevision[idx] = (imageLoadRevision[idx] || 0) + 1;
     // show the saved thumbnail as preview
     document.getElementById('uploadZone' + idx).style.display = 'none';
     document.getElementById('textInputRow' + idx).style.display = 'block';
@@ -1787,8 +1876,17 @@ function restoreImgRecords() {
       // 有原图快照：重建完整编辑状态（可改文字/拖动/重新确认）
       var srcImg = new Image();
       srcImg.onload = function() {
+        if (currentPageId !== ownerId || loadImgRecords()[idx] !== rec || imageLoadRevision[idx] !== revision) return;
+        var previewImg = document.getElementById('cropImg' + idx);
+        previewImg.onload = null;
+        previewImg.src = srcImg.src;
         imgStates[idx] = { loaded: true, naturalW: srcImg.naturalWidth, naturalH: srcImg.naturalHeight, offX: 0, offY: 0, scale: 1, dragging: false, cachedImg: srcImg };
         onRatioChange(idx);
+        if (rec.crop) {
+          var s = imgStates[idx], w = getCropW(idx);
+          s.scale = rec.crop.scale * w; s.offX = rec.crop.x * w; s.offY = rec.crop.y * w;
+          clampImgPos(idx); applyImgPos(idx); renderPreview(idx);
+        }
       };
       srcImg.src = rec.source;
     } else {
@@ -1935,9 +2033,9 @@ renderPageList();
 renderTemplateList();
 selectTemplate(appData.selectedTemplate || 'EPBox');
 
-// init image records
-restoreImgRecords();
+// init image records (already restored by applyPageToEditor)
 updateSlotTags();
+window.addEventListener('beforeunload', function() { captureCurrentPage(); savePages(); });
 
 // init hosting token setting + auto check
 loadTokenSetting();
